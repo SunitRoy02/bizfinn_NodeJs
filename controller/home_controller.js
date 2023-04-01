@@ -12,6 +12,16 @@ module.exports = {
 
     },
 
+
+    updateBanner : async (req,res) => {
+        console.log('UpdateRequest',req.body);
+        
+        const filter = {_id : req.body.id};
+        var newvalues = {imageUrl: req.body.imageUrl };
+        const bannrsData = await banners.findOneAndUpdate(filter,newvalues);
+        res.status(200).send({ success: true, data: bannrsData});
+    },
+
     addBanner: async (req, res) => {
 
         try {
@@ -53,5 +63,4 @@ module.exports = {
             res.status(400).send({ success: false, msg: error.message });
         }
     },
-
 }
