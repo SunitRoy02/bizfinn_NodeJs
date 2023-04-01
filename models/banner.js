@@ -6,6 +6,11 @@ const bannersSchema = mongoose.Schema({
         type: String,
         trim: true,
     },
+    name:String,
+    shortDis: String,
+    discription:String,
+    slug:String,
+
 
 });
 
