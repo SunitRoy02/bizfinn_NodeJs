@@ -3,13 +3,19 @@ const mongoose = require('mongoose');
 const productSchema = mongoose.Schema({
 
     name : String ,
-    categoryId : String,
-    image : String ,
+    sunCategoryId : String,
+    image : {
+        type: [String],
+    },
+    thumbnilImg: String,
     price : String ,
     discription : String ,
-    discountPrice : String ,
+    discountAmount : String ,
     rating : String ,
     slug : String ,
+    stock: Number,
+
+
 
 
 });

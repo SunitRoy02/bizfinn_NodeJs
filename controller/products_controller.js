@@ -95,7 +95,15 @@ module.exports = {
 
     getSubCategories : async (req,res) =>  {
         try {
-            const subCategoriesData = await subCategories.find({});
+
+            let id = req.query.id;
+            let filterQuery = {};
+            if(id != 'undefined' && id != ''){
+             filterQuery = {categoryId: id};
+            }
+
+            console.log(filterQuery)
+            const subCategoriesData = await subCategories.find(filterQuery);
             res.status(200).send({ success: true, data: subCategoriesData });
         } catch (error) {
             console.log("Error : ", error);
