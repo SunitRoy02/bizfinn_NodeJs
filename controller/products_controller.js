@@ -1,5 +1,6 @@
 const products = require('../models/product');
 const categories = require('../models/categories');
+const subCategories = require('../models/sub_categories');
 const { validationResult } = require('express-validator');
 
 module.exports = {
@@ -51,6 +52,51 @@ module.exports = {
                 const msg = "No matched banner found ";
                 res.status(201).send({ success: true, msg: msg, });
             }
+        } catch (error) {
+            console.log("Error : ", error);
+            res.status(400).send({ success: false, msg: error.message });
+        }
+    },
+
+
+    addSubCategories : async (req,res) => {
+        try {
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                return res.status(400).send({ success: false, errors: errors.array()[0] });
+            }
+
+            let reqData = req.body;
+
+            const query = { _id: req.body.categoryId };
+            console.log(query);
+            console.log('-----------');
+            const cat = await categories.find(query);
+            console.log('Cat in sub ', cat);
+            reqData.categoryData  = cat[0];
+
+            console.log('FInal Obj => ', reqData);
+
+            let data =  subCategories(reqData);
+            let result = await data.save(); 
+            console.log(result);
+
+            const msfIfSuccess = "SubCategory Added Successfully !!";
+            res.status(200).send({ success: true, msg: msfIfSuccess, data: data });
+
+        } catch (error) {
+            console.log("Error : ", error);
+            res.status(400).send({ success: false, msg: error.message });
+        }
+
+
+    },
+
+
+    getSubCategories : async (req,res) =>  {
+        try {
+            const subCategoriesData = await subCategories.find({});
+            res.status(200).send({ success: true, data: subCategoriesData });
         } catch (error) {
             console.log("Error : ", error);
             res.status(400).send({ success: false, msg: error.message });

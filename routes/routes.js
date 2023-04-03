@@ -8,7 +8,12 @@ const router = require('express').Router();
 const {loginValidation ,registerValidation, forgotPassValidation } = require('../validation/user_validation');
 const { addBannerValidation } = require('../validation/banner_validation'); 
 const { productValidation } = require('../validation/product_validation'); 
-const { categoriesValidation } = require('../validation/categories_validation'); 
+const { categoriesValidation, subCategoriesValidation } = require('../validation/categories_validation'); 
+
+
+
+
+
 
 //Auth --------
 router.post('/login' , loginValidation , authController.loginFun)
@@ -28,6 +33,9 @@ router.post('/addCategories',categoriesValidation,productController.addCategorie
 router.delete('/deleteCategory/:id',productController.deleteCategory)
 router.get('/getCategories',productController.getCategories)
 // router.patch('/updateBanner',homeController.updateBanner)
+router.post('/addSubCategories',subCategoriesValidation,productController.addSubCategories)
+router.get('/getSubCategories',productController.getSubCategories)
+
 
 
 //Product 
