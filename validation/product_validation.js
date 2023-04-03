@@ -4,7 +4,7 @@ const { check } = require('express-validator');
 exports.productValidation = [
 
     check("name").notEmpty().withMessage('Name is required'),
-    check("sunCategoryId").notEmpty().withMessage('SubCategory is required'),
+    check("subCategoryId").notEmpty().withMessage('SubCategory is required'),
     check("price").notEmpty().withMessage('Price is required'),
     check("discountAmount").notEmpty().withMessage('Discount Price is required'),
     check("discription").notEmpty().withMessage('Discription is required'),
