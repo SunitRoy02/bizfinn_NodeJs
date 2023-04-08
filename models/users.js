@@ -2,15 +2,15 @@ const mongoose = require('mongoose');
 
 const userSchema = mongoose.Schema({
 
-    name: {
-        type: String,
-        required: [true, "Please send name "],
-        trim: true,
-    },
+    name: String,
     email: String,
-    mobile: String,
+    mobile: Number,
     password: String,
-    fcmToken: String
+    fcmToken: String,
+    createdAt : String,
+    updatedAt : String,
+    avatar:String,
+    postCode: Number,
 
 });
 

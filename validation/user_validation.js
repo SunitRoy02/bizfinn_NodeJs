@@ -27,3 +27,11 @@ exports.forgotPassValidation = [
 ]
 
 
+exports.getProfileValidation = [
+
+    check("userId").notEmpty().withMessage('User Id is required'),
+    check("userId").isString().withMessage("Please enter valid User Id"),
+
+]
+
+

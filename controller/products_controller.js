@@ -13,7 +13,9 @@ module.exports = {
                 return res.status(400).send({ success: false, errors: errors.array()[0] });
             }
 
-            let data = new categories(req.body);
+            let reqData = req.body;
+            reqData.createdAt  = new Date().toLocaleString();
+            let data = new categories(reqData);
             let result = await data.save();
             console.log(result);
 
@@ -49,8 +51,8 @@ module.exports = {
                 const msg = "Category Deleted Successfully";
                 res.status(200).send({ success: true, msg: msg, });
             }else{
-                const msg = "No matched banner found ";
-                res.status(201).send({ success: true, msg: msg, });
+                const msg = "No matched Category found ";
+                res.status(201).send({ success: false, msg: msg, });
             }
         } catch (error) {
             console.log("Error : ", error);
@@ -67,12 +69,14 @@ module.exports = {
             }
 
             let reqData = req.body;
+            reqData.createdAt  = new Date().toLocaleString();
+
 
             const query = { _id: req.body.categoryId };
             console.log(query);
             console.log('-----------');
             const cat = await categories.find(query);
-            console.log('Cat in sub ', cat);
+            console.log('Cat in sub >>>', cat);
             reqData.categoryData  = cat[0];
 
             console.log('FInal Obj => ', reqData);
@@ -111,6 +115,25 @@ module.exports = {
         }
     },
 
+
+    deleteSubcategories: async (req, res) => {
+
+        try {
+            var id = req.params.id;
+            const query = { _id: id };
+            const result = await subCategories.deleteOne(query);
+            if (result.deletedCount === 1) {
+                const msg = "SubCategory Deleted Successfully";
+                res.status(200).send({ success: true, msg: msg, });
+            }else{
+                const msg = "No matched SubCategory found ";
+                res.status(201).send({ success: false, msg: msg, });
+            }
+        } catch (error) {
+            console.log("Error : ", error);
+            res.status(400).send({ success: false, msg: error.message });
+        }
+    },
 
     addProduct: async (req, res) => {
 

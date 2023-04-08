@@ -5,7 +5,7 @@ const productController = require('../controller/products_controller')
 const router = require('express').Router();
 
 //Validation Imports 
-const {loginValidation ,registerValidation, forgotPassValidation } = require('../validation/user_validation');
+const {loginValidation ,registerValidation, forgotPassValidation ,getProfileValidation} = require('../validation/user_validation');
 const { addBannerValidation } = require('../validation/banner_validation'); 
 const { productValidation } = require('../validation/product_validation'); 
 const { categoriesValidation, subCategoriesValidation } = require('../validation/categories_validation'); 
@@ -19,6 +19,8 @@ const { categoriesValidation, subCategoriesValidation } = require('../validation
 router.post('/login' , loginValidation , authController.loginFun)
 router.post('/register' , registerValidation , authController.registerFun)
 router.post('/forgotPassword',forgotPassValidation,authController.forgotPassFun)
+router.post('/getProfile',getProfileValidation,authController.getProfile)
+router.post('/updateProfile',getProfileValidation,authController.updateProfile)
 // router.post('/verifyOtp',authController.verifyOtpFun)
 // router.patch('/changePassword',authController.changePasswordFun)
 
@@ -33,8 +35,10 @@ router.post('/addCategories',categoriesValidation,productController.addCategorie
 router.delete('/deleteCategory/:id',productController.deleteCategory)
 router.get('/getCategories',productController.getCategories)
 // router.patch('/updateBanner',homeController.updateBanner)
+
 router.post('/addSubCategories',subCategoriesValidation,productController.addSubCategories)
 router.get('/getSubCategories',productController.getSubCategories)
+router.delete('/deleteSubcategories/:id',productController.deleteSubcategories)
 
 
 
