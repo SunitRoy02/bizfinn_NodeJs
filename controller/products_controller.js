@@ -6,7 +6,7 @@ const { validationResult } = require('express-validator');
 module.exports = {
 
 
-    addCategories : async (req,res) => {
+    addCategories: async (req, res) => {
         try {
             const errors = validationResult(req)
             if (!errors.isEmpty()) {
@@ -14,7 +14,7 @@ module.exports = {
             }
 
             let reqData = req.body;
-            reqData.createdAt  = new Date().toLocaleString();
+            reqData.createdAt = new Date().toLocaleString();
             let data = new categories(reqData);
             let result = await data.save();
             console.log(result);
@@ -30,7 +30,7 @@ module.exports = {
 
     },
 
-    getCategories : async (req,res) =>  {
+    getCategories: async (req, res) => {
         try {
             const categoriesData = await categories.find({});
             res.status(200).send({ success: true, data: categoriesData });
@@ -50,7 +50,7 @@ module.exports = {
             if (result.deletedCount === 1) {
                 const msg = "Category Deleted Successfully";
                 res.status(200).send({ success: true, msg: msg, });
-            }else{
+            } else {
                 const msg = "No matched Category found ";
                 res.status(201).send({ success: false, msg: msg, });
             }
@@ -61,7 +61,7 @@ module.exports = {
     },
 
 
-    addSubCategories : async (req,res) => {
+    addSubCategories: async (req, res) => {
         try {
             const errors = validationResult(req)
             if (!errors.isEmpty()) {
@@ -69,7 +69,7 @@ module.exports = {
             }
 
             let reqData = req.body;
-            reqData.createdAt  = new Date().toLocaleString();
+            reqData.createdAt = new Date().toLocaleString();
 
 
             const query = { _id: req.body.categoryId };
@@ -77,12 +77,12 @@ module.exports = {
             console.log('-----------');
             const cat = await categories.find(query);
             console.log('Cat in sub >>>', cat);
-            reqData.categoryData  = cat[0];
+            reqData.categoryData = cat[0];
 
             console.log('FInal Obj => ', reqData);
 
-            let data =  subCategories(reqData);
-            let result = await data.save(); 
+            let data = subCategories(reqData);
+            let result = await data.save();
             console.log(result);
 
             const msfIfSuccess = "SubCategory Added Successfully !!";
@@ -97,13 +97,13 @@ module.exports = {
     },
 
 
-    getSubCategories : async (req,res) =>  {
+    getSubCategories: async (req, res) => {
         try {
 
             let id = req.query.id;
             let filterQuery = {};
-            if(id != 'undefined' && id != ''){
-             filterQuery = {categoryId: id};
+            if (id != 'undefined' && id != '') {
+                filterQuery = { categoryId: id };
             }
 
             console.log(filterQuery)
@@ -125,7 +125,7 @@ module.exports = {
             if (result.deletedCount === 1) {
                 const msg = "SubCategory Deleted Successfully";
                 res.status(200).send({ success: true, msg: msg, });
-            }else{
+            } else {
                 const msg = "No matched SubCategory found ";
                 res.status(201).send({ success: false, msg: msg, });
             }
@@ -142,13 +142,29 @@ module.exports = {
             if (!errors.isEmpty()) {
                 return res.status(400).send({ success: false, errors: errors.array()[0] });
             }
+            let reqData = req.body;
 
-            let data = new products(req.body);
-            let result = await data.save();
-            console.log(result);
+            let subCats = await subCategories.find({_id : req.body.subCategoryId})
+            console.log(subCats);
+            if(subCats.length > 0){
+                
+                reqData.createdAt = new Date().toLocaleString();
+                reqData.subCategory = subCats[0];
+    
+                console.log(reqData);
+                let data = new products(reqData);
+                let result = await data.save();
+                // console.log(result);
+    
 
-            const msfIfSuccess = "Product Added Successfully";
-            res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
+                const msfIfSuccess = "Product Added Successfully";
+                res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
+            }else{
+                const msfIfSuccess = "No Matching SubCategory Found";
+                res.status(200).send({ success: false, msg: msfIfSuccess, data: [] });
+            }
+
+           
 
         } catch (error) {
             console.log("Error : ", error);
@@ -185,13 +201,15 @@ module.exports = {
 
 
     productsByCategory: async (req, res) => {
-
-        console.log(req.query);
         try {
-            var id = req.query.categoryId;
-            const query = { categoryId: id };
+            let id = req.query.subCategoryId;
+            
+            const query = { 'subCategory._id' : id   };
+            // const query = { subCategory :  {_id : id} };
+            console.log("Query >> ",query);
             const result = await products.find(query);
 
+            console.log("Result >> ",result);
             if (result.length > 0) {
                 const msg = "Product Found Successfully";
                 res.status(200).send({ success: true, msg: msg, data: result });
