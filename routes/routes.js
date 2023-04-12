@@ -8,7 +8,7 @@ const router = require('express').Router();
 //Validation Imports 
 const {loginValidation ,registerValidation, forgotPassValidation ,getProfileValidation} = require('../validation/user_validation');
 const { addBannerValidation } = require('../validation/banner_validation'); 
-const { productValidation } = require('../validation/product_validation'); 
+const { productValidation , wishListValidation } = require('../validation/product_validation'); 
 const { queryValidation } = require('../validation/queryValidation'); 
 const { categoriesValidation, subCategoriesValidation } = require('../validation/categories_validation'); 
 
@@ -56,6 +56,10 @@ router.post('/addQuery',queryValidation,queryController.addQuery)
 router.get('/getAllQuery',queryController.getAllQuery)
 router.delete('/deleteQuery/:id',queryController.deleteQuery)
 
+//WishList 
+router.post('/addToWishList',queryValidation,queryController.addQuery)
+router.get('/getAllWishList',queryController.getAllQuery)
+router.delete('/removeWishList/:id',queryController.deleteQuery)
  
 
 

@@ -15,6 +15,13 @@ exports.productValidation = [
     check("stock").notEmpty().withMessage('Stock quantity is required'),
 ]
 
+exports.wishListValidation = [
+
+    check("userId").notEmpty().withMessage('User ID is required'),
+    check("productId").notEmpty().withMessage('SubCategory is required'),
+ 
+]
+
 
 // exports.registerValidation = [
 
