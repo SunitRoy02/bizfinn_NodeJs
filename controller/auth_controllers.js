@@ -141,37 +141,40 @@ module.exports = {
 
         try {
 
-            const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                return res.status(400).send({ success: false, errors: errors.array()[0] });
-            }
+            // const errors = validationResult(req)
+            // if (!errors.isEmpty()) {
+                // return res.status(400).send({ success: false, errors: errors.array()[0] });
+            // }
 
-            const find = await users.find({ _id: req.body.userId })
-            if (find.length === 0) {
-                const msfIferror = "User not found";
-                res.status(400).send({ success: false, msg: msfIferror });
+            res.status(200).send(req.body);
 
-            } else {
+            // const find = await users.find({ _id: req.body.userId })
+            // if (find.length === 0) {
+            //     const msfIferror = "User not found";
+            //     res.status(400).send({ success: false, msg: msfIferror });
 
-                let reqData = req.body;
-                reqData.updatedAt = new Date().toLocaleString();
-                users.findByIdAndUpdate(req.body.userId, req.body, { new: true }, (err, updatedDoc) => {
-                    if (err) {
-                        // console.error(err);  
-                        const message = "Unexpected Error Found";
-                        res.status(200).send({ success: true, msg: err });
+            // } else {
+
+            //     let reqData = req.body;
+            //     // let img = req.file;
+            //     reqData.updatedAt = new Date().toLocaleString();
+            //     users.findByIdAndUpdate(req.body.userId, req.body, { new: true }, (err, updatedDoc) => {
+            //         if (err) {
+            //             // console.error(err);  
+            //             const message = "Unexpected Error Found";
+            //             res.status(200).send({ success: true, msg: err });
                     
-                    } else {
-                        // console.log(updatedDoc);
-                        const message = "User Updated successfully";
-                        res.status(200).send({ success: true, msg: message, data : updatedDoc });
-                    }
-                });
+            //         } else {
+            //             // console.log(updatedDoc);
+            //             const message = "User Updated successfully";
+            //             res.status(200).send({ success: true, msg: message, data : updatedDoc });
+            //         }
+            //     });
 
 
 
 
-            }
+            // }
         } catch (error) {
             console.log("Error : ", error);
             res.status(400).send({ success: false, msg: error.message });
