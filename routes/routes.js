@@ -4,6 +4,24 @@ const homeController = require('../controller/home_controller')
 const productController = require('../controller/products_controller')
 const queryController = require('../controller/query_controller')
 const router = require('express').Router();
+const multer = require('multer');
+const path = require('path');
+
+
+
+//multer
+const _destinaiton = 'upload/user' 
+const diskStorage = multer.diskStorage({
+    destination : _destinaiton,
+    filename : (req,file,cb) => {
+        return cb(null,`${file.name}_${Date.now()}${path.extname(file.originalname)}`)
+    }
+})
+const upload = multer({
+    storage: diskStorage,
+    limits: {fileSize : 10000000}
+})
+
 
 //Validation Imports 
 const {loginValidation ,registerValidation, forgotPassValidation ,getProfileValidation} = require('../validation/user_validation');
@@ -22,7 +40,7 @@ router.post('/login' , loginValidation , authController.loginFun)
 router.post('/register' , registerValidation , authController.registerFun)
 router.post('/forgotPassword',forgotPassValidation,authController.forgotPassFun)
 router.post('/getProfile',getProfileValidation,authController.getProfile)
-router.post('/updateProfile',getProfileValidation,authController.updateProfile)
+router.post('/updateProfile',upload.single('image'),getProfileValidation,authController.updateProfile)
 // router.post('/verifyOtp',authController.verifyOtpFun)
 // router.patch('/changePassword',authController.changePasswordFun)
 
@@ -48,7 +66,7 @@ router.delete('/deleteSubcategories/:id',productController.deleteSubcategories)
 router.post('/addProduct',productValidation,productController.addProduct)
 router.get('/getProducts',productController.getProducts)
 router.get('/productDetailes',productController.getSingleProduct)
-router.get('/productsByCategory',productController.productsByCategory)
+router.get('/searchProducts',productController.searchProducts)
 router.delete('/deleteProduct/:id',productController.deleteProduct)
 
 //Contact Query

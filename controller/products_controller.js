@@ -2,6 +2,7 @@ const products = require('../models/product');
 const categories = require('../models/categories');
 const subCategories = require('../models/sub_categories');
 const { validationResult } = require('express-validator');
+const { ObjectId } = require('mongodb');
 
 module.exports = {
 
@@ -200,12 +201,13 @@ module.exports = {
     },
 
 
-    productsByCategory: async (req, res) => {
+    searchProducts: async (req, res) => {
+        console.log("Result >> ",req.query);
         try {
             let id = req.query.subCategoryId;
             
-            const query = { 'subCategory._id' : id   };
-            // const query = { subCategory :  {_id : id} };
+            const query = { "subCategory._id": ObjectId(id) };
+            
             console.log("Query >> ",query);
             const result = await products.find(query);
 

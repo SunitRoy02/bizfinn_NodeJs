@@ -1,9 +1,15 @@
 const mongoose = require('mongoose');
 
 const widhListSchema = mongoose.Schema({
-
-    userId : String,
-    productId: String,
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+      },
+      products: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product'
+      }]
 });
 
 
