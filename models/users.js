@@ -11,6 +11,7 @@ const userSchema = mongoose.Schema({
     updatedAt : String,
     avatar:String,
     postCode: Number,
+    userType: Number,
 
 });
 
