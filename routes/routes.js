@@ -1,7 +1,7 @@
 
 const authController = require('../controller/auth_controllers')
 const lenderController = require('../controller/lender_controllers')
-// const homeController = require('../controller/home_controller')
+const borrowerController = require('../controller/borrower_controller')
 // const productController = require('../controller/products_controller')
 // const queryController = require('../controller/query_controller')
 const router = require('express').Router();
@@ -52,6 +52,11 @@ router.get('/getLeanders' , lenderController.getLenders)
 router.post('/getSingleLender' , getSingleLenderValidation , lenderController.getSingleLender)
 router.delete('/deleteLeander/:lenderId' , getSingleLenderValidation , lenderController.deleteLeander)
 
+//Borrower ---------
+router.post('/registerBorrower' , borrowerController.createBrowwer)
+router.get('/getBorrowers' , borrowerController.getBorrowers)
+router.post('/getSingleBorrower' , borrowerController.getSingleBorrower)
+router.delete('/deleteBorrower/:borrowerId' , borrowerController.deleteBorrower)
 
 
 

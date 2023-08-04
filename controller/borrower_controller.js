@@ -10,15 +10,15 @@ function generateRandomSixDigitNumber() {
 
 
 module.exports = {
-    createLender: async (req, res) => {
+    createBrowwer: async (req, res) => {
         try {
 
-            const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                return res.status(400).send({ success: false, errors: errors.array()[0] });
-            }
+            // const errors = validationResult(req)
+            // if (!errors.isEmpty()) {
+            //     return res.status(400).send({ success: false, errors: errors.array()[0] });
+            // }
 
-            const find = await lenders.find({ email: req.body.email })
+            const find = await borrower.find({ mobile: req.body.mobile })
             // console.log("Find IN Register >>> ", find);
             if (find.length === 0) {
 
@@ -28,18 +28,18 @@ module.exports = {
                 reqData.case_pending = 0;
 
 
-                reqData.lender_id = generateRandomSixDigitNumber();
+                reqData.borrower_id = generateRandomSixDigitNumber();
 
                 reqData.createdAt = new Date().toLocaleString();
-                let data = new lenders(reqData);
+                let data = new borrower(reqData);
                 let result = await data.save();
                 // console.log(result);
 
-                const msfIfSuccess = "Lender Created Successfully";
+                const msfIfSuccess = "Borrower Created Successfully";
                 res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
 
             } else {
-                const msfIferror = "Lender Already Exixts";
+                const msfIferror = "Borrower Already Exixts";
                 res.status(400).send({ success: false, msg: msfIferror });
             }
         } catch (error) {
@@ -51,10 +51,10 @@ module.exports = {
 
     },
 
-    getLenders: async (req, res) => {
+    getBorrowers: async (req, res) => {
         try {
 
-            const find = await lenders.find({ })
+            const find = await borrower.find({ })
             // console.log("Find IN GetProfile >>> ", find);
             if (find.length === 0) {
 
@@ -75,24 +75,24 @@ module.exports = {
     },
 
 
-    getSingleLender: async (req, res) => {
+    getSingleBorrower: async (req, res) => {
         try {
 
-            const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                return res.status(400).send({ success: false, errors: errors.array()[0] });
-            }
+            // const errors = validationResult(req)
+            // if (!errors.isEmpty()) {
+                // return res.status(400).send({ success: false, errors: errors.array()[0] });
+            // }
 
-            const find = await lenders.find({ _id: req.body.lenderId })
+            const find = await borrower.find({ _id: req.body.borrowerId})
             // console.log("Find IN GetProfile >>> ", find);
             if (find.length === 0) {
 
-                const msfIferror = "Lender not found";
+                const msfIferror = "Borrower not found";
                 res.status(400).send({ success: false, msg: msfIferror });
 
             } else {
                 //send otp work here 
-                const message = "Lender  Found successfully";
+                const message = "Borrower  Found successfully";
                 res.status(200).send({ success: true, msg: message, data: find });
 
             }
@@ -153,16 +153,16 @@ module.exports = {
     },
 
 
-    deleteLeander: async (req, res) => {
+    deleteBorrower: async (req, res) => {
         try {
-            var id = req.params.lenderId;
+            var id = req.params.borrowerId;
             const query = { _id: id };
-            const result = await lenders.deleteOne(query);
+            const result = await borrower.deleteOne(query);
             if (result.deletedCount === 1) {
-                const msg = "Lender Deleted Successfully";
+                const msg = "Borrower Deleted Successfully";
                 res.status(200).send({ success: true, msg: msg, });
             }else{
-                const msg = "No matched lender found ";
+                const msg = "No matched borrower found ";
                 res.status(201).send({ success: false, msg: msg, });
             }
         } catch (error) {

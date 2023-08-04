@@ -4,7 +4,7 @@ const borrowerSchema = mongoose.Schema({
 
     companyName: String,
     mobile: Number,
-    lender_id: Number,
+    borrower_id: Number,
     channel_parther: Object,
     case_logged : Number,
     case_approved : Number,
