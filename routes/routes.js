@@ -2,7 +2,7 @@
 const authController = require('../controller/auth_controllers')
 const lenderController = require('../controller/lender_controllers')
 const borrowerController = require('../controller/borrower_controller')
-// const productController = require('../controller/products_controller')
+const notificationController = require('../controller/notification_controller')
 // const queryController = require('../controller/query_controller')
 const router = require('express').Router();
 const multer = require('multer');
@@ -57,7 +57,13 @@ router.post('/registerBorrower' , borrowerController.createBrowwer)
 router.get('/getBorrowers' , borrowerController.getBorrowers)
 router.post('/getSingleBorrower' , borrowerController.getSingleBorrower)
 router.delete('/deleteBorrower/:borrowerId' , borrowerController.deleteBorrower)
+router.post('/updateBorrowerBusinessDetails' , borrowerController.updateBorrowerBusinessDetails)
+router.post('/updateBorrowerKycDetails' , borrowerController.updateBorrowerKycDetails)
+router.post('/updateBorrowerFinancialDetails' , borrowerController.updateBorrowerFinancialDetails)
 
-
+//Notification ---------
+router.post('/createNotification' , notificationController.createNotification)
+router.post('/getNotifications' , notificationController.getNotifications)
+router.post('/clearNotification' , notificationController.clearNotification)
 
 module.exports = router

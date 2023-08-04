@@ -11,7 +11,10 @@ const borrowerSchema = mongoose.Schema({
     case_pending: Number,
     createdAt : String,
     updatedAt : String,
-    avatar:String
+    avatar:String,
+    bussiness_details:Object,
+    kyc_details:Object,
+    financial_details:Object
 });
 
 module.exports = mongoose.model('borrowers', borrowerSchema);
