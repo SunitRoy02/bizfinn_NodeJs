@@ -28,17 +28,26 @@ module.exports = {
                 reqData.case_logged = 0;
                 reqData.case_approved = 0;
                 reqData.case_pending = 0;
-
-
+                
                 reqData.lender_id = generateRandomSixDigitNumber();
 
-                reqData.createdAt = new Date().toLocaleString();
                 let data = new lenders(reqData);
                 let result = await data.save();
                 // console.log(result);
 
-                //Adding nto userSection
 
+                //Adding nto userSection
+                const findUser = await users.find({ email: req.body.email })
+                // console.log("Find IN Register >>> ", find);
+                if (findUser.length === 0) {
+    
+                    let reqDataUser = req.body;
+                    reqDataUser.createdAt = new Date().toLocaleString();
+                    reqDataUser.userType = 2;
+
+                    let data = new users(reqDataUser);
+                    let resultUser = await data.save();
+                }
 
 
 
