@@ -12,6 +12,7 @@ module.exports = {
             // }
 
             let reqData = req.body;
+            reqData.read = false;
 
             reqData.createdAt = new Date().toLocaleString();
             let data = new notification(reqData);
@@ -32,10 +33,20 @@ module.exports = {
     getNotifications: async (req, res) => {
         try {
 
-            const find = await notification.find({ userId : req.body.userId })
-           
-                const message = "Notifications Found successfully";
-                res.status(200).send({ success: true, msg: message, data: find });
+
+            // Update documents where read=false
+            const result = await notification.updateMany(
+                { "read": false },
+                { $set: { "read": true } }
+            );
+
+            const find = await notification.find({ userId: req.body.userId })
+
+            const message = "Notifications Found successfully";
+            res.status(200).send({ success: true, msg: message, data: find });
+
+
+
 
         } catch (error) {
             console.log("Error : ", error);
@@ -59,6 +70,24 @@ module.exports = {
             res.status(400).send({ success: false, msg: error.message });
         }
     },
+
+    deleteNotification: async (req, res) => {
+        try {
+            var id = req.params.notiId;
+            const query = { _id: id };
+            const result = await notification.deleteOne(query);
+            if (result.deletedCount === 1) {
+                const msg = "Notification Deleted Successfully";
+                res.status(200).send({ success: true, msg: msg, });
+            } else {
+                const msg = "No matched Notification found ";
+                res.status(201).send({ success: false, msg: msg, });
+            }
+        } catch (error) {
+            console.log("Error : ", error);
+            res.status(400).send({ success: false, msg: error.message });
+        }
+    }
 
 }
 

@@ -12,6 +12,8 @@ const userSchema = mongoose.Schema({
     avatar:String,
     postCode: Number,
     userType: Number,
+    lenderData: Object,
+    borrowerData: Object,
 
 });
 

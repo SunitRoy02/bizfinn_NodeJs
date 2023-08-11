@@ -9,11 +9,11 @@ const borrowerSchema = mongoose.Schema({
     case_logged : Number,
     case_approved : Number,
     case_pending: Number,
-    createdAt : String,
+    createdAt : String, 
     updatedAt : String,
     avatar:String,
     bussiness_details:Object,
-    kyc_details:Object,
+    kyc_details: Object,
     financial_details:Object
 });
 
