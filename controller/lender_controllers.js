@@ -1,5 +1,7 @@
 const { validationResult } = require('express-validator');
 const lenders = require('../models/lenders');
+const users = require('../models/users');
+
 
 
 function generateRandomSixDigitNumber() {
@@ -15,7 +17,7 @@ module.exports = {
 
             const errors = validationResult(req)
             if (!errors.isEmpty()) {
-                return res.status(400).send({ success: false, errors: errors.array()[0] });
+                return res.status(400).send({ success: false, errors: errors.array()[0]});
             }
 
             const find = await lenders.find({ email: req.body.email })
@@ -34,6 +36,12 @@ module.exports = {
                 let data = new lenders(reqData);
                 let result = await data.save();
                 // console.log(result);
+
+                //Adding nto userSection
+
+
+
+
 
                 const msfIfSuccess = "Lender Created Successfully";
                 res.status(200).send({ success: true, msg: msfIfSuccess, data: result });

@@ -7,7 +7,7 @@ const lendersSchema = mongoose.Schema({
     email: String,
     mobile: Number,
     password: String,
-    lender_id: Number,
+    lender_id: Number, 
     commission: Number,
     case_logged : Number,
     case_approved : Number,
