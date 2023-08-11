@@ -8,7 +8,7 @@ function generateRandomSixDigitNumber() {
     const min = 100000; // Smallest 6-digit number
     const max = 999999; // Largest 6-digit number
     return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
+}
 
 
 module.exports = {
@@ -17,10 +17,11 @@ module.exports = {
 
             const errors = validationResult(req)
             if (!errors.isEmpty()) {
-                return res.status(400).send({ success: false, errors: errors.array()[0]});
+                return res.status(400).send({ success: false, errors: errors.array()[0] });
             }
 
-            const find = await lenders.find({ email: req.body.email })
+            // const find = await lenders.find({ email: req.body.email })
+            const find = await users.find({ email: req.body.email })
             // console.log("Find IN Register >>> ", find);
             if (find.length === 0) {
 
@@ -28,35 +29,28 @@ module.exports = {
                 reqData.case_logged = 0;
                 reqData.case_approved = 0;
                 reqData.case_pending = 0;
-                
+
                 reqData.lender_id = generateRandomSixDigitNumber();
+
+
+                let reqDataUser = req.body;
+                reqDataUser.createdAt = new Date().toLocaleString();
+                reqDataUser.userType = 2;
+                reqDataUser.lenderData = reqData;
+
+                console.log(reqDataUser);
+                let dataUser = new users(reqDataUser);
+                let resultUser = await dataUser.save();
 
                 let data = new lenders(reqData);
                 let result = await data.save();
-                // console.log(result);
+                console.log(reqData);
 
-
-                //Adding nto userSection
-                const findUser = await users.find({ email: req.body.email })
-                // console.log("Find IN Register >>> ", find);
-                if (findUser.length === 0) {
-    
-                    let reqDataUser = req.body;
-                    reqDataUser.createdAt = new Date().toLocaleString();
-                    reqDataUser.userType = 2;
-
-                    let data = new users(reqDataUser);
-                    let resultUser = await data.save();
-                }
-
-
-
-
-                const msfIfSuccess = "Lender Created Successfully";
-                res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
+                const msfIfSuccess = "Register Successfully";
+                res.status(200).send({ success: true, msg: msfIfSuccess, data: resultUser });
 
             } else {
-                const msfIferror = "Lender Already Exixts";
+                const msfIferror = "USer with same email already exixts";
                 res.status(400).send({ success: false, msg: msfIferror });
             }
         } catch (error) {
@@ -71,11 +65,11 @@ module.exports = {
     getLenders: async (req, res) => {
         try {
 
-            const find = await lenders.find({ })
+            const find = await lenders.find({})
             // console.log("Find IN GetProfile >>> ", find);
             if (find.length === 0) {
 
-                res.status(200).send({ success: true ,data: find});
+                res.status(200).send({ success: true, data: find });
 
             } else {
                 //send otp work here 
@@ -118,7 +112,7 @@ module.exports = {
             res.status(400).send({ success: false, msg: error.message });
 
         }
-        
+
     },
 
     updateLenderProfile: async (req, res) => {
@@ -127,7 +121,7 @@ module.exports = {
 
             // const errors = validationResult(req)
             // if (!errors.isEmpty()) {
-                // return res.status(400).send({ success: false, errors: errors.array()[0] });
+            // return res.status(400).send({ success: false, errors: errors.array()[0] });
             // }
 
             res.status(200).send(req.body);
@@ -147,7 +141,7 @@ module.exports = {
             //             // console.error(err);  
             //             const message = "Unexpected Error Found";
             //             res.status(200).send({ success: true, msg: err });
-                    
+
             //         } else {
             //             // console.log(updatedDoc);
             //             const message = "User Updated successfully";
@@ -178,7 +172,7 @@ module.exports = {
             if (result.deletedCount === 1) {
                 const msg = "Lender Deleted Successfully";
                 res.status(200).send({ success: true, msg: msg, });
-            }else{
+            } else {
                 const msg = "No matched lender found ";
                 res.status(201).send({ success: false, msg: msg, });
             }

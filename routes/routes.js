@@ -66,5 +66,6 @@ router.post('/createNotification' , notificationController.createNotification)
 router.post('/getNotifications' , notificationController.getNotifications)
 router.post('/clearNotification' , notificationController.clearNotification)
 router.delete('/deleteNotification/:notiId' , notificationController.deleteNotification)
+router.get('/readNotification/:userId' , notificationController.readNotification)
 
 module.exports = router

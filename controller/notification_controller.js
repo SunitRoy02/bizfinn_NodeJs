@@ -30,16 +30,33 @@ module.exports = {
 
     },
 
+
+    readNotification: async (req, res) => {
+        try {
+
+            // Update documents where read=false
+            const result = await notification.updateMany(
+                { "read": false,
+                 "userId": req.params.userId
+             },
+                { $set: { "read": true } }
+            );
+            const message = "Notifications Found successfully";
+            res.status(200).send({ success: true, result : result  });
+
+        } catch (error) {
+            console.log("Error : ", error);
+            res.status(400).send({ success: false, msg: error.message });
+
+        }
+
+    },
+
     getNotifications: async (req, res) => {
         try {
 
 
-            // Update documents where read=false
-            const result = await notification.updateMany(
-                { "read": false },
-                { $set: { "read": true } }
-            );
-
+        
             const find = await notification.find({ userId: req.body.userId })
 
             const message = "Notifications Found successfully";
