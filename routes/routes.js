@@ -3,7 +3,9 @@ const authController = require('../controller/auth_controllers')
 const lenderController = require('../controller/lender_controllers')
 const borrowerController = require('../controller/borrower_controller')
 const notificationController = require('../controller/notification_controller')
-// const queryController = require('../controller/query_controller')
+const chatController = require('../controller/chat_controller')
+
+
 const router = require('express').Router();
 const multer = require('multer');
 const path = require('path');
@@ -67,5 +69,8 @@ router.post('/getNotifications' , notificationController.getNotifications)
 router.post('/clearNotification' , notificationController.clearNotification)
 router.delete('/deleteNotification/:notiId' , notificationController.deleteNotification)
 router.get('/readNotification/:userId' , notificationController.readNotification)
+
+
+
 
 module.exports = router
