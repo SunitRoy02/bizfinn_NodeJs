@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 const notification = require('../models/notifications');
 
 
+
 module.exports = {
     createNotification: async (req, res) => {
         try {
