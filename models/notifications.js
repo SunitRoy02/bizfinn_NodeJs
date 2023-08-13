@@ -5,7 +5,7 @@ const notificationSchema = mongoose.Schema({
     title: String,
     subtitle: String,
     userId: String,
-    read: Boolean,
+    read: { type: Boolean, default: false },
     createdAt : { type: Date, default: Date.now },
 });
 

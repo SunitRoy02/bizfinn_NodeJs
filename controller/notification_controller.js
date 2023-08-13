@@ -6,15 +6,9 @@ module.exports = {
     createNotification: async (req, res) => {
         try {
 
-            // const errors = validationResult(req)
-            // if (!errors.isEmpty()) {
-            //     return res.status(400).send({ success: false, errors: errors.array()[0] });
-            // }
-
             let reqData = req.body;
             reqData.read = false;
 
-            reqData.createdAt = new Date().toLocaleString();
             let data = new notification(reqData);
             let result = await data.save();
 
@@ -26,7 +20,6 @@ module.exports = {
             res.status(400).send({ success: false, msg: error.message });
 
         }
-
 
     },
 
@@ -53,17 +46,11 @@ module.exports = {
     },
 
     getNotifications: async (req, res) => {
-        try {
-
-
-        
+        try {        
             const find = await notification.find({ userId: req.body.userId })
 
             const message = "Notifications Found successfully";
             res.status(200).send({ success: true, msg: message, data: find });
-
-
-
 
         } catch (error) {
             console.log("Error : ", error);
