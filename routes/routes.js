@@ -3,7 +3,7 @@ const authController = require('../controller/auth_controllers')
 const lenderController = require('../controller/lender_controllers')
 const borrowerController = require('../controller/borrower_controller')
 const notificationController = require('../controller/notification_controller')
-const chatController = require('../controller/chat_controller')
+
 
 
 const router = require('express').Router();

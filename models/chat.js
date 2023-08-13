@@ -5,6 +5,7 @@ const chatSchema = mongoose.Schema({
     contentType : String,
     senderId: String,
     receiverId : String,
+    roomId : String,
     id: mongoose.Schema.Types.ObjectId, // Reference to the recipient user's ObjectId
     media: [String], // Array of media URLs or paths
     createdAt: { type: Date, default: Date.now },
@@ -14,7 +15,7 @@ const chatConversationSchema = mongoose.Schema({
     id: mongoose.Schema.Types.ObjectId, // Reference to the recipient user's ObjectId
     users : [String],
     participants : [Object],
-    messages : [Object], // Array of media URLs or paths
+    messages : Object, // Array of media URLs or paths
     createdAt: { type: Date, default: Date.now },
 });
 
