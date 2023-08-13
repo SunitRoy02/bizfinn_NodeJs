@@ -11,8 +11,8 @@ module.exports = function initializeSocket(server) {
        var result = await  chatController.sendMessage(data);
         io.emit('newCreatedMessage', result);
         try {
-            var rooms = await chatController.getChatRooms();
-            io.emit('listOfRooms', rooms);
+            // var rooms = await chatController.getChatRooms();
+            // io.emit('listOfRooms', rooms);
           } catch (error) {
             console.error('Error:', error);
           }
@@ -22,7 +22,7 @@ module.exports = function initializeSocket(server) {
     socket.on('getChatRooms', async  (data) => {
 
         var result = await  chatController.getChatRooms(data);
-        console.log(result);
+        // console.log(result);
          io.emit('listOfRooms', result);
      });
 
@@ -30,10 +30,16 @@ module.exports = function initializeSocket(server) {
      socket.on('getMessages', async  (data) => {
 
         var result = await  chatController.getMsgsOnRooms(data);
-        console.log(result);
+        // console.log(result);
          io.emit('getMessagesOfRoom', result);
      });
 
+     socket.on('deleteSingleMsg', async  (data) => {
+
+        var result = await  chatController.deleteSingleMsg(data);
+        // console.log(result);
+         io.emit('getMessagesOfRoom', result);
+     });
 
     socket.on('disconnect', () => console.log('User disconnected'));
   });

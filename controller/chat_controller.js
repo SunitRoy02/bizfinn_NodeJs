@@ -81,7 +81,7 @@ module.exports = {
 
         try {
             const findChat = await chatDetails.find({roomId : data.roomId})
-            console.log('findChat found >> ',findChat)
+            // console.log('findChat found >> ',findChat)
             if(findChat.length == 0){
                 const msfIfSuccess = "No data found";
                 return { success: true, msg: msfIfSuccess, data: findChat };
@@ -98,6 +98,36 @@ module.exports = {
 
     },
  
+    deleteSingleMsg : async (data) => {
+
+        console.log(data);
+
+        try {
+            const findChat = await chatDetails.find({roomId : data.roomId, _id : data.msgId})
+            console.log('findChat found one chat to delete >> ',findChat)
+            if(findChat.length == 0){
+                const msfIfSuccess = "No data found";
+                return { success: false, msg: msfIfSuccess, data: findChat };
+            }
+             // Delete the item based on its _id and userId
+        const deletionResult = await chatDetails.deleteOne({ _id: data.msgId, });
+
+        if (deletionResult.deletedCount === 0) {
+            const msgIfSuccess = "Item not found or not deletable";
+            return { success: false, msg: msgIfSuccess };
+        }
+
+            const findChatComplete = await chatDetails.find({roomId : data.roomId})
+            const msfIfSuccess = "Chat Deleted Successfully";
+            return { success: true, msg: msfIfSuccess, data: findChatComplete };
+
+        } catch (error) {
+
+            console.log("Error : ", error);
+            return { success: false, msg: error.message };
+        }
+
+    },
 
 }
 
