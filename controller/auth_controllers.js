@@ -114,7 +114,7 @@ module.exports = {
                 return res.status(404).json({ msg: 'Permission not found' });
             }
     
-            return res.status(200).json({status : true, msg: 'Status Updated Successfully !!' });
+            return res.status(200).json({status : true, msg: 'Status Updated Successfully !!',result: updatedPermission});
         } catch (error) {
             console.error('Error:', error);
             return res.status(400).json({status : false, msg: error });
