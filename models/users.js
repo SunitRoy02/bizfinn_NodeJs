@@ -7,14 +7,31 @@ const userSchema = mongoose.Schema({
     mobile: Number,
     password: String,
     fcmToken: String,
-    createdAt : String,
+    createdAt : { type: Date, default: Date.now },
     updatedAt : String,
     avatar:String,
     postCode: Number,
     active: { type: Number, default: 0 },
     userType: Number,
-    lenderData: Object,
-    borrowerData: Object,
+
+    //Lender-Borrower----------
+    contact_person_name: String,
+    lender_id: Number,
+    commission: Number,
+    case_logged : Number,
+    case_approved : Number,
+    case_pending: Number,
+    channel_partnership_agrement: Object,
+    //--
+
+    borrower_id: Number,
+    channel_parther: Object,
+    case_logged : Number,
+    case_approved : Number,
+    case_pending: Number,
+    bussiness_details:Object,
+    kyc_details: Object,
+    financial_details:Object
 
 });
 

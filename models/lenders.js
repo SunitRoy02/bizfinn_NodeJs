@@ -1,14 +1,14 @@
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 
-const lendersSchema = mongoose.Schema({
+// const lendersSchema = mongoose.Schema({
 
-    contact_person_name: String,
-    lender_id: Number,
-    commission: Number,
-    case_logged : Number,
-    case_approved : Number,
-    case_pending: Number,
-    channel_partnership_agrement: Object
-});
+//     contact_person_name: String,
+//     lender_id: Number,
+//     commission: Number,
+//     case_logged : Number,
+//     case_approved : Number,
+//     case_pending: Number,
+//     channel_partnership_agrement: Object
+// });
 
-module.exports = mongoose.model('lenders', lendersSchema);
+// module.exports = mongoose.model('lenders', lendersSchema);
