@@ -25,7 +25,8 @@ const userSchema = mongoose.Schema({
     //--
 
     borrower_id: Number,
-    channel_parther: Object,
+    channel_partner: String,
+    annual_turn_over: String,
     case_logged : Number,
     case_approved : Number,
     case_pending: Number,

@@ -61,9 +61,10 @@ router.post('/registerBorrower' , borrowerController.createBrowwer)
 router.get('/getBorrowers' , borrowerController.getBorrowers)
 router.post('/getSingleBorrower' , borrowerController.getSingleBorrower)
 router.delete('/deleteBorrower/:borrowerId' , borrowerController.deleteBorrower)
-router.post('/updateBorrowerBusinessDetails' , borrowerController.updateBorrowerBusinessDetails)
-router.post('/updateBorrowerKycDetails' , borrowerController.updateBorrowerKycDetails)
-router.post('/updateBorrowerFinancialDetails' , borrowerController.updateBorrowerFinancialDetails)
+router.put('/updateBorrowerProfile/:id' , borrowerController.updateBorrowerProfile)
+router.put('/updateBorrowerBusinessDetails/:id' , borrowerController.updateBorrowerBusinessDetails)
+router.put('/updateBorrowerKycDetails/:id' , borrowerController.updateBorrowerKycDetails)
+router.put('/updateBorrowerFinancialDetails/:id' , borrowerController.updateBorrowerFinancialDetails)
 
 //Notification ---------
 router.post('/createNotification' , notificationController.createNotification)
