@@ -11,6 +11,7 @@ const userSchema = mongoose.Schema({
     updatedAt : String,
     avatar:String,
     postCode: Number,
+    active: { type: Number, default: 0 },
     userType: Number,
     lenderData: Object,
     borrowerData: Object,

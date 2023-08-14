@@ -17,24 +17,16 @@ module.exports = {
             // console.log('Chat rooms found >> ',findConversation)
 
             if(findConversation.length == 0){
-
-
                 const usersArray = [data.senderId,data.receiverId]
-
                 let convoData = {
                     users : userArray,
                     participants : userParticipants
                 }
-
                 let convoObj = new chatConversation(convoData)
                 let convoResult = await convoObj.save();
-
-                // console.log(convoResult);
                 data.roomId = convoResult._id;
-                // console.log(convoResult._id);
             }else{
                 data.roomId = findConversation[0]._id;
-
             }
         
             let dataObj = new chatDetails(data);

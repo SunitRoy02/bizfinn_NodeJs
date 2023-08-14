@@ -94,12 +94,34 @@ module.exports = {
 
         }
 
-
-
     },
 
 
 
+    setActiveStatus: async (req, res) => {
+        const permissionId = req.params.id;
+        const newActiveValue = req.body.active; // The new value for the "active" field
+    
+        try {
+            const updatedPermission = await users.findByIdAndUpdate(
+                permissionId,
+                { active: newActiveValue },
+                { new: true } // Return the updated document
+            );
+    
+            if (!updatedPermission) {
+            
+                return res.status(404).json({ msg: 'Permission not found' });
+            }
+    
+            return res.status(200).json({status : true, msg: 'Status Updated Successfully !!' });
+        } catch (error) {
+            console.error('Error:', error);
+            return res.status(400).json({status : false, msg: error });
+        }
+        
+        
+    },
 
 
     getProfile: async (req, res) => {

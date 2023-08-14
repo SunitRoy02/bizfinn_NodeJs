@@ -47,6 +47,7 @@ router.post('/getProfile',getProfileValidation,authController.getProfile)
 router.post('/updateProfile',upload.single('image'),getProfileValidation,authController.updateProfile)
 router.post('/verifyOtp',authController.verifyOtpFun)
 router.patch('/changePassword',authController.changePasswordFun)
+router.put('/setActiveStatus/:id',authController.setActiveStatus)
 
 //Lenders ---------
 router.post('/registerLenders' , createLenderValidation , lenderController.createLender)
