@@ -3,6 +3,7 @@ const authController = require('../controller/auth_controllers')
 const lenderController = require('../controller/lender_controllers')
 const borrowerController = require('../controller/borrower_controller')
 const notificationController = require('../controller/notification_controller')
+const casesController = require('../controller/cases_controller')
 
 
 
@@ -73,7 +74,11 @@ router.post('/clearNotification' , notificationController.clearNotification)
 router.delete('/deleteNotification/:notiId' , notificationController.deleteNotification)
 router.get('/readNotification/:userId' , notificationController.readNotification)
 
-
+//Cases -------------
+router.post('/createCases' , casesController.createCases)
+router.put('/createCases/:id' , casesController.updateLender)
+router.put('/caseStatus/:id',casesController.caseStatus)
+router.get('/getCases',casesController.getCases)
 
 
 module.exports = router

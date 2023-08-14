@@ -30,8 +30,6 @@ module.exports = {
     },
 
     registerFun: async (req, res) => {
-
-
         try {
 
             const errors = validationResult(req)
@@ -62,10 +60,8 @@ module.exports = {
 
         }
 
-
     },
-
-
+    
     forgotPassFun: async (req, res) => {
 
         try {
@@ -96,8 +92,6 @@ module.exports = {
 
     },
 
-
-
     setActiveStatus: async (req, res) => {
         const permissionId = req.params.id;
         const newActiveValue = req.body.active; // The new value for the "active" field
@@ -119,13 +113,9 @@ module.exports = {
             console.error('Error:', error);
             return res.status(400).json({ status: false, msg: error });
         }
-
-
     },
 
-
     getProfile: async (req, res) => {
-
 
         try {
 
@@ -152,10 +142,6 @@ module.exports = {
             res.status(400).send({ success: false, msg: error.message });
 
         }
-
-
-
-
     },
 
     updateProfileImage: async (req, res) => {
