@@ -4,6 +4,7 @@ const lenderController = require('../controller/lender_controllers')
 const borrowerController = require('../controller/borrower_controller')
 const notificationController = require('../controller/notification_controller')
 const casesController = require('../controller/cases_controller')
+const queryController = require('../controller/query_controller')
 
 
 
@@ -79,6 +80,10 @@ router.post('/createCases' , casesController.createCases)
 router.put('/createCases/:id' , casesController.updateLender)
 router.put('/caseStatus/:id',casesController.caseStatus)
 router.get('/getCases',casesController.getCases)
+
+//Query -------------
+router.post('/createQuery' , queryController.createQuery)
+router.get('/getQuery',queryController.getQuery)
 
 
 module.exports = router
