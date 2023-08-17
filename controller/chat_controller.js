@@ -32,8 +32,9 @@ module.exports = {
             let dataObj = new chatDetails(data);
             let result = await dataObj.save();
 
+        
             const msfIfSuccess = "Message Sent Successfully";
-            return { success: true, msg: msfIfSuccess, data: result };
+            return { success: true, msg: msfIfSuccess, data: data };
 
         } catch (error) {
             console.log("Error : ", error);
@@ -69,7 +70,7 @@ module.exports = {
 
     getMsgsOnRooms : async (data) => {
 
-        console.log(data);
+        console.log('getMsgsOnRooms >>' ,data.roomId);
 
         try {
             const findChat = await chatDetails.find({roomId : data.roomId})

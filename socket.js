@@ -17,10 +17,12 @@ const io = socketIO(server, {
   
     socket.on('createMessage', async  (data) => {
        var result = await  chatController.sendMessage(data);
-        io.emit('newCreatedMessage', result);
+
+        console.log("Result >> ", result);
         try {
-            // var rooms = await chatController.getChatRooms();
-            // io.emit('listOfRooms', rooms);
+            var result = await  chatController.getMsgsOnRooms(result.data);
+            // console.log(result);
+             io.emit('getMessagesOfRoom', result);
           } catch (error) {
             console.error('Error:', error);
           }
