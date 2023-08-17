@@ -3,7 +3,8 @@ const chatController = require('./controller/chat_controller')
 
 module.exports = function initializeSocket(server) {
   const io = socketIO(server);
-
+  io.origins('*:*');
+  
   io.on('connection', (socket) => {
     console.log('User connected');
   
