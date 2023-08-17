@@ -1,10 +1,10 @@
-const socketIO = require('socket.io');
+// const socketIO = require('socket.io');
+const socketIO = require('socket.io')(server, {cors: {origin: "*"}});
 const chatController = require('./controller/chat_controller')
 
 module.exports = function initializeSocket(server) {
   const io = socketIO(server);
-  io.origins('*:*');
-  
+
   io.on('connection', (socket) => {
     console.log('User connected');
   
