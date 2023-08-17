@@ -3,6 +3,7 @@ const chatController = require('./controller/chat_controller')
 
 module.exports = function initializeSocket(server) {
 
+
   // Create a socket.io instance and attach it to the server
 const io = socketIO(server, {
   cors: {
@@ -10,8 +11,9 @@ const io = socketIO(server, {
   },
 });
 
+
   io.on('connection', (socket) => {
-    console.log('User connected');
+    console.log('User connected ');
   
     socket.on('createMessage', async  (data) => {
        var result = await  chatController.sendMessage(data);
