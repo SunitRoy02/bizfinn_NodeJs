@@ -72,6 +72,44 @@ module.exports = {
 
     },
 
+    updateBorrower: async (req, res) => {
+
+        try {
+
+            const itemId = req.params.id;
+
+
+            console.log('ID >> ', itemId);
+            console.log('Borrower >> ', req.body.borrowerId);
+
+
+            const findBorrower = await users.find({ _id: req.body.borrowerId, userType: 3 })
+
+            if (findBorrower.length == 0) {
+                console.log('findBorrower >> ', findBorrower);
+                return res.status(400).json({ status: false, message: 'Borrower not found' });
+            }
+
+            // Find and update the document with the provided ID
+            const updatedItem = await cases.findByIdAndUpdate(
+                itemId,
+                { $set: { borrower: findBorrower[0] } },
+                { new: true } // Return the updated document
+            );
+
+            if (!updatedItem) {
+                return res.status(400).json({ status: false, message: 'Case not found' });
+            }
+
+            return res.status(200).json({ status: true, message: 'Case Updated Successfully', result: updatedItem });
+        } catch (error) {
+            console.log("Error : ", error);
+            res.status(400).send({ status: false, msg: error.message });
+
+        }
+
+    },
+
     caseStatus: async (req, res) => {
         const permissionId = req.params.id;
         const newActiveValue = req.body.status; // The new value for the "active" field
@@ -113,7 +151,47 @@ module.exports = {
             console.error('Error:', error);
             return res.status(400).json({ status: false, msg: error });
         }
-    }
+    },
+
+    getSingleCase: async (req, res) => {
+
+        try {
+            var id = req.params.id;
+            console.log(req.params)
+            const queryMap = { _id: id };
+            const find = await cases.find(queryMap)
+            if (find.length === 0) {
+                res.status(200).send({ success: false, msg: "No case Found ", data: find });
+            } else {
+                //send otp work here 
+                const message = "Case Found successfully";
+                res.status(200).send({ success: true, msg: message, data: find[0] });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            return res.status(400).json({ status: false, msg: error });
+        }
+    },
+
+    deleteCase: async (req, res) => {
+
+        try {
+            var id = req.params.id;
+            console.log(req.params)
+            const queryMap = { _id: id };
+            const result = await cases.deleteOne(queryMap)
+            if (result.deletedCount === 1) {
+                const msg = "Cases Deleted Successfully";
+                res.status(200).send({ success: true, msg: msg, });
+            } else {
+                const msg = "No matched lender found ";
+                res.status(201).send({ success: false, msg: msg, });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            return res.status(400).json({ status: false, msg: error });
+        }
+    },
 }
 
 

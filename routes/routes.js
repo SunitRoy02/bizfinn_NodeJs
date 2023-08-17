@@ -78,12 +78,17 @@ router.get('/readNotification/:userId' , notificationController.readNotification
 //Cases -------------
 router.post('/createCases' , casesController.createCases)
 router.put('/createCases/:id' , casesController.updateLender)
+router.put('/updateBorrower/:id' , casesController.updateBorrower)
 router.put('/caseStatus/:id',casesController.caseStatus)
 router.get('/getCases',casesController.getCases)
+router.get('/getSingleCase/:id',casesController.getSingleCase)
+router.delete('/deleteCase/:id',casesController.deleteCase)
 
 //Query -------------
 router.post('/createQuery' , queryController.createQuery)
 router.get('/getQuery',queryController.getQuery)
+router.get('/getSingleQuery/:queryId',queryController.getSingleQuery)
+router.delete('/deleteQuery/:queryId',queryController.deleteQuery)
 
 
 module.exports = router
