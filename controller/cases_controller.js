@@ -14,8 +14,14 @@ module.exports = {
     createCases: async (req, res) => {
         try {
             let reqData = req.body;
+            const findBorrower = await users.find({ _id: req.body.borrowerId, userType: 3 })
+            console.log('findBorrower >> ', findBorrower);
+            if (findBorrower.length == 0) {
+            
+                return res.status(400).json({ status: false, message: 'Borrower not found' });
+            }
+            reqData.borrower = findBorrower[0];
             reqData.lender_remark = "";
-            reqData.borrower = null;
             reqData.lender = null;
             reqData.case_no = generateRandomSixDigitNumber();
 
