@@ -12,7 +12,7 @@ module.exports = {
                 return res.status(400).send({ success: false, errors: errors.array()[0] });
             }
 
-            const find = await users.find({ email: req.body.email, password: req.body.password })
+            const find = await users.find({ email: req.body.email, password: req.body.password , userType : req.body.userType})
 
             if (find.length === 0) {
                 const msfIferror = "User Not Found";

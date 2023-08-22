@@ -2,10 +2,22 @@ const { validationResult } = require('express-validator');
 const users = require('../models/users');
 
 
-function generateRandomSixDigitNumber() {
+async function generateRandomSixDigitNumber() {
     const min = 100000; // Smallest 6-digit number
-    const max = 999999; // Largest 6-digit number
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    const max = 9999999; // Largest 6-digit number
+  
+    let generatedNum;
+    let isUnique = false;
+  
+    while (!isUnique) {
+      generatedNum = Math.floor(Math.random() * (max - min + 1)) + min;
+  
+      const existingCase = await users.findOne({ borrower_id: generatedNum });
+      if (!existingCase) {
+        isUnique = true;
+      }
+    }
+    return generatedNum;
   }
 
 
@@ -31,7 +43,7 @@ module.exports = {
                 reqData.kyc_details = null;
                 reqData.financial_details = null;
                 reqData.name = reqData.companyName
-                reqData.borrower_id = generateRandomSixDigitNumber();
+                reqData.borrower_id = await generateRandomSixDigitNumber();
 
                 console.log(reqData);
                 let data = new users(reqData);

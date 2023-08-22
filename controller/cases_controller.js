@@ -3,18 +3,33 @@ const cases = require('../models/cases');
 const users = require('../models/users');
 
 
-function generateRandomSixDigitNumber() {
+async function generateRandomSixDigitNumber() {
     const min = 100000; // Smallest 6-digit number
-    const max = 999999; // Largest 6-digit number
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+    const max = 9999999; // Largest 6-digit number
+  
+    let generatedNum;
+    let isUnique = false;
+  
+    while (!isUnique) {
+      generatedNum = Math.floor(Math.random() * (max - min + 1)) + min;
+  
+      const existingCase = await cases.findOne({ case_no: generatedNum });
+      if (!existingCase) {
+        isUnique = true;
+      }
+    }
+    return generatedNum;
+  }
 
 
 module.exports = {
     createCases: async (req, res) => {
         try {
             let reqData = req.body;
-            const findBorrower = await users.find({ _id: req.body.borrowerId, userType: 3 })
+            let filterData = { _id: req.body.borrowerId, userType: 3 }
+            // let filterData = { _id: mongoose.Types.ObjectId(req.body.borrowerId), userType: 3 }
+            console.log('findBorrower ......>> ', filterData );
+            const findBorrower = await users.find(filterData)
             console.log('findBorrower >> ', findBorrower);
             if (findBorrower.length == 0) {
             
@@ -23,7 +38,7 @@ module.exports = {
             reqData.borrower = findBorrower[0];
             reqData.lender_remark = "";
             reqData.lender = null;
-            reqData.case_no = generateRandomSixDigitNumber();
+            reqData.case_no = await generateRandomSixDigitNumber();
 
             console.log(reqData);
             let data = new cases(reqData);
