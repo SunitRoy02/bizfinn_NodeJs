@@ -1,5 +1,17 @@
 const mongoose = require('mongoose');
 
+
+const lenderRemark = mongoose.Schema({
+    lenderId: String,
+    approved: { type: Number, default: 0 },
+    landerName: String,
+    createdAt : { type: Date, default: Date.now },
+    updatedAt : Date,
+    lender_remark: String,    
+});
+
+
+
 const userSchema = mongoose.Schema({
 
     requirement: Number,
@@ -11,7 +23,7 @@ const userSchema = mongoose.Schema({
     lender_remark: String,
     case_no: Number,
     borrower: Object,
-    lender:Object
+    lenders:[lenderRemark]
     
 });
 

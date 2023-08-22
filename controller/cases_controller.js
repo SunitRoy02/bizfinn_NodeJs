@@ -73,10 +73,27 @@ module.exports = {
                 return res.status(400).json({ status: false, message: 'Lender not found' });
             }
 
+            const lenderFound = find[0];
+            console.log(' FOUND Lenders>>',lenderFound)
+            let newLenderObj = {};
+            newLenderObj.landerName = lenderFound.name;
+            newLenderObj.lenderId = lenderFound._id;
+
+            const findCases = await cases.find({ _id: itemId,})
+            console.log('CASE FOUND Lenders>>',findCases[0])
+            const oldLenders = findCases[0].lenders; 
+
+            for (let i = 0; i < oldLenders.length ; i++) {
+                if(oldLenders[i].lenderId == lenderFound._id){
+                    return res.status(400).json({ status: false, message: 'Lender already assignend to this case !' });
+                }
+                console.log(i);
+            }
+            
             // Find and update the document with the provided ID
             const updatedItem = await cases.findByIdAndUpdate(
                 itemId,
-                { $set: { lender: find[0] } },
+                { $push: { lenders: newLenderObj} },
                 { new: true } // Return the updated document
             );
 
@@ -84,6 +101,7 @@ module.exports = {
                 return res.status(400).json({ status: false, message: 'Case not found' });
             }
 
+            console.log('Updated Value >>',updatedItem)
             return res.status(200).json({ status: true, message: 'Case Updated Successfully', result: updatedItem });
         } catch (error) {
             console.log("Error : ", error);

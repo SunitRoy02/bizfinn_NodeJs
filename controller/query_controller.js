@@ -14,7 +14,7 @@ async function generateRandomSixDigitNumber() {
     while (!isUnique) {
       generatedNum = Math.floor(Math.random() * (max - min + 1)) + min;
   
-      const existingCase = await users.findOne({ query_no: generatedNum });
+      const existingCase = await query.findOne({ query_no: generatedNum });
       if (!existingCase) {
         isUnique = true;
       }
@@ -28,7 +28,7 @@ module.exports = {
         try {
             let reqData = req.body;
 
-            reqData.query_no = generateRandomSixDigitNumber();
+            reqData.query_no = await generateRandomSixDigitNumber();
             const caseNo = reqData.case_no.toString(); // Fix 1: Correct destructuring
             console.log(caseNo);
 

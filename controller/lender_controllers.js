@@ -41,7 +41,7 @@ module.exports = {
                 reqData.case_logged = 0;
                 reqData.case_approved = 0;
                 reqData.case_pending = 0;
-                reqData.lender_id = generateRandomSixDigitNumber();
+                reqData.lender_id = await generateRandomSixDigitNumber();
                 reqData.avatar = '';
                 reqData.userType = 2; // admin 1 lender 2 borrower 3
 
