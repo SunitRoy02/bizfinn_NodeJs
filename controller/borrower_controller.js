@@ -180,47 +180,14 @@ module.exports = {
 
     updateBorrowerBusinessDetails: async (req, res) => {
 
-        // try {
-
-        //     const itemId = req.params.id;
-        //     const updateFields = {};
-
-        //     // Iterate through request body and populate updateFields object
-        //     for (const key in req.body) {
-        //         if (req.body[key] !== undefined && req.body[key] !== null && req.body[key] !== '') {
-        //             updateFields[key] = req.body[key];
-        //         } else {
-        //             updateFields[key] = null;
-        //         }
-        //     }
-
-        //     console.log('ID >> ', itemId);
-        //     console.log('updateFields >> ', updateFields);
-
-        //     // Find and update the document with the provided ID
-        //     const updatedItem = await users.findByIdAndUpdate(
-        //         itemId,
-        //         { $set: { bussiness_details: updateFields } },
-        //         { new: true } // Return the updated document
-        //     );
-
-        //     if (!updatedItem) {
-        //         return res.status(400).json({ status: false, message: 'User not found' });
-        //     }
-
-        //     return res.status(200).json({ status: true, message: 'Profile Updated Successfully', result: updatedItem });
-        // } catch (error) {
-        //     console.log("Error : ", error);
-        //     res.status(400).send({ status: false, msg: error.message });
-
-        // }
         try {
             const userId = req.params.id;
             const updatedBusinessDetails = req.body;
         
             // Find the user by userId
             const userData = await users.findOne({ _id: userId });
-        
+            console.log("userData before >>",userData)
+
             if (!userData) {
               return res.status(400).json({status: false, message: 'User not found' });
             }
@@ -229,13 +196,25 @@ module.exports = {
             for (const key in updatedBusinessDetails) {
               const value = updatedBusinessDetails[key];
               if (value !== null && value !== undefined && value !== '') {
+                console.log(key)
                 userData.bussiness_details[key] = value;
               }
             }
+
+            console.log("userData after >>",userData)
         
-            // Save the updated user
-            await userData.save();
-            return res.json({status: true, message: 'Business details updated successfully', });
+           // Find and update the document with the provided ID
+            const updatedItem = await users.findByIdAndUpdate(
+                userId,
+                { $set: { bussiness_details: userData.bussiness_details } },
+                { new: true } // Return the updated document
+            );
+
+            if (!updatedItem) {
+                return res.status(400).json({ status: false, message: 'User not found' });
+            }
+
+            return res.json({status: true, message: 'Business details updated successfully',data : updatedItem });
           } catch (error) {
             console.error(error);
             return res.status(400).json({status: false, message: 'An error occurred', error });

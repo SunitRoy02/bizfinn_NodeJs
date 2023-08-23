@@ -5,7 +5,7 @@ const docSchema = mongoose.Schema({
     docId : mongoose.Types.ObjectId,
     status : { type: Number, default: 0 },
     createdAt : { type: Date, default: Date.now },
-    updatedAt : String,
+    updatedAt : { type: Date,},
 })
 
 const kycSchema = mongoose.Schema({
@@ -42,6 +42,7 @@ const bussinessSchema = mongoose.Schema({
     type_of_business: String,
     annual_turn_over: String,
     type_of_loan: String,
+    loan_amount: String,
 })
 
 const userSchema = mongoose.Schema({
