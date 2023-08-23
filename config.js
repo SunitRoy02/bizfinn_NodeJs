@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
+
+
 mongoose.set('strictQuery', true)
-const mongoUrl = "mongodb+srv://mongo_db:S4Z5FUUx9VsMDqDv@cluster0.86ypqfj.mongodb.net/bizfinn?retryWrites=true&w=majority"
+const mongoUrl = process.env.MONGO_URL
 
 mongoose.connect(mongoUrl,{ useNewUrlParser: true })
 .then(() => console.log('connected to db'))

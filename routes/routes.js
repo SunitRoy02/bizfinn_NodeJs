@@ -13,7 +13,6 @@ const router = require('express').Router();
 
 
 
-
 //Validation Imports 
 const {loginValidation ,registerValidation, forgotPassValidation ,getProfileValidation} = require('../validation/user_validation');
 const { createLenderValidation, getSingleLenderValidation , getLeanders } = require('../validation/lender_validation'); 

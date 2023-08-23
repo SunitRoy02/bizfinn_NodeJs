@@ -6,8 +6,8 @@ const shortId = require('shortid');
 let s3 = new S3Client({
   region: 'eu-north-1',
   credentials: {
-    accessKeyId: 'AKIAV4WVRSRIZPK4OTXX',
-    secretAccessKey: '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',
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
   sslEnabled: false,
   s3ForcePathStyle: true,

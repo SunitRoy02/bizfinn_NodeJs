@@ -6,6 +6,9 @@ const initializeSocket = require('./socket');
 const app = express();
 const serverApp = http.createServer(app);
 
+const dotenv = require('dotenv');
+dotenv.config();
+
 //apis -------------
 const cors = require('cors')
 const bodyParser = require('body-parser');
@@ -29,10 +32,10 @@ const io = initializeSocket(serverApp);
 
 
 
-
+console.log(`Your port is ${process.env.PORT}`);
 
 // listening ---------------------
-var server = serverApp.listen(8081, function () {
+var server = serverApp.listen(process.env.PORT, function () {
     var host = server.address().address
     var port = server.address().port
     console.log("Example app listening at http://%s:%s", host, port)
