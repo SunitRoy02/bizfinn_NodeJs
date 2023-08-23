@@ -5,20 +5,20 @@ const users = require('../models/users');
 async function generateRandomSixDigitNumber() {
     const min = 100000; // Smallest 6-digit number
     const max = 9999999; // Largest 6-digit number
-  
+
     let generatedNum;
     let isUnique = false;
-  
+
     while (!isUnique) {
-      generatedNum = Math.floor(Math.random() * (max - min + 1)) + min;
-  
-      const existingCase = await users.findOne({ borrower_id: generatedNum });
-      if (!existingCase) {
-        isUnique = true;
-      }
+        generatedNum = Math.floor(Math.random() * (max - min + 1)) + min;
+
+        const existingCase = await users.findOne({ borrower_id: generatedNum });
+        if (!existingCase) {
+            isUnique = true;
+        }
     }
     return generatedNum;
-  }
+}
 
 
 module.exports = {
@@ -48,7 +48,7 @@ module.exports = {
                 console.log(reqData);
                 let data = new users(reqData);
                 let result = await data.save();
-                
+
 
                 const msfIfSuccess = "Borrower Created Successfully";
                 res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
@@ -69,11 +69,11 @@ module.exports = {
     getBorrowers: async (req, res) => {
         try {
 
-            const find = await users.find({ userType : 3})
+            const find = await users.find({ userType: 3 })
             // console.log("Find IN GetProfile >>> ", find);
             if (find.length === 0) {
 
-                res.status(200).send({ success: true ,data: find});
+                res.status(200).send({ success: true, data: find });
 
             } else {
                 //send otp work here 
@@ -95,10 +95,10 @@ module.exports = {
 
             // const errors = validationResult(req)
             // if (!errors.isEmpty()) {
-                // return res.status(400).send({ success: false, errors: errors.array()[0] });
+            // return res.status(400).send({ success: false, errors: errors.array()[0] });
             // }
 
-            const find = await users.find({ _id: req.body.borrowerId})
+            const find = await users.find({ _id: req.body.borrowerId })
             // console.log("Find IN GetProfile >>> ", find);
             if (find.length === 0) {
 
@@ -116,7 +116,7 @@ module.exports = {
             res.status(400).send({ success: false, msg: error.message });
 
         }
-        
+
     },
 
 
@@ -128,7 +128,7 @@ module.exports = {
             if (result.deletedCount === 1) {
                 const msg = "Borrower Deleted Successfully";
                 res.status(200).send({ success: true, msg: msg, });
-            }else{
+            } else {
                 const msg = "No matched borrower found ";
                 res.status(201).send({ success: false, msg: msg, });
             }
@@ -189,7 +189,7 @@ module.exports = {
             for (const key in req.body) {
                 if (req.body[key] !== undefined && req.body[key] !== null && req.body[key] !== '') {
                     updateFields[key] = req.body[key];
-                }else{
+                } else {
                     updateFields[key] = null;
                 }
             }
@@ -200,7 +200,7 @@ module.exports = {
             // Find and update the document with the provided ID
             const updatedItem = await users.findByIdAndUpdate(
                 itemId,
-                { $set: { bussiness_details : updateFields} },
+                { $set: { bussiness_details: updateFields } },
                 { new: true } // Return the updated document
             );
 
@@ -228,18 +228,31 @@ module.exports = {
             for (const key in req.body) {
                 if (req.body[key] !== undefined && req.body[key] !== null && req.body[key] !== '') {
                     updateFields[key] = req.body[key];
-                }else{
+                } else {
                     updateFields[key] = null;
                 }
             }
 
             console.log('ID >> ', itemId);
             console.log('updateFields >> ', updateFields);
+            
 
+            const updateObject = {};
+            const userData = await users.find({_id : itemId });
+
+            for(const key in userData[0].kyc_details){
+                console.log(key);
+                if (updateFields.hasOwnProperty(key)) {
+                    updateObject[`${key}`] = updateFields[key]
+                } else {
+                    updateObject[`${key}`] = userData[0].kyc_details[key]
+                }
+            }
+            console.log('updateObject >> ', updateObject);
             // Find and update the document with the provided ID
             const updatedItem = await users.findByIdAndUpdate(
                 itemId,
-                { $set: { kyc_details : updateFields} },
+                { $set: { kyc_details: updateObject} },
                 { new: true } // Return the updated document
             );
 
@@ -266,7 +279,7 @@ module.exports = {
             for (const key in req.body) {
                 if (req.body[key] !== undefined && req.body[key] !== null && req.body[key] !== '') {
                     updateFields[key] = req.body[key];
-                }else{
+                } else {
                     updateFields[key] = null;
                 }
             }
@@ -277,7 +290,7 @@ module.exports = {
             // Find and update the document with the provided ID
             const updatedItem = await users.findByIdAndUpdate(
                 itemId,
-                { $set: { financial_details : updateFields} },
+                { $set: { financial_details: updateFields } },
                 { new: true } // Return the updated document
             );
 
