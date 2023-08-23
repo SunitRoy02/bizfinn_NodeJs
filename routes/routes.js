@@ -6,51 +6,9 @@ const notificationController = require('../controller/notification_controller')
 const casesController = require('../controller/cases_controller')
 const queryController = require('../controller/query_controller')
 
-const uploadAws = require('../routes/upload')
-
-
+const { upload } = require('../routes/upload')
 
 const router = require('express').Router();
-// const multer = require('multer');
-// const multerS3 = require('multer-s3');
-
-// const AWS = require('aws-sdk');
-// require("aws-sdk/lib/maintenance_mode_message").suppress = true;
-
-const path = require('path');
-
-
-// AWS.config.update({
-// accessKeyId: 'AKIAV4WVRSRIZPK4OTXX',
-// secretAccessKey : '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',
-// region: 'eu-north-1'
-// });
-
-// const s3 = new AWS.S3;
-// const mybucket = 'bizfinn-uploads';
-
-// //multer
-// const _destinaitonUser = 'upload/user' 
-// const diskStorage = multer.diskStorage({
-//     destination : _destinaitonUser,
-//     filename : (req,file,cb) => {
-//         return cb(null,`${file.name}_${Date.now()}${path.extname(file.originalname)}`)
-//     }
-// })
-// const upload = multer({
-//     storage: multerS3({
-//         s3 : s3,
-//         bucket : mybucket,
-//         acl : 'public-read',
-//         contentType : multerS3.AUTO_CONTENT_TYPE,
-//         key : function (req,file,cb){
-//             console.log(file);
-//             cb(null,file.originalname);
-//         }
-//     }),
-//     // limits: {fileSize : 10000000}
-// })
-
 
 
 
@@ -70,7 +28,7 @@ router.post('/login' , loginValidation , authController.loginFun)
 router.post('/register' , registerValidation , authController.registerFun)
 router.post('/forgotPassword',forgotPassValidation,authController.forgotPassFun)
 router.post('/getProfile',getProfileValidation,authController.getProfile)
-router.post('/uploadfile',uploadAws.single('file'),getProfileValidation,authController.uploadFile)
+router.post('/uploadfile',upload.single('file'),getProfileValidation,authController.uploadFile)
 router.put('/updateProfile/:id',authController.updateProfile)
 router.post('/verifyOtp',authController.verifyOtpFun)
 router.patch('/changePassword',authController.changePasswordFun)

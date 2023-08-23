@@ -161,24 +161,12 @@ module.exports = {
                 res.status(400).send({ success: false, msg: msfIferror });
 
             } else {
-                let file = req.file
-                users.findByIdAndUpdate(req.body.userId, req.body, { new: true }, (err, updatedDoc) => {
-                    if (err) {
-                        // console.error(err);  
-                        const message = "Unexpected Error Found";
-                        res.status(200).send({ success: false, msg: err });
+                res.json({ message: 'File uploaded successfully',success: true, fileUrl: req.file.location });
 
-                    } else {
-                        // console.log(updatedDoc);
-                        const message = "User Updated successfully";
-                        res.status(200).send({ success: true, msg: message, data : req.file });
-                    }
-                });
             }
         } catch (error) {
             console.log("Error : ", error);
             res.status(400).send({ success: false, msg: error.message });
-
         }
 
     },

@@ -19,7 +19,7 @@ exports.upload = multer({
     s3: s3,
     bucket: 'bizfinn-uploads',
     contentType: multerS3.AUTO_CONTENT_TYPE,
-    acl: 'public-read',
+    // acl: 'public-read',
     metadata: function (req, file, cb) {
       cb(null, { fieldName: file.fieldname });
     },
