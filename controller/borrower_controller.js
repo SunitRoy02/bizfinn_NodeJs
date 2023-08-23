@@ -186,7 +186,6 @@ module.exports = {
 
             // Find the user by userId
             const userData = await users.findOne({ _id: userId });
-            console.log("userData before >>", userData)
 
             if (!userData) {
                 return res.status(400).json({ status: false, message: 'User not found' });
@@ -196,13 +195,9 @@ module.exports = {
             for (const key in updatedBusinessDetails) {
                 const value = updatedBusinessDetails[key];
                 if (value !== null && value !== undefined && value !== '') {
-                    console.log(key)
                     userData.bussiness_details[key] = value;
                 }
             }
-
-            console.log("userData after >>", userData)
-
             // Find and update the document with the provided ID
             const updatedItem = await users.findByIdAndUpdate(
                 userId,
@@ -225,25 +220,27 @@ module.exports = {
     updateBorrowerKycDetails: async (req, res) => {
 
         try {
-            // Find the user by the provided user ID
             const userId = req.params.id;
+            const updatedBusinessDetails = req.body;
 
-            let updateObj = {};
-
-            const userData = await users.findById(userId);
+            // Find the user by userId
+            const userData = await users.findOne({ _id: userId });
 
             if (!userData) {
-                return res.status(400).json({ message: "User not found." });
+                return res.status(400).json({ status: false, message: 'User not found' });
             }
 
-            // Update the specific key within the aoa object
-            updateObj.url = req.body.url
-            userData.kyc_details[req.body.key] = updateObj;
-
+            // Update only non-null, non-undefined, and non-empty values in business details
+            for (const key in updatedBusinessDetails) {
+                const value = updatedBusinessDetails[key];
+                if (value !== null && value !== undefined && value !== '') {
+                    userData.kyc_details[key] = { url : value,};
+                }
+            }
             // Find and update the document with the provided ID
             const updatedItem = await users.findByIdAndUpdate(
                 userId,
-                { $set: { kyc_details:  userData.kyc_details } },
+                { $set: { kyc_details: userData.kyc_details } },
                 { new: true } // Return the updated document
             );
 
@@ -251,10 +248,10 @@ module.exports = {
                 return res.status(400).json({ status: false, message: 'User not found' });
             }
 
-            return res.json({status: true, message: "Kyc updated successfully.",data : updatedItem });
+            return res.json({ status: true, message: "Kyc updated successfully.", data: updatedItem });
         } catch (error) {
-            console.error("Error updating key:", error);
-            return res.status(500).json({ error: "Internal server error." });
+            console.error(error);
+            return res.status(400).json({ status: false, message: 'An error occurred', error });
         }
 
     },
@@ -263,25 +260,27 @@ module.exports = {
 
 
         try {
-            // Find the user by the provided user ID
             const userId = req.params.id;
+            const updatedBusinessDetails = req.body;
 
-            let updateObj = {};
-
-            const userData = await users.findById(userId);
+            // Find the user by userId
+            const userData = await users.findOne({ _id: userId });
 
             if (!userData) {
-                return res.status(400).json({ message: "User not found." });
+                return res.status(400).json({ status: false, message: 'User not found' });
             }
 
-            // Update the specific key within the aoa object
-            updateObj.url = req.body.url
-            userData.financial_details[req.body.key] = updateObj;
-
-            // Find and update the document with the provided IDs
+            // Update only non-null, non-undefined, and non-empty values in business details
+            for (const key in updatedBusinessDetails) {
+                const value = updatedBusinessDetails[key];
+                if (value !== null && value !== undefined && value !== '') {
+                    userData.financial_details[key] = { url : value,};
+                }
+            }
+            // Find and update the document with the provided ID
             const updatedItem = await users.findByIdAndUpdate(
                 userId,
-                { $set: { financial_details:  userData.financial_details } },
+                { $set: { financial_details: userData.financial_details } },
                 { new: true } // Return the updated document
             );
 
@@ -289,10 +288,10 @@ module.exports = {
                 return res.status(400).json({ status: false, message: 'User not found' });
             }
 
-            return res.json({status: true, message: "Financial Details updated successfully.",data : updatedItem });
+            return res.json({ status: true, message: "Financial Details updated successfully.", data: updatedItem });
         } catch (error) {
-            console.error("Error updating key:", error);
-            return res.status(500).json({ error: "Internal server error." });
+            console.error(error);
+            return res.status(400).json({ status: false, message: 'An error occurred', error });
         }
 
     },
