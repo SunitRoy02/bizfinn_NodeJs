@@ -10,9 +10,22 @@ const queryController = require('../controller/query_controller')
 
 const router = require('express').Router();
 const multer = require('multer');
+const multerS3 = require('multer-s3');
+
+const AWS = require('aws-sdk');
+require("aws-sdk/lib/maintenance_mode_message").suppress = true;
+
 const path = require('path');
 
 
+AWS.config.update({
+accessKeyId: 'AKIAV4WVRSRIZPK4OTXX',
+secretAccessKey : '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',
+region: 'eu-north-1'
+});
+
+const s3 = new AWS.S3;
+const mybucket = 'bizfinn-uploads';
 
 //multer
 const _destinaitonUser = 'upload/user' 
@@ -23,8 +36,17 @@ const diskStorage = multer.diskStorage({
     }
 })
 const upload = multer({
-    storage: diskStorage,
-    limits: {fileSize : 10000000}
+    storage: multerS3({
+        s3 : s3,
+        bucket : mybucket,
+        acl : 'public-read',
+        contentType : multerS3.AUTO_CONTENT_TYPE,
+        key : function (req,file,cb){
+            console.log(file);
+            cb(null,file.originalname);
+        }
+    }),
+    // limits: {fileSize : 10000000}
 })
 
 
@@ -46,7 +68,7 @@ router.post('/login' , loginValidation , authController.loginFun)
 router.post('/register' , registerValidation , authController.registerFun)
 router.post('/forgotPassword',forgotPassValidation,authController.forgotPassFun)
 router.post('/getProfile',getProfileValidation,authController.getProfile)
-router.post('/updateProfileImage',upload.single('image'),getProfileValidation,authController.updateProfileImage)
+router.post('/uploadfile',upload.single('file'),getProfileValidation,authController.uploadFile)
 router.put('/updateProfile/:id',authController.updateProfile)
 router.post('/verifyOtp',authController.verifyOtpFun)
 router.patch('/changePassword',authController.changePasswordFun)
@@ -57,6 +79,7 @@ router.post('/registerLenders' , createLenderValidation , lenderController.creat
 router.get('/getLeanders' , lenderController.getLenders)
 router.post('/getSingleLender' , getSingleLenderValidation , lenderController.getSingleLender)
 router.delete('/deleteLeander/:lenderId' , getSingleLenderValidation , lenderController.deleteLeander)
+router.get('/lenderCases/:lenderId',casesController.getCases)
 
 //Borrower ---------
 router.post('/registerBorrower' , borrowerController.createBrowwer)
@@ -67,6 +90,7 @@ router.put('/updateBorrowerProfile/:id' , borrowerController.updateBorrowerProfi
 router.put('/updateBorrowerBusinessDetails/:id' , borrowerController.updateBorrowerBusinessDetails)
 router.put('/updateBorrowerKycDetails/:id' , borrowerController.updateBorrowerKycDetails)
 router.put('/updateBorrowerFinancialDetails/:id' , borrowerController.updateBorrowerFinancialDetails)
+router.get('/borrowerCases/:borrowerId',casesController.getCases)
 
 //Notification ---------
 router.post('/createNotification' , notificationController.createNotification)

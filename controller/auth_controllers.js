@@ -144,6 +144,45 @@ module.exports = {
         }
     },
 
+    uploadFile: async (req, res) => {
+
+        try {
+
+            // const errors = validationResult(req)
+            // if (!errors.isEmpty()) {
+            // return res.status(400).send({ success: false, errors: errors.array()[0] });
+            // }
+
+            // res.status(200).send(req.body);
+
+            const find = await users.find({ _id: req.body.userId })
+            if (find.length === 0) {
+                const msfIferror = "User not found";
+                res.status(400).send({ success: false, msg: msfIferror });
+
+            } else {
+                let file = req.file
+                users.findByIdAndUpdate(req.body.userId, req.body, { new: true }, (err, updatedDoc) => {
+                    if (err) {
+                        // console.error(err);  
+                        const message = "Unexpected Error Found";
+                        res.status(200).send({ success: false, msg: err });
+
+                    } else {
+                        // console.log(updatedDoc);
+                        const message = "User Updated successfully";
+                        res.status(200).send({ success: true, msg: message, data : req.file });
+                    }
+                });
+            }
+        } catch (error) {
+            console.log("Error : ", error);
+            res.status(400).send({ success: false, msg: error.message });
+
+        }
+
+    },
+
     updateProfileImage: async (req, res) => {
 
         try {
