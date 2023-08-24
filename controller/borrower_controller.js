@@ -1,5 +1,7 @@
 const { validationResult } = require('express-validator');
 const users = require('../models/users');
+const cases = require('../models/cases');
+const { ObjectId } = require('mongodb');
 
 
 async function generateRandomSixDigitNumber() {
@@ -295,6 +297,30 @@ module.exports = {
         }
 
     },
+
+
+    getCases : async (req,res)=> {
+        try {
+
+            const borrowerId = req.params.borrowerId;
+
+            console.log("Borrower >> ",borrowerId);
+            const find = await cases.find({'borrower._id': ObjectId(borrowerId)});
+            if (find.length === 0) {
+                res.status(200).send({ success: false,msg:"No Cases Found ", data: find });
+            } else {
+                //send otp work here 
+                const message = "Cases Found successfully";
+                res.status(200).send({ success: true, msg: message, data: find });
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            return res.status(400).json({ status: false, msg: error });
+        }
+    },
+
+    
 }
 
 

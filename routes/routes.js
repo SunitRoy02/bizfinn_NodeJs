@@ -35,10 +35,10 @@ router.put('/setActiveStatus/:id',authController.setActiveStatus)
 
 //Lenders ---------
 router.post('/registerLenders' , createLenderValidation , lenderController.createLender)
-router.get('/getLeanders' , lenderController.getLenders)
+router.get('/getLeanders' , lenderController.getLenders)    
 router.post('/getSingleLender' , getSingleLenderValidation , lenderController.getSingleLender)
 router.delete('/deleteLeander/:lenderId' , getSingleLenderValidation , lenderController.deleteLeander)
-router.get('/lenderCases/:lenderId',casesController.getCases)
+router.get('/lenderCases/:lenderId',lenderController.getCases)
 
 //Borrower ---------
 router.post('/registerBorrower' , borrowerController.createBrowwer)
@@ -49,7 +49,7 @@ router.put('/updateBorrowerProfile/:id' , borrowerController.updateBorrowerProfi
 router.put('/updateBorrowerBusinessDetails/:id' , borrowerController.updateBorrowerBusinessDetails)
 router.put('/updateBorrowerKycDetails/:id' , borrowerController.updateBorrowerKycDetails)
 router.put('/updateBorrowerFinancialDetails/:id' , borrowerController.updateBorrowerFinancialDetails)
-router.get('/borrowerCases/:borrowerId',casesController.getCases)
+router.get('/borrowerCases/:borrowerId',borrowerController.getCases)
 
 //Notification ---------
 router.post('/createNotification' , notificationController.createNotification)

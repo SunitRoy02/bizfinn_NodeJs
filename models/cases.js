@@ -12,7 +12,7 @@ const lenderRemark = mongoose.Schema({
 
 
 
-const userSchema = mongoose.Schema({
+const casesSchema = mongoose.Schema({
 
     requirement: Number,
     type_of_loan: String,
@@ -27,4 +27,4 @@ const userSchema = mongoose.Schema({
     
 });
 
-module.exports = mongoose.model('cases', userSchema);
+module.exports = mongoose.model('cases', casesSchema);
