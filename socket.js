@@ -30,24 +30,19 @@ const io = socketIO(server, {
     });
 
     socket.on('getChatRooms', async  (data) => {
-
         var result = await  chatController.getChatRooms(data);
-        // console.log(result);
          io.emit('listOfRooms', result);
      });
 
   
      socket.on('getMessages', async  (data) => {
-
         var result = await  chatController.getMsgsOnRooms(data);
-        // console.log(result);
          io.emit('getMessagesOfRoom', result);
      });
 
      socket.on('deleteSingleMsg', async  (data) => {
 
         var result = await  chatController.deleteSingleMsg(data);
-        // console.log(result);
          io.emit('getMessagesOfRoom', result);
      });
 
