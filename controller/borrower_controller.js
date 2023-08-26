@@ -256,9 +256,7 @@ module.exports = {
 
                 for (const key in KycUpdatedObj) {
                     const value = KycUpdatedObj[key];
-                    if (value !== null && value !== undefined && value !== '') {
-                        kycMap[key] = { url: value, };
-                    }
+                    kycMap[key] = { url: value, };
                 }
 
                 userData.kyc_details = kycMap;

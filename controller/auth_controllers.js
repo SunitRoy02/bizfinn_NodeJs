@@ -151,7 +151,6 @@ module.exports = {
             // if (!errors.isEmpty()) {
             // return res.status(400).send({ success: false, errors: errors.array()[0] });
             // }
-
             // res.status(200).send(req.body);
 
             const find = await users.find({ _id: req.body.userId })
