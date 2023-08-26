@@ -250,8 +250,18 @@ module.exports = {
                         userData.kyc_details[key] = { url: value, };
                     }
                 }
-            }else{
-                userData.kyc_details = KycUpdatedObj;
+            } else {
+
+                let kycMap = {};
+
+                for (const key in KycUpdatedObj) {
+                    const value = KycUpdatedObj[key];
+                    if (value !== null && value !== undefined && value !== '') {
+                        kycMap[key] = { url: value, };
+                    }
+                }
+
+                userData.kyc_details = kycMap;
             }
 
             // Find and update the document with the provided ID
@@ -287,12 +297,24 @@ module.exports = {
                 return res.status(400).json({ status: false, message: 'User not found' });
             }
 
-            // Update only non-null, non-undefined, and non-empty values in business details
-            for (const key in updatedBusinessDetails) {
-                const value = updatedBusinessDetails[key];
-                if (value !== null && value !== undefined && value !== '') {
-                    userData.financial_details[key] = { url: value, };
+
+            
+            if (userData.financial_details !== null) {
+                // Update only non-null, non-undefined, and non-empty values in business details
+                for (const key in updatedBusinessDetails) {
+                    const value = updatedBusinessDetails[key];
+                    if (value !== null && value !== undefined && value !== '') {
+                        userData.financial_details[key] = { url: value, };
+                    }
                 }
+            } else {
+                let keyMap = {};
+                for (const key in updatedBusinessDetails) {
+                    const value = updatedBusinessDetails[key];
+                    keyMap[key] = { url: value, };
+                }
+
+                userData.financial_details = keyMap;
             }
             // Find and update the document with the provided ID
             const updatedItem = await users.findByIdAndUpdate(

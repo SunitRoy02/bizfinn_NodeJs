@@ -78,7 +78,7 @@ const userSchema = mongoose.Schema({
     case_pending: Number,
     bussiness_details: bussinessSchema,
     kyc_details: kycSchema,
-    financial_details: financialSchema
+    financial_details: financialSchema,
 
 });
 
