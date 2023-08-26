@@ -186,20 +186,28 @@ module.exports = {
             const userId = req.params.id;
             const updatedBusinessDetails = req.body;
 
+            console.log('userId >> ', userId);
             // Find the user by userId
-            const userData = await users.findOne({ _id: userId });
+            const userData = await users.findOne({ _id: ObjectId(userId) });
 
             if (!userData) {
                 return res.status(400).json({ status: false, message: 'User not found' });
             }
 
             // Update only non-null, non-undefined, and non-empty values in business details
-            for (const key in updatedBusinessDetails) {
-                const value = updatedBusinessDetails[key];
-                if (value !== null && value !== undefined && value !== '') {
-                    userData.bussiness_details[key] = value;
+            if (userData.bussiness_details !== null) {
+                console.log('userData.bussiness_details >> ', userData.bussiness_details);
+                console.log('updatedBusinessDetails >> ', updatedBusinessDetails);
+                for (const key in updatedBusinessDetails) {
+                    const value = updatedBusinessDetails[key];
+                    if (value !== null && value !== undefined && value !== '') {
+                        userData.bussiness_details[key] = value;
+                    }
                 }
+            } else {
+                userData.bussiness_details = updatedBusinessDetails;
             }
+
             // Find and update the document with the provided ID
             const updatedItem = await users.findByIdAndUpdate(
                 userId,
@@ -223,7 +231,7 @@ module.exports = {
 
         try {
             const userId = req.params.id;
-            const updatedBusinessDetails = req.body;
+            const KycUpdatedObj = req.body;
 
             // Find the user by userId
             const userData = await users.findOne({ _id: userId });
@@ -232,13 +240,20 @@ module.exports = {
                 return res.status(400).json({ status: false, message: 'User not found' });
             }
 
-            // Update only non-null, non-undefined, and non-empty values in business details
-            for (const key in updatedBusinessDetails) {
-                const value = updatedBusinessDetails[key];
-                if (value !== null && value !== undefined && value !== '') {
-                    userData.kyc_details[key] = { url : value,};
+            console.log('userData.kyc_details >> ', userData.kyc_details);
+            console.log('KycUpdatedObj >> ', KycUpdatedObj);
+            if (userData.kyc_details !== null) {
+                // Update only non-null, non-undefined, and non-empty values in business details
+                for (const key in KycUpdatedObj) {
+                    const value = KycUpdatedObj[key];
+                    if (value !== null && value !== undefined && value !== '') {
+                        userData.kyc_details[key] = { url: value, };
+                    }
                 }
+            }else{
+                userData.kyc_details = KycUpdatedObj;
             }
+
             // Find and update the document with the provided ID
             const updatedItem = await users.findByIdAndUpdate(
                 userId,
@@ -276,7 +291,7 @@ module.exports = {
             for (const key in updatedBusinessDetails) {
                 const value = updatedBusinessDetails[key];
                 if (value !== null && value !== undefined && value !== '') {
-                    userData.financial_details[key] = { url : value,};
+                    userData.financial_details[key] = { url: value, };
                 }
             }
             // Find and update the document with the provided ID
@@ -299,15 +314,15 @@ module.exports = {
     },
 
 
-    getCases : async (req,res)=> {
+    getCases: async (req, res) => {
         try {
 
             const borrowerId = req.params.borrowerId;
 
-            console.log("Borrower >> ",borrowerId);
-            const find = await cases.find({'borrower._id': ObjectId(borrowerId)});
+            console.log("Borrower >> ", borrowerId);
+            const find = await cases.find({ 'borrower._id': ObjectId(borrowerId) });
             if (find.length === 0) {
-                res.status(200).send({ success: false,msg:"No Cases Found ", data: find });
+                res.status(200).send({ success: false, msg: "No Cases Found ", data: find });
             } else {
                 //send otp work here 
                 const message = "Cases Found successfully";
@@ -320,7 +335,7 @@ module.exports = {
         }
     },
 
-    
+
 }
 
 
