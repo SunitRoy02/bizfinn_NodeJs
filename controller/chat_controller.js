@@ -12,7 +12,9 @@ module.exports = {
         try {
 
             const userArray = [data.senderId,data.receiverId]
-            const userParticipants = await users.find({users : { $all: userArray }})
+            const userData1 = await users.findOne({ _id: userArray[0] });
+            const userData2 = await users.findOne({ _id: userArray[1] });
+            const userParticipants = [userData1,userData2]
             const findConversation = await chatConversation.find({users : { $all: userArray }})
             // console.log('Chat rooms found >> ',findConversation)
 
