@@ -42,7 +42,6 @@ module.exports = {
             if (find.length === 0) {
 
                 let reqData = req.body;
-                reqData.createdAt = new Date().toLocaleString();
                 let data = new users(reqData);
                 let result = await data.save();
                 // console.log(result);
