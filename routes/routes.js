@@ -16,6 +16,7 @@ const router = require('express').Router();
 //Validation Imports 
 const {loginValidation ,registerValidation, forgotPassValidation ,getProfileValidation} = require('../validation/user_validation');
 const { createLenderValidation, getSingleLenderValidation , getLeanders } = require('../validation/lender_validation'); 
+const chat_controller = require('../controller/chat_controller')
 
 
 
@@ -72,6 +73,10 @@ router.post('/createQuery' , queryController.createQuery)
 router.get('/getQuery',queryController.getQuery)
 router.get('/getSingleQuery/:queryId',queryController.getSingleQuery)
 router.delete('/deleteQuery/:queryId',queryController.deleteQuery)
+
+
+//Chat -------------
+router.get('/getOldMessages/:roomId',chat_controller.getMsgs)
 
 
 module.exports = router

@@ -92,6 +92,37 @@ module.exports = {
         }
 
     },
+
+    getMsgs: async (req,res) => {
+
+        var room = req.params.roomId;
+
+        console.log('getMsgsOnRooms >>' ,room);
+
+        try {
+            const findChat = await chatDetails.find({roomId : room})
+            // console.log('findChat found >> ',findChat)
+            if(findChat.length == 0){
+                const msfIfSuccess = "No data found";
+                let responce =  { success: false, msg: msfIfSuccess, data: findChat };
+                res.status(201).send(responce);
+            }
+
+            const msfIfSuccess = "Chat found Successfully";
+            let responce = { success: true, msg: msfIfSuccess, data: findChat };
+            res.status(200).send(responce);
+
+
+        } catch (error) {
+
+            console.log("Error : ", error);
+            return { success: false, msg: error.message };
+        }
+
+    },
+
+
+
  
     deleteSingleMsg : async (data) => {
 
