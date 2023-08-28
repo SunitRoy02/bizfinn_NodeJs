@@ -22,7 +22,9 @@ const casesSchema = mongoose.Schema({
     status: { type: Number, default: 0 },
     lender_remark: String,
     case_no: Number,
-    borrower: Object,
+    borrower: String,
+    borrowerName: String,
+    borrowerTurnOver: String,
     lenders:[lenderRemark]
     
 });

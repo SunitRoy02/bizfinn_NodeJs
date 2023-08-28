@@ -7,7 +7,8 @@ const userSchema = mongoose.Schema({
     createdAt : { type: Date, default: Date.now },
     updatedAt : Date,
     query_no: Number,
-    case: Object,
+    case: String,
+    status: { type: Number, default: 0 },
     
 });
 

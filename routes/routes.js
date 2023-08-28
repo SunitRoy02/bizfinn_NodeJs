@@ -64,6 +64,7 @@ router.post('/createCases' , casesController.createCases)
 router.put('/createCases/:id' , casesController.updateLender)
 router.put('/updateBorrower/:id' , casesController.updateBorrower)
 router.put('/caseStatus/:id',casesController.caseStatus)
+router.put('/lenderCaseStatus/:id',casesController.lenderCaseStatus)
 router.get('/getCases',casesController.getCases)
 router.get('/getSingleCase/:id',casesController.getSingleCase)
 router.delete('/deleteCase/:id',casesController.deleteCase)
@@ -73,6 +74,7 @@ router.post('/createQuery' , queryController.createQuery)
 router.get('/getQuery',queryController.getQuery)
 router.get('/getSingleQuery/:queryId',queryController.getSingleQuery)
 router.delete('/deleteQuery/:queryId',queryController.deleteQuery)
+router.put('/queryStatus/:id',queryController.queryStatus)
 
 
 //Chat -------------

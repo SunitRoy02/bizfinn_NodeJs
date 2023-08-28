@@ -340,7 +340,7 @@ module.exports = {
             const borrowerId = req.params.borrowerId;
 
             console.log("Borrower >> ", borrowerId);
-            const find = await cases.find({ 'borrower._id': ObjectId(borrowerId) });
+            const find = await cases.find({ 'borrower': ObjectId(borrowerId) });
             if (find.length === 0) {
                 res.status(200).send({ success: false, msg: "No Cases Found ", data: find });
             } else {

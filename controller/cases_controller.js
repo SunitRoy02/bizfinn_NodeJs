@@ -1,25 +1,26 @@
 const { validationResult } = require('express-validator');
 const cases = require('../models/cases');
 const users = require('../models/users');
+const { ObjectId } = require('mongodb');
 
 
 async function generateRandomSixDigitNumber() {
     const min = 100000; // Smallest 6-digit number
     const max = 9999999; // Largest 6-digit number
-  
+
     let generatedNum;
     let isUnique = false;
-  
+
     while (!isUnique) {
-      generatedNum = Math.floor(Math.random() * (max - min + 1)) + min;
-  
-      const existingCase = await cases.findOne({ case_no: generatedNum });
-      if (!existingCase) {
-        isUnique = true;
-      }
+        generatedNum = Math.floor(Math.random() * (max - min + 1)) + min;
+
+        const existingCase = await cases.findOne({ case_no: generatedNum });
+        if (!existingCase) {
+            isUnique = true;
+        }
     }
     return generatedNum;
-  }
+}
 
 
 module.exports = {
@@ -28,14 +29,16 @@ module.exports = {
             let reqData = req.body;
             let filterData = { _id: req.body.borrowerId, userType: 3 }
             // let filterData = { _id: mongoose.Types.ObjectId(req.body.borrowerId), userType: 3 }
-            console.log('findBorrower ......>> ', filterData );
+            console.log('findBorrower ......>> ', filterData);
             const findBorrower = await users.find(filterData)
             console.log('findBorrower >> ', findBorrower);
             if (findBorrower.length == 0) {
-            
+
                 return res.status(400).json({ status: false, message: 'Borrower not found' });
             }
-            reqData.borrower = findBorrower[0];
+            reqData.borrower = findBorrower[0]._id;
+            reqData.borrowerName = findBorrower[0].name;
+            reqData.borrowerTurnOver = findBorrower[0].annual_turn_over;
             reqData.lender_remark = "";
             reqData.lender = null;
             reqData.case_no = await generateRandomSixDigitNumber();
@@ -74,26 +77,26 @@ module.exports = {
             }
 
             const lenderFound = find[0];
-            console.log(' FOUND Lenders>>',lenderFound)
+            console.log(' FOUND Lenders>>', lenderFound)
             let newLenderObj = {};
             newLenderObj.landerName = lenderFound.name;
             newLenderObj.lenderId = lenderFound._id;
 
-            const findCases = await cases.find({ _id: itemId,})
-            console.log('CASE FOUND Lenders>>',findCases[0])
-            const oldLenders = findCases[0].lenders; 
+            const findCases = await cases.find({ _id: itemId, })
+            console.log('CASE FOUND Lenders>>', findCases[0])
+            const oldLenders = findCases[0].lenders;
 
-            for (let i = 0; i < oldLenders.length ; i++) {
-                if(oldLenders[i].lenderId == lenderFound._id){
+            for (let i = 0; i < oldLenders.length; i++) {
+                if (oldLenders[i].lenderId == lenderFound._id) {
                     return res.status(400).json({ status: false, message: 'Lender already assignend to this case !' });
                 }
                 console.log(i);
             }
-            
+
             // Find and update the document with the provided ID
             const updatedItem = await cases.findByIdAndUpdate(
                 itemId,
-                { $push: { lenders: newLenderObj} },
+                { $push: { lenders: newLenderObj } },
                 { new: true } // Return the updated document
             );
 
@@ -101,7 +104,7 @@ module.exports = {
                 return res.status(400).json({ status: false, message: 'Case not found' });
             }
 
-            console.log('Updated Value >>',updatedItem)
+            console.log('Updated Value >>', updatedItem)
             return res.status(200).json({ status: true, message: 'Case Updated Successfully', result: updatedItem });
         } catch (error) {
             console.log("Error : ", error);
@@ -173,12 +176,62 @@ module.exports = {
     },
 
 
-    getCases : async (req,res)=> {
+    lenderCaseStatus: async (req, res) => {
+
+        const caseId = req.params.id;
+        const lenderId = req.body.lenderId;
+        const newActiveValue = req.body.approved;
+
+        console.log('CaseId >> ', caseId);
+        console.log('lenderId >> ', lenderId);
+        console.log('approved >> ', newActiveValue);
+
         try {
-            
+            let singleCase = await cases.find({ _id: caseId });
+            console.log('singleCase >> ', singleCase);
+            if (singleCase.length === 0) {
+                return res.status(404).json({ msg: 'Case not found' });
+            }
+
+            let didUpdated = false;
+            let lenders = singleCase[0].lenders;
+            for (let i = 0; i < lenders.length; i++) {
+                if (lenders[i].lenderId == lenderId) {
+                    console.log('Found at Obj >>>', lenders[i]._id);
+                    lenders[i].approved = newActiveValue
+                    didUpdated = true;
+                }
+            }
+
+            if(!didUpdated){
+                return res.status(404).json({ message: ' lender not found' });
+            }
+
+            const updatedCase = await cases.findOneAndUpdate(
+                ObjectId(caseId),
+                {
+                    $set: { lenders : lenders },
+                },
+                { new: true }
+            );
+
+            if (!updatedCase) {
+                return res.status(404).json({ message: 'Case or lender not found' });
+            }
+
+            return res.status(200).json({ status: true, msg: 'Status Updated Successfully !!', result: updatedCase });
+        } catch (error) {
+            console.error('Error:', error);
+            return res.status(400).json({ status: false, msg: error });
+        }
+    },
+
+    getCases: async (req, res) => {
+        try {
+
             const find = await cases.find({})
             if (find.length === 0) {
-                res.status(200).send({ success: false,msg:"No Cases Found ", data: find });
+                res.status(200).send({ success: false, msg: "No Cases Found ", data: find });
             } else {
                 //send otp work here 
                 const message = "Cases Found successfully";

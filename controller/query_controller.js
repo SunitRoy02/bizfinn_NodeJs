@@ -34,7 +34,10 @@ module.exports = {
 
             const find = await cases.find({ case_no: parseInt(caseNo.replace(/\s/g, '')) });
             console.log('FindeCase >> ', find);
-            reqData.case = find[0]
+            if(find.length === 0){
+                res.status(400).send({ success: false, msg: "Case not found !!", data: result });
+            }
+            reqData.case = find[0]._id;
 
             let data = new query(reqData);  
             let result = await data.save();
@@ -111,7 +114,30 @@ module.exports = {
             console.error('Error:', error);
             return res.status(400).json({ status: false, msg: error });
         }
-    }
+    },
+
+    queryStatus: async (req, res) => {
+        const permissionId = req.params.id;
+        const newActiveValue = req.body.status; // The new value for the "active" field
+
+        try {
+            const updatedPermission = await query.findByIdAndUpdate(
+                permissionId,
+                { status: newActiveValue },
+                { new: true } // Return the updated document
+            );
+
+            if (!updatedPermission) {
+
+                return res.status(404).json({ msg: 'Permission not found' });
+            }
+
+            return res.status(200).json({ status: true, msg: 'Status Updated Successfully !!', result: updatedPermission });
+        } catch (error) {
+            console.error('Error:', error);
+            return res.status(400).json({ status: false, msg: error });
+        }
+    },
     
 }
 
