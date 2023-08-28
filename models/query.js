@@ -8,6 +8,8 @@ const userSchema = mongoose.Schema({
     updatedAt : Date,
     query_no: Number,
     case: String,
+    borrower: String,
+    borrowerName: String,
     status: { type: Number, default: 0 },
     
 });

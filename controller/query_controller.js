@@ -38,6 +38,8 @@ module.exports = {
                 res.status(400).send({ success: false, msg: "Case not found !!", data: result });
             }
             reqData.case = find[0]._id;
+            reqData.borrower = find[0].borrower;
+            reqData.borrowerName = find[0].borrowerName;
 
             let data = new query(reqData);  
             let result = await data.save();
