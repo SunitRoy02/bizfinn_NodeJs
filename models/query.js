@@ -7,6 +7,7 @@ const userSchema = mongoose.Schema({
     createdAt : { type: Date, default: Date.now },
     updatedAt : Date,
     query_no: Number,
+    case_no: Number,
     case: String,
     borrower: String,
     borrowerName: String,
