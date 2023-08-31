@@ -257,7 +257,6 @@ module.exports = {
 
     verifyOtpFun: async (req, res) => {
 
-
     },
 
     changePasswordFun: async (req, res) => {

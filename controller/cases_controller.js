@@ -63,16 +63,20 @@ module.exports = {
         try {
 
             const itemId = req.params.id;
+            const lenderId = req.body.lenderId;
 
 
             console.log('ID >> ', itemId);
-            console.log('Lender >> ', req.body.lenderId);
+            console.log('Lender >> ', lenderId);
+            console.log('Body >> ', req.body);
 
 
-            const find = await users.find({ _id: req.body.lenderId, userType: 2 })
+
+
+            const find = await users.find({ _id: ObjectId(lenderId), userType: 2 })
 
             if (find.length == 0) {
-                console.log('findUser >> ', findUser.lender);
+                console.log('findUser >> ', find.lender);
                 return res.status(400).json({ status: false, message: 'Lender not found' });
             }
 
@@ -154,12 +158,15 @@ module.exports = {
 
     caseStatus: async (req, res) => {
         const permissionId = req.params.id;
-        const newActiveValue = req.body.status; // The new value for the "active" field
 
         try {
             const updatedPermission = await cases.findByIdAndUpdate(
                 permissionId,
-                { status: newActiveValue },
+                { 
+                    status: req.body.status,
+                    status: req.body.status,
+                
+                },
                 { new: true } // Return the updated document
             );
 
@@ -199,6 +206,8 @@ module.exports = {
                 if (lenders[i].lenderId == lenderId) {
                     console.log('Found at Obj >>>', lenders[i]._id);
                     lenders[i].approved = newActiveValue
+                    lenders[i].remark = req.body.remark
+                    lenders[i].lander_approved = req.body.lander_approved
                     didUpdated = true;
                 }
             }

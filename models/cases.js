@@ -4,7 +4,9 @@ const mongoose = require('mongoose');
 const lenderRemark = mongoose.Schema({
     lenderId: String,
     approved: { type: Number, default: 0 },
+    lander_approved: { type: Number, default: 0 },
     landerName: String,
+    remark: { type: String, default: ""},
     createdAt : { type: Date, default: Date.now },
     updatedAt : Date,
     lender_remark: String,    
