@@ -238,7 +238,21 @@ module.exports = {
     getCases: async (req, res) => {
         try {
 
-            const find = await cases.find({})
+            const { name, fromDate, toDate } = req.query;
+
+            const queryMap = {};
+        
+            if (name) {
+                queryMap.borrowerName = { $regex: new RegExp(name, 'i') }; // Case-insensitive name search
+            }
+        
+            if (fromDate && toDate) {
+                queryMap.createdAt = {
+                $gte: new Date(fromDate),
+                $lte: new Date(toDate),
+              };
+            }
+            const find = await cases.find(queryMap)
             if (find.length === 0) {
                 res.status(200).send({ success: false, msg: "No Cases Found ", data: find });
             } else {

@@ -70,7 +70,16 @@ module.exports = {
     getLenders: async (req, res) => {
         try {
 
-            const find = await users.find({userType : 2})
+            const { name } = req.query;
+
+            const queryMap = {};
+            queryMap.userType = 2;
+        
+            if (name) {
+                queryMap.name = { $regex: new RegExp(name, 'i') }; // Case-insensitive name search
+            }
+
+            const find = await users.find(queryMap)
             // console.log("Find IN GetProfile >>> ", find);
             if (find.length === 0) {
 

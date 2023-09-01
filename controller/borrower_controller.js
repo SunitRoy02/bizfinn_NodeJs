@@ -70,8 +70,16 @@ module.exports = {
 
     getBorrowers: async (req, res) => {
         try {
+            const { name } = req.query;
 
-            const find = await users.find({ userType: 3 })
+            const queryMap = {};
+            queryMap.userType = 3;
+        
+            if (name) {
+                queryMap.name = { $regex: new RegExp(name, 'i') }; // Case-insensitive name search
+            }
+
+            const find = await users.find(queryMap)
             // console.log("Find IN GetProfile >>> ", find);
             if (find.length === 0) {
 

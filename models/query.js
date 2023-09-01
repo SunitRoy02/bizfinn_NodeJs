@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const userSchema = mongoose.Schema({
 
     lender_name: String,
+    lenderId: String,
     comment: String,
     createdAt : { type: Date, default: Date.now },
     updatedAt : Date,

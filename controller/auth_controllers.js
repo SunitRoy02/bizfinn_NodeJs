@@ -12,7 +12,7 @@ module.exports = {
                 return res.status(400).send({ success: false, errors: errors.array()[0] });
             }
 
-            const find = await users.find({ email: req.body.email, password: req.body.password , userType : req.body.userType})
+            const find = await users.find({ email: req.body.email, password: req.body.password, userType: req.body.userType })
 
             if (find.length === 0) {
                 const msfIferror = "User Not Found";
@@ -60,7 +60,7 @@ module.exports = {
         }
 
     },
-    
+
     forgotPassFun: async (req, res) => {
 
         try {
@@ -147,19 +147,13 @@ module.exports = {
 
         try {
 
-            // const errors = validationResult(req)
-            // if (!errors.isEmpty()) {
-            // return res.status(400).send({ success: false, errors: errors.array()[0] });
-            // }
-            // res.status(200).send(req.body);
-
             const find = await users.find({ _id: req.body.userId })
             if (find.length === 0) {
                 const msfIferror = "User not found";
                 res.status(400).send({ success: false, msg: msfIferror });
 
             } else {
-                res.json({ message: 'File uploaded successfully',success: true, fileUrl: req.file.location });
+                res.json({ message: 'File uploaded successfully', success: true, fileUrl: req.file.location });
 
             }
         } catch (error) {
@@ -260,6 +254,38 @@ module.exports = {
     },
 
     changePasswordFun: async (req, res) => {
+
+        try {
+            let user = await users.findOne({ _id: req.body.id });
+
+            console.log('User >> ',user)
+
+            if (user == null) {
+               return  res.status(400).send({ success: false, msg: "User not found !!", });
+            }
+            if (user.password != req.body.old_password) {
+                return res.status(400).send({ success: false, msg: "Password did not match !!", });
+            }
+
+            user.password = req.body.new_password;
+            // Find and update the document with the provided ID
+            const updatedItem = await users.findByIdAndUpdate(
+                req.body.id,
+                { $set: user},
+                { new: true } // Return the updated document
+            );
+
+            if (!updatedItem) {
+                return res.status(400).json({ status: false, message: 'Query not found' });
+            }
+
+            res.status(200).send({ success: true, msg: "Password Changed Successfully !!",result : updatedItem});
+
+        } catch (error) {
+            console.log("Error : ", error);
+            res.status(400).send({ status: false, msg: error.message });
+
+        }
 
 
 

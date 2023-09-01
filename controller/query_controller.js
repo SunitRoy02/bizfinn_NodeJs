@@ -28,6 +28,11 @@ module.exports = {
         try {
             let reqData = req.body;
 
+            let lender = await users.findOne({ _id: req.body.lenderId});
+            if(lender == null){
+                res.status(400).send({ success: false, msg: "Lender not found !!",});
+            }
+
             reqData.query_no = await generateRandomSixDigitNumber();
             const caseNo = reqData.case_no.toString(); // Fix 1: Correct destructuring
             console.log(caseNo);
@@ -41,6 +46,7 @@ module.exports = {
             reqData.case_no = find[0].case_no;
             reqData.borrower = find[0].borrower;
             reqData.borrowerName = find[0].borrowerName;
+            reqData.lender_name = lender.name;
 
             let data = new query(reqData);  
             let result = await data.save();
@@ -58,7 +64,22 @@ module.exports = {
 
     getQuery: async (req, res) => {
         try {
-            const find = await query.find({})
+
+            const { name, fromDate, toDate } = req.query;
+
+            const queryMap = {};
+        
+            if (name) {
+                queryMap.lender_name = { $regex: new RegExp(name, 'i') }; // Case-insensitive name search
+            }
+        
+            if (fromDate && toDate) {
+                queryMap.createdAt = {
+                $gte: new Date(fromDate),
+                $lte: new Date(toDate),
+              };
+            }
+            const find = await query.find(queryMap)
             if (find.length === 0) {
                 res.status(200).send({ success: false, msg: "No query Found ", data: find });
             } else {
