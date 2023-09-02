@@ -1,5 +1,42 @@
 const { chatDetails, chatConversation } = require('../models/chat');
 const users = require('../models/users')
+const { ObjectId } = require('mongoose').Types;
+
+
+async function createOrGetConversationRoom(senderId, receiverId,data) {
+    // Sort the user IDs to ensure consistency in room detection
+    const sortedUserIds = [senderId, receiverId].sort();
+  
+    // Check if a conversation room already exists between the users
+    const existingConversation = await chatConversation.findOne({
+      users: sortedUserIds,
+    });
+  
+    if (existingConversation) {
+
+        //update msg here ---
+
+      return existingConversation;
+    }
+  
+    // If no conversation room exists, create a new one
+    const uniqueId = uid();
+    const userData1 = await users.findOne({ _id: senderId });
+    const userData2 = await users.findOne({ _id: receiverId });
+    const userParticipants = [userData1, userData2];
+  
+    const convoData = {
+      users: sortedUserIds,
+      participants: userParticipants,
+      messages:  data.contentType == 2 ? "Image" : data.content,
+      roomId: uniqueId,
+    };
+  
+    const convoObj = new chatConversation(convoData);
+    await convoObj.save();
+  
+    return convoObj;
+  }
 
 const uid = function () {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -12,43 +49,23 @@ module.exports = {
         console.log(data);
 
         try {
-
-            const userArray = [data.senderId, data.receiverId]
-
-            const userData1 = await users.findOne({ _id: userArray[0] });
-            const userData2 = await users.findOne({ _id: userArray[1] });
-            const userParticipants = [userData1, userData2]
-
-            const uniqueId = uid();
-            if (data.roomid == undefined || data.roomId == '' || data.roomId == null) {
-
-                // const findConversation = await chatConversation.find({ roomId: data.roomId })
-                // console.log('Chat rooms found >> ', findConversation)
-                
-                let convoData = {
-                    users: userArray,
-                    participants: userParticipants,
-                    messages : data.contentType == 2 ? "Image" : data.content,
-                    roomId : uniqueId
-                }
-
-                data.roomId = convoData.roomId;
-                let convoObj = new chatConversation(convoData)
-                let convoResult = await convoObj.save();
-                
-
-            } 
-
-            let dataObj = new chatDetails(data);
-            let result = await dataObj.save();
-            const msfIfSuccess = "Message Sent Successfully";
-            return { success: true, msg: msfIfSuccess, data: data };
-
+          const { senderId, receiverId, roomId } = data;
+      
+          if (!roomId) {
+            // Create or get the conversation room
+            const conversationRoom = await createOrGetConversationRoom(senderId, receiverId,data);
+            data.roomId = conversationRoom.roomId;
+          }
+      
+          const dataObj = new chatDetails(data);
+          await dataObj.save();
+      
+          const message = "Message Sent Successfully";
+          return { success: true, msg: message, data: data };
         } catch (error) {
-            console.log("Error : ", error);
-            return { success: false, msg: error.message };
+          console.log("Error: ", error);
+          return { success: false, msg: error.message };
         }
-
     },
 
 
