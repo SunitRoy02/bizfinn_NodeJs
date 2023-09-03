@@ -64,6 +64,7 @@ router.post('/createCases' , casesController.createCases)
 router.put('/createCases/:id' , casesController.updateLender)
 router.put('/updateBorrower/:id' , casesController.updateBorrower)
 router.put('/caseStatus/:id',casesController.caseStatus)
+
 router.put('/lenderCaseStatus/:id',casesController.lenderCaseStatus)
 router.get('/getCases',casesController.getCases)
 router.get('/getSingleCase/:id',casesController.getSingleCase)
