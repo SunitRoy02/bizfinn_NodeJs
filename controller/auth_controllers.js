@@ -147,15 +147,18 @@ module.exports = {
 
         try {
 
-            const find = await users.find({ _id: req.body.userId })
-            if (find.length === 0) {
-                const msfIferror = "User not found";
-                res.status(400).send({ success: false, msg: msfIferror });
+            // const find = await users.find({ _id: req.body.userId })
+            // if (find.length === 0) {
+            //     const msfIferror = "User not found";
+            //     res.status(400).send({ success: false, msg: msfIferror });
 
-            } else {
-                res.json({ message: 'File uploaded successfully', success: true, fileUrl: req.file.location });
+            // } else {
 
-            }
+            // }
+
+
+            res.json({ message: 'File uploaded successfully', success: true, fileUrl: req.file.location });
+
         } catch (error) {
             console.log("Error : ", error);
             res.status(400).send({ success: false, msg: error.message });

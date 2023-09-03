@@ -42,10 +42,16 @@ module.exports = {
             if(find.length === 0){
                 res.status(400).send({ success: false, msg: "Case not found !!", data: result });
             }
+
+
+
             reqData.case = find[0]._id;
             reqData.case_no = find[0].case_no;
             reqData.borrower = find[0].borrower;
             reqData.borrowerName = find[0].borrowerName;
+            reqData.borrowerTurnOver = find[0].borrowerTurnOver;
+            reqData.business_structure = find[0].business_structure;
+            reqData.loan_ask = find[0].requirement;
             reqData.lender_name = lender.name;
 
             let data = new query(reqData);  

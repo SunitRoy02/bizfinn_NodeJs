@@ -12,6 +12,9 @@ const userSchema = mongoose.Schema({
     case: String,
     borrower: String,
     borrowerName: String,
+    borrowerTurnOver: String,
+    business_structure: String,
+    loan_ask: String,
     status: { type: Number, default: 0 },
     
 });

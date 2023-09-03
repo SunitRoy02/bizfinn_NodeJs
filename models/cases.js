@@ -27,6 +27,7 @@ const casesSchema = mongoose.Schema({
     borrower: String,
     borrowerName: String,
     borrowerTurnOver: String,
+    business_structure: String,
     lenders:[lenderRemark]
     
 });

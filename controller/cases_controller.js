@@ -33,12 +33,12 @@ module.exports = {
             const findBorrower = await users.find(filterData)
             console.log('findBorrower >> ', findBorrower);
             if (findBorrower.length == 0) {
-
                 return res.status(400).json({ status: false, message: 'Borrower not found' });
             }
             reqData.borrower = findBorrower[0]._id;
             reqData.borrowerName = findBorrower[0].name;
             reqData.borrowerTurnOver = findBorrower[0].annual_turn_over;
+            reqData.business_structure = findBorrower[0].bussiness_details.bussiness_structure;
             reqData.lender_remark = "";
             reqData.lender = null;
             reqData.case_no = await generateRandomSixDigitNumber();
