@@ -164,7 +164,7 @@ module.exports = {
                 permissionId,
                 { 
                     status: req.body.status,
-                    status: req.body.status,
+                    lender_remark: req.body.lender_remark,
                 
                 },
                 { new: true } // Return the updated document
