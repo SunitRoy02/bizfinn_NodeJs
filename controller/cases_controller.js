@@ -288,6 +288,28 @@ module.exports = {
         }
     },
 
+    getSingleCaseByNo: async (req, res) => {
+
+        try {
+            let caseNo = req.query.caseNo.toString();
+            console.log(req.query)
+
+            const queryMap = { case_no: parseInt(caseNo.replace(/\s/g, '')) };   
+            const find = await cases.find(queryMap)
+            
+            if (find.length === 0) {
+                res.status(200).send({ success: false, msg: "No case Found ", data: find });
+            } else {
+                //send otp work here 
+                const message = "Case Found successfully";
+                res.status(200).send({ success: true, msg: message, data: find[0] });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            return res.status(400).json({ status: false, msg: error });
+        }
+    },
+
     deleteCase: async (req, res) => {
 
         try {
