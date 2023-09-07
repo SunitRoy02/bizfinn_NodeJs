@@ -20,7 +20,15 @@ module.exports = {
                 res.status(400).send({ success: false, msg: msfIferror, });
             } else {
                 const msfIfSuccess = "Login Successfully";
-                res.status(200).send({ success: true, msg: msfIfSuccess, data: find[0] });
+                let thisUser = find[0];
+                if(req.body.userType == '2' || req.body.userType == '3' ){
+                    console.log('TYPE >> ', req.body.userType, typeof req.body.userType)
+                    const findAdmin = await users.findOne({userType: 1});
+                    thisUser.admin = findAdmin._id
+                    console.log(' findAdmin._id >> ',  findAdmin._id);
+                    console.log(thisUser);
+                }
+                res.status(200).send({ success: true, msg: msfIfSuccess, data: thisUser});
             }
 
         } catch (error) {
@@ -302,24 +310,19 @@ module.exports = {
         try {
 
             let userId = '';
-            users.findOne({ mobile: req.body.phone}, (err, user) => {
-                if (err) {
-                  console.error('Error:', err);
-                  return  res.status(400).send({ status: false, msg: 'User not found with this phone number'});
-                  // Handle the error here
-                } else if (user) {
-                  console.log('Found User:', user);
-                  userId = user._id;
-                  // Do something with the found user
-                } else {
-                  console.log('User not found.');
-                  return  res.status(400).send({ status: false, msg: 'User not found with this phone number'});
-                  // Handle the case where the user is not found
-                }
-              });
+          const thisUser = await users.findOne({ mobile: req.body.phone});
+              if (thisUser) {
+                console.log('Found User:', thisUser);
+                userId = thisUser._id;
+                // Do something with the found user
+              } else {
+                console.log('User not found.');
+                return  res.status(400).send({ status: false, msg: 'User not found with this phone number'});
+                // Handle the case where the user is not found
+              } 
             const apiUrl = `https://api.vialogue.in/pushapi/sendbulkmsg?username=${process.env.USERNAME_OTP}&dest=${req.body.phone}&apikey=${process.env.APIKEY_OTP}&signature=${process.env.SIGNATURE_OTP}&msgtype=PM&msgtxt=${req.body.otp}${msgFormate}&entityid=${process.env.ENTITYIT_IT_OTP}&templateid=${process.env.TMPLATE_ID}`;
 
-            // console.log(apiUrl);
+            console.log(apiUrl);
             axios.get(apiUrl)
                 .then(function (response) {
                     // Handle successful response here

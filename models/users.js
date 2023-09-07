@@ -49,6 +49,7 @@ const userSchema = mongoose.Schema({
 
     id : mongoose.Types.ObjectId, 
     name: String,
+    admin: String,
     email: String,
     mobile: Number,
     password: String,
