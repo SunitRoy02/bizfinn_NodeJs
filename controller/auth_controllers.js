@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 const users = require('../models/users');
+const axios = require('axios');
 
 
 
@@ -252,29 +253,25 @@ module.exports = {
 
     },
 
-    verifyOtpFun: async (req, res) => {
-
-    },
-
     changePasswordFun: async (req, res) => {
 
         try {
             let user = await users.findOne({ _id: req.body.id });
 
-            console.log('User >> ',user)
+            console.log('User >> ', user)
 
             if (user == null) {
-               return  res.status(400).send({ success: false, msg: "User not found !!", });
+                return res.status(400).send({ success: false, msg: "User not found !!", });
             }
-            if (user.password != req.body.old_password) {
-                return res.status(400).send({ success: false, msg: "Password did not match !!", });
-            }
+            // if (user.password != req.body.old_password) {
+            //     return res.status(400).send({ success: false, msg: "Password did not match !!", });
+            // }
 
             user.password = req.body.new_password;
             // Find and update the document with the provided ID
             const updatedItem = await users.findByIdAndUpdate(
                 req.body.id,
-                { $set: user},
+                { $set: user },
                 { new: true } // Return the updated document
             );
 
@@ -282,7 +279,7 @@ module.exports = {
                 return res.status(400).json({ status: false, message: 'Query not found' });
             }
 
-            res.status(200).send({ success: true, msg: "Password Changed Successfully !!",result : updatedItem});
+            res.status(200).send({ success: true, msg: "Password Changed Successfully !!", result: updatedItem });
 
         } catch (error) {
             console.log("Error : ", error);
@@ -293,6 +290,37 @@ module.exports = {
 
 
     },
+
+
+    sendOtp: async (req, res) => {
+
+        // console.log(req.body);
+        if(req.body.phone == undefined || req.body.phone == null || req.body.phone == ''){
+          return  res.status(400).send({ status: false, msg: 'Please enter valid phone number', data : req.body});
+        }
+        const msgFormate = ' is the OTP for signing up into your BizFinn account. Keep the OTP safe. We will never call you to ask for your OTP.-BizFinn (RKSP)';
+        try {
+            const apiUrl = `https://api.vialogue.in/pushapi/sendbulkmsg?username=${process.env.USERNAME_OTP}&dest=${req.body.phone}&apikey=${process.env.APIKEY_OTP}&signature=${process.env.SIGNATURE_OTP}&msgtype=PM&msgtxt=${req.body.otp}${msgFormate}&entityid=${process.env.ENTITYIT_IT_OTP}&templateid=${process.env.TMPLATE_ID}`;
+
+            // console.log(apiUrl);
+            axios.get(apiUrl)
+                .then(function (response) {
+                    // Handle successful response here
+                    console.log('Response Data:', response.data);
+                    res.status(200).send({ status: true, msg: 'Otp sent successfully'});
+                })
+                .catch(function (error) {
+                    // Handle error here
+                    console.error('Error:', error);
+                    res.status(400).send({ status: false, msg: 'Something went wrong' });
+                });
+        } catch (error) {
+            console.log("Error : ", error);
+            res.status(400).send({ status: false, msg: error.message });
+
+        }
+
+    }
 }
 
 

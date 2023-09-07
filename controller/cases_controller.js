@@ -31,16 +31,21 @@ module.exports = {
             // let filterData = { _id: mongoose.Types.ObjectId(req.body.borrowerId), userType: 3 }
             console.log('findBorrower ......>> ', filterData);
             const findBorrower = await users.find(filterData)
+
             console.log('findBorrower >> ', findBorrower);
             if (findBorrower.length == 0) {
                 return res.status(400).json({ status: false, message: 'Borrower not found' });
             }
+            if (findBorrower[0].kyc_details == null || findBorrower[0].financial_details == null) {
+                return res.status(400).json({ status: false, message: 'Please update all related documents first!!' });
+            }
+
             reqData.borrower = findBorrower[0]._id;
             reqData.borrowerName = findBorrower[0].name;
             reqData.borrowerTurnOver = findBorrower[0].annual_turn_over;
             reqData.business_structure = findBorrower[0].bussiness_details.bussiness_structure;
             reqData.lender_remark = "";
-            reqData.lender = null;
+            reqData.lender = [];
             reqData.case_no = await generateRandomSixDigitNumber();
 
             console.log(reqData);
@@ -69,9 +74,6 @@ module.exports = {
             console.log('ID >> ', itemId);
             console.log('Lender >> ', lenderId);
             console.log('Body >> ', req.body);
-
-
-
 
             const find = await users.find({ _id: ObjectId(lenderId), userType: 2 })
 
@@ -172,7 +174,7 @@ module.exports = {
 
             if (!updatedPermission) {
 
-                return res.status(404).json({ msg: 'Permission not found' });
+                return res.status(404).json({ msg: 'Case not found' });
             }
 
             return res.status(200).json({ status: true, msg: 'Status Updated Successfully !!', result: updatedPermission });

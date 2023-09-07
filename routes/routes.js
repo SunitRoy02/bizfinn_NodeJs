@@ -30,7 +30,7 @@ router.post('/forgotPassword',forgotPassValidation,authController.forgotPassFun)
 router.post('/getProfile',getProfileValidation,authController.getProfile)
 router.post('/uploadfile',upload.single('file'),getProfileValidation,authController.uploadFile)
 router.put('/updateProfile/:id',authController.updateProfile)
-router.post('/verifyOtp',authController.verifyOtpFun)
+router.post('/sendOtp',authController.sendOtp)
 router.patch('/changePassword',authController.changePasswordFun)
 router.put('/setActiveStatus/:id',authController.setActiveStatus)
 
