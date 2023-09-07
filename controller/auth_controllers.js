@@ -300,6 +300,23 @@ module.exports = {
         }
         const msgFormate = ' is the OTP for signing up into your BizFinn account. Keep the OTP safe. We will never call you to ask for your OTP.-BizFinn (RKSP)';
         try {
+
+            let userId = '';
+            users.findOne({ mobile: req.body.phone}, (err, user) => {
+                if (err) {
+                  console.error('Error:', err);
+                  return  res.status(400).send({ status: false, msg: 'User not found with this phone number'});
+                  // Handle the error here
+                } else if (user) {
+                  console.log('Found User:', user);
+                  userId = user._id;
+                  // Do something with the found user
+                } else {
+                  console.log('User not found.');
+                  return  res.status(400).send({ status: false, msg: 'User not found with this phone number'});
+                  // Handle the case where the user is not found
+                }
+              });
             const apiUrl = `https://api.vialogue.in/pushapi/sendbulkmsg?username=${process.env.USERNAME_OTP}&dest=${req.body.phone}&apikey=${process.env.APIKEY_OTP}&signature=${process.env.SIGNATURE_OTP}&msgtype=PM&msgtxt=${req.body.otp}${msgFormate}&entityid=${process.env.ENTITYIT_IT_OTP}&templateid=${process.env.TMPLATE_ID}`;
 
             // console.log(apiUrl);
@@ -307,16 +324,16 @@ module.exports = {
                 .then(function (response) {
                     // Handle successful response here
                     console.log('Response Data:', response.data);
-                    res.status(200).send({ status: true, msg: 'Otp sent successfully'});
+                   return res.status(200).send({ status: true, msg: 'Otp sent successfully',user : userId});
                 })
                 .catch(function (error) {
                     // Handle error here
                     console.error('Error:', error);
-                    res.status(400).send({ status: false, msg: 'Something went wrong' });
+                   return res.status(400).send({ status: false, msg: 'Something went wrong' });
                 });
         } catch (error) {
             console.log("Error : ", error);
-            res.status(400).send({ status: false, msg: error.message });
+           return res.status(400).send({ status: false, msg: error.message });
 
         }
 
