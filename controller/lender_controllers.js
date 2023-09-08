@@ -33,10 +33,10 @@ module.exports = {
                 return res.status(400).send({ success: false, errors: errors.array()[0] });
             }
 
-            // const find = await lenders.find({ email: req.body.email })
-            const find = await users.find({ email: req.body.email })
+            const email = await users.findOne({ email: req.body.email ,})
+            const phone = await users.findOne({ mobile: req.body.mobile })
             // console.log("Find IN Register >>> ", find);
-            if (find.length === 0) {
+            if (!email && !phone) {
 
                 let reqData = req.body;
                 reqData.case_logged = 0;
@@ -54,7 +54,8 @@ module.exports = {
                 res.status(200).send({ success: true, msg: msfIfSuccess, data: resultUser });
 
             } else {
-                const msfIferror = "USer with same email already exixts";
+                const msfIferror = email ?  "User with this Email Already Exixts" 
+                : phone ? "User with this Mobile Number Already Exixts" : "";
                 res.status(400).send({ success: false, msg: msfIferror });
             }
         } catch (error) {
@@ -200,17 +201,36 @@ module.exports = {
 
     getCases : async (req,res)=> {
         try {
-
             const lenderId = req.params.lenderId;
 
+            const { name, fromDate, toDate } = req.query;
+
+            const queryMap = {'lenders.lenderId': ObjectId(lenderId)};
+        
+            if (name) {
+                queryMap.borrowerName = { $regex: new RegExp(name, 'i') }; // Case-insensitive name search
+            }
+        
+            if (fromDate && toDate) {
+                queryMap.createdAt = {
+                $gte: new Date(fromDate),
+                $lte: new Date(toDate),
+              };
+            }
+
+
             console.log("lenderId >> ",lenderId);
-            const find = await cases.find({'lenders.lenderId': ObjectId(lenderId)});
+            const userByLenderId = await users.findOne({ _id:  lenderId});
+            if(!userByLenderId){
+               return  res.status(400).send({ success: false,msg:"Lander not found",});
+            }
+            const find = await cases.find(queryMap);
             if (find.length === 0) {
-                res.status(200).send({ success: false,msg:"No Cases Found ", data: find });
+               return  res.status(200).send({ success: false,msg:"No Cases Found ", data: find });
             } else {
                 //send otp work here 
                 const message = "Cases Found successfully";
-                res.status(200).send({ success: true, msg: message, data: find });
+               return  res.status(200).send({ success: true, msg: message, data: find });
             }
 
         } catch (error) {

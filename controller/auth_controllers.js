@@ -46,9 +46,10 @@ module.exports = {
                 return res.status(400).send({ success: false, errors: errors.array()[0] });
             }
 
-            const find = await users.find({ email: req.body.email })
+            const email = await users.findOne({ email: req.body.email })
+            const phone = await users.findOne({ mobile: req.body.mobile })
             // console.log("Find IN Register >>> ", find);
-            if (find.length === 0) {
+            if (!email && !phone) {
 
                 let reqData = req.body;
                 let data = new users(reqData);
@@ -59,7 +60,8 @@ module.exports = {
                 res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
 
             } else {
-                const msfIferror = "User Already Exixts";
+            
+                const msfIferror = email ?  "User Email Already Exixts" : phone ? "User Mobile Number Already Exixts" : "";
                 res.status(400).send({ success: false, msg: msfIferror });
             }
         } catch (error) {
@@ -310,7 +312,7 @@ module.exports = {
         try {
 
             let userId = '';
-          const thisUser = await users.findOne({ mobile: req.body.phone});
+          const thisUser = await users.findOne({ mobile: req.body.phone , userType : req.body.userType});
               if (thisUser) {
                 console.log('Found User:', thisUser);
                 userId = thisUser._id;
@@ -322,8 +324,9 @@ module.exports = {
               } 
             const apiUrl = `https://api.vialogue.in/pushapi/sendbulkmsg?username=${process.env.USERNAME_OTP}&dest=${req.body.phone}&apikey=${process.env.APIKEY_OTP}&signature=${process.env.SIGNATURE_OTP}&msgtype=PM&msgtxt=${req.body.otp}${msgFormate}&entityid=${process.env.ENTITYIT_IT_OTP}&templateid=${process.env.TMPLATE_ID}`;
 
-            console.log(apiUrl);
-            axios.get(apiUrl)
+            // console.log(apiUrl);
+            if(thisUser){
+                axios.get(apiUrl)
                 .then(function (response) {
                     // Handle successful response here
                     console.log('Response Data:', response.data);
@@ -334,6 +337,7 @@ module.exports = {
                     console.error('Error:', error);
                    return res.status(400).send({ status: false, msg: 'Something went wrong' });
                 });
+            }
         } catch (error) {
             console.log("Error : ", error);
            return res.status(400).send({ status: false, msg: error.message });

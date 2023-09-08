@@ -32,9 +32,10 @@ module.exports = {
             //     return res.status(400).send({ success: false, errors: errors.array()[0] });
             // }
 
-            const find = await users.find({ mobile: req.body.mobile })
+            const email = await users.findOne({ email: req.body.email ,})
+            const phone = await users.findOne({ mobile: req.body.mobile })
             // console.log("Find IN Register >>> ", find);
-            if (find.length === 0) {
+            if (!email && !phone) {
 
                 let reqData = req.body;
                 reqData.case_logged = 0;
@@ -58,7 +59,8 @@ module.exports = {
                 res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
 
             } else {
-                const msfIferror = "Borrower Already Exixts";
+                const msfIferror = email ?  "User with this email already exixts" 
+                : phone ? "User with this mobile number already exixts" : "";
                 res.status(400).send({ success: false, msg: msfIferror });
             }
         } catch (error) {
