@@ -95,14 +95,18 @@ module.exports = {
 
     getMsgsOnRooms: async (data) => {
 
-        console.log('getMsgsOnRooms >>', data.roomId);
+        const { receiverId, roomId } = data;
+
+        console.log('getMsgsOnRooms >>', roomId);
+
+        const recever = await users.findOne({_id : receiverId});
 
         try {
             const findChat = await chatDetails.find({ roomId: data.roomId })
             // console.log('findChat found >> ',findChat)
             if (findChat.length == 0) {
                 const msfIfSuccess = "No data found";
-                return { success: true, msg: msfIfSuccess, data: findChat };
+                return { success: true, msg: msfIfSuccess, };
             }
 
             const msfIfSuccess = "Chat found Successfully";
