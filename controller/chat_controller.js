@@ -95,9 +95,17 @@ module.exports = {
 
     getMsgsOnRooms: async (data) => {
 
-        const { receiverId, roomId } = data;
+        const { senderId, receiverId, roomId } = data;
+      
+          if (!roomId) {
+            // Create or get the conversation room
+            const conversationRoom = await createOrGetConversationRoom(senderId, receiverId,data);
+            data.roomId = conversationRoom.roomId;
+          }
 
-        console.log('getMsgsOnRooms >>', roomId);
+        console.log('getMsgsOnRooms >>', data.roomId);
+
+
 
         const recever = await users.findOne({_id : receiverId});
 

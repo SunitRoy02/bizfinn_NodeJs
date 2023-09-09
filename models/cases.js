@@ -13,6 +13,11 @@ const lenderRemark = mongoose.Schema({
 });
 
 
+const commentOnCase = mongoose.Schema({
+    commenterId: String,
+    remark: { type: String, default: ""},
+});
+
 
 const casesSchema = mongoose.Schema({
 
@@ -29,7 +34,8 @@ const casesSchema = mongoose.Schema({
     borrowerTurnOver: String,
     business_structure: String,
     doc_passwords: String,
-    lenders:[lenderRemark]
+    lenders:[lenderRemark],
+    comments:[commentOnCase]
     
 });
 
