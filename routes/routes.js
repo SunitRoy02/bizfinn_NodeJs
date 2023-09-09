@@ -69,6 +69,7 @@ router.put('/lenderCaseStatus/:id',casesController.lenderCaseStatus)
 router.get('/getCases',casesController.getCases)
 router.get('/getSingleCase/:id',casesController.getSingleCase)
 router.get('/getSingleCase/',casesController.getSingleCaseByNo)
+router.post('/cases/:caseId/comments',casesController.addCommentInCase)
 
 router.delete('/deleteCase/:id',casesController.deleteCase)
 

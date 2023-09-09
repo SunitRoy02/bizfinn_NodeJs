@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
 
 
-const lenderRemark = mongoose.Schema({
+const lendersSchema = mongoose.Schema({
     lenderId: String,
     approved: { type: Number, default: 0 },
     lander_approved: { type: Number, default: 0 },
     landerName: String,
-    remark: { type: String, default: ""},
     createdAt : { type: Date, default: Date.now },
     updatedAt : Date,
     lender_remark: String,    
@@ -15,7 +14,9 @@ const lenderRemark = mongoose.Schema({
 
 const commentOnCase = mongoose.Schema({
     commenterId: String,
+    type: String,
     remark: { type: String, default: ""},
+    createdAt : { type: Date, default: Date.now },
 });
 
 
@@ -34,7 +35,7 @@ const casesSchema = mongoose.Schema({
     borrowerTurnOver: String,
     business_structure: String,
     doc_passwords: String,
-    lenders:[lenderRemark],
+    lenders:[lendersSchema],
     comments:[commentOnCase]
     
 });

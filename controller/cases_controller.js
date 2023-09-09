@@ -164,10 +164,10 @@ module.exports = {
         try {
             const updatedPermission = await cases.findByIdAndUpdate(
                 permissionId,
-                { 
+                {
                     status: req.body.status,
                     lender_remark: req.body.lender_remark,
-                
+
                 },
                 { new: true } // Return the updated document
             );
@@ -196,32 +196,37 @@ module.exports = {
         console.log('approved >> ', newActiveValue);
 
         try {
-            let singleCase = await cases.find({ _id: caseId });
+            let singleCase = await cases.findOne({ _id: caseId });
             console.log('singleCase >> ', singleCase);
-            if (singleCase.length === 0) {
+            if (!singleCase) {
                 return res.status(404).json({ msg: 'Case not found' });
             }
 
             let didUpdated = false;
-            let lenders = singleCase[0].lenders;
+            let lenders = singleCase.lenders;
             for (let i = 0; i < lenders.length; i++) {
                 if (lenders[i].lenderId == lenderId) {
                     console.log('Found at Obj >>>', lenders[i]._id);
-                    lenders[i].approved = newActiveValue
-                    lenders[i].remark = req.body.remark
-                    lenders[i].lander_approved = req.body.lander_approved
+
+                    for (const keys in req.body) {
+                        lenders[i][keys] = req.body[keys]
+                    }
+
+                    // lenders[i].approved = newActiveValue
+                    // lenders[i].remark = req.body.remark
+                    // lenders[i].lander_approved = req.body.lander_approved
                     didUpdated = true;
                 }
             }
 
-            if(!didUpdated){
+            if (!didUpdated) {
                 return res.status(404).json({ message: ' lender not found' });
             }
 
             const updatedCase = await cases.findOneAndUpdate(
                 ObjectId(caseId),
                 {
-                    $set: { lenders : lenders },
+                    $set: { lenders: lenders },
                 },
                 { new: true }
             );
@@ -243,16 +248,16 @@ module.exports = {
             const { name, fromDate, toDate } = req.query;
 
             const queryMap = {};
-        
+
             if (name) {
                 queryMap.borrowerName = { $regex: new RegExp(name, 'i') }; // Case-insensitive name search
             }
-        
+
             if (fromDate && toDate) {
                 queryMap.createdAt = {
-                $gte: new Date(fromDate),
-                $lte: new Date(toDate),
-              };
+                    $gte: new Date(fromDate),
+                    $lte: new Date(toDate),
+                };
             }
             const find = await cases.find(queryMap)
             if (find.length === 0) {
@@ -296,9 +301,9 @@ module.exports = {
             let caseNo = req.query.caseNo.toString();
             console.log(req.query)
 
-            const queryMap = { case_no: parseInt(caseNo.replace(/\s/g, '')) };   
+            const queryMap = { case_no: parseInt(caseNo.replace(/\s/g, '')) };
             const find = await cases.find(queryMap)
-            
+
             if (find.length === 0) {
                 res.status(200).send({ success: false, msg: "No case Found ", data: find });
             } else {
@@ -331,6 +336,34 @@ module.exports = {
             return res.status(400).json({ status: false, msg: error });
         }
     },
+
+    addCommentInCase: async (req, res) => {
+
+        const caseId = req.params.caseId;
+        const { commenterId, remark , type } = req.body;
+
+        try {
+            const updatedCase = await cases.findByIdAndUpdate(
+                caseId,
+                {
+                    $push: {
+                        comments: { commenterId, remark, type },
+                    },
+                },
+                { new: true }
+            );
+
+            if (!updatedCase) {
+                return res.status(404).json({ error: 'Case not found' });
+            }
+
+            return res.status(200).json(updatedCase);
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    },
+
 }
 
 
