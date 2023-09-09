@@ -6,10 +6,9 @@ const lendersSchema = mongoose.Schema({
     approved: { type: Number, default: 0 },
     lander_approved: { type: Number, default: 0 },
     landerName: String,
-    remark: { type: String, default: ""},
     createdAt : { type: Date, default: Date.now },
     updatedAt : Date,
-    lender_remark: String,    
+    lender_remark: { type: String, default: ""},    
 });
 
 
