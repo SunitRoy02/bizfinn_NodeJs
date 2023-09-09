@@ -110,7 +110,7 @@ module.exports = {
             }
 
             const msfIfSuccess = "Chat found Successfully";
-            return { success: true, msg: msfIfSuccess, data: findChat };
+            return { success: true, msg: msfIfSuccess, data: findChat , user: recever };
 
         } catch (error) {
 
