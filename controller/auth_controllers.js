@@ -21,14 +21,14 @@ module.exports = {
             } else {
                 const msfIfSuccess = "Login Successfully";
                 let thisUser = find[0];
-                if(req.body.userType == '2' || req.body.userType == '3' ){
+                if (req.body.userType == '2' || req.body.userType == '3') {
                     console.log('TYPE >> ', req.body.userType, typeof req.body.userType)
-                    const findAdmin = await users.findOne({userType: 1});
+                    const findAdmin = await users.findOne({ userType: 1 });
                     thisUser.admin = findAdmin._id
-                    console.log(' findAdmin._id >> ',  findAdmin._id);
+                    console.log(' findAdmin._id >> ', findAdmin._id);
                     console.log(thisUser);
                 }
-                res.status(200).send({ success: true, msg: msfIfSuccess, data: thisUser});
+                res.status(200).send({ success: true, msg: msfIfSuccess, data: thisUser });
             }
 
         } catch (error) {
@@ -60,8 +60,8 @@ module.exports = {
                 res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
 
             } else {
-            
-                const msfIferror = email ?  "User Email Already Exixts" : phone ? "User Mobile Number Already Exixts" : "";
+
+                const msfIferror = email ? "User Email Already Exixts" : phone ? "User Mobile Number Already Exixts" : "";
                 res.status(400).send({ success: false, msg: msfIferror });
             }
         } catch (error) {
@@ -176,53 +176,6 @@ module.exports = {
         }
 
     },
-
-    updateProfileImage: async (req, res) => {
-
-        try {
-
-            // const errors = validationResult(req)
-            // if (!errors.isEmpty()) {
-            // return res.status(400).send({ success: false, errors: errors.array()[0] });
-            // }
-
-            res.status(200).send(req.body);
-
-            // const find = await users.find({ _id: req.body.userId })
-            // if (find.length === 0) {
-            //     const msfIferror = "User not found";
-            //     res.status(400).send({ success: false, msg: msfIferror });
-
-            // } else {
-
-            //     let reqData = req.body;
-            //     // let img = req.file;
-            //     reqData.updatedAt = new Date().toLocaleString();
-            //     users.findByIdAndUpdate(req.body.userId, req.body, { new: true }, (err, updatedDoc) => {
-            //         if (err) {
-            //             // console.error(err);  
-            //             const message = "Unexpected Error Found";
-            //             res.status(200).send({ success: true, msg: err });
-
-            //         } else {
-            //             // console.log(updatedDoc);
-            //             const message = "User Updated successfully";
-            //             res.status(200).send({ success: true, msg: message, data : updatedDoc });
-            //         }
-            //     });
-
-
-
-
-            // }
-        } catch (error) {
-            console.log("Error : ", error);
-            res.status(400).send({ success: false, msg: error.message });
-
-        }
-
-    },
-
     updateProfile: async (req, res) => {
 
         try {
@@ -238,8 +191,6 @@ module.exports = {
                     updateFields[key] = req.body[key];
                 }
             }
-
-
             console.log('ID >> ', itemId);
             console.log('updateFields >> ', updateFields);
 
@@ -302,49 +253,129 @@ module.exports = {
     },
 
 
+    // sendOtp: async (req, res) => {
+
+    //     // console.log(req.body);
+    //     if(req.body.phone == undefined || req.body.phone == null || req.body.phone == ''){
+    //       return  res.status(400).send({ status: false, msg: 'Please enter valid phone number', data : req.body});
+    //     }
+    //     const msgFormate = ' is the OTP for signing up into your BizFinn account. Keep the OTP safe. We will never call you to ask for your OTP.-BizFinn (RKSP)';
+    //     try {
+
+    //         let userId = '';
+    //       const thisUser = await users.findOne({ mobile: req.body.phone , userType : req.body.userType});
+    //           if (thisUser) {
+    //             console.log('Found User:', thisUser);
+    //             userId = thisUser._id;
+    //             // Do something with the found user
+    //           } else {
+    //             console.log('User not found.');
+    //             return  res.status(400).send({ status: false, msg: 'User not found with this phone number'});
+    //             // Handle the case where the user is not found
+    //           } 
+    //         const apiUrl = `https://api.vialogue.in/pushapi/sendbulkmsg?username=${process.env.USERNAME_OTP}&dest=${req.body.phone}&apikey=${process.env.APIKEY_OTP}&signature=${process.env.SIGNATURE_OTP}&msgtype=PM&msgtxt=${req.body.otp}${msgFormate}&entityid=${process.env.ENTITYIT_IT_OTP}&templateid=${process.env.TMPLATE_ID}`;
+
+    //         // console.log(apiUrl);
+    //         if(thisUser){
+    //             axios.get(apiUrl)
+    //             .then(function (response) {
+    //                 // Handle successful response here
+    //                 console.log('Response Data:', response.data);
+    //                return res.status(200).send({ status: true, msg: 'Otp sent successfully',user : userId});
+    //             })
+    //             .catch(function (error) {
+    //                 // Handle error here
+    //                 console.error('Error:', error);
+    //                return res.status(400).send({ status: false, msg: 'Something went wrong' });
+    //             });
+    //         }
+    //     } catch (error) {
+    //         console.log("Error : ", error);
+    //        return res.status(400).send({ status: false, msg: error.message });
+
+    //     }
+
+    // }
+
+
     sendOtp: async (req, res) => {
-
-        // console.log(req.body);
-        if(req.body.phone == undefined || req.body.phone == null || req.body.phone == ''){
-          return  res.status(400).send({ status: false, msg: 'Please enter valid phone number', data : req.body});
-        }
-        const msgFormate = ' is the OTP for signing up into your BizFinn account. Keep the OTP safe. We will never call you to ask for your OTP.-BizFinn (RKSP)';
         try {
+            const { phone, type, userType } = req.body;
 
-            let userId = '';
-          const thisUser = await users.findOne({ mobile: req.body.phone , userType : req.body.userType});
-              if (thisUser) {
-                console.log('Found User:', thisUser);
-                userId = thisUser._id;
-                // Do something with the found user
-              } else {
-                console.log('User not found.');
-                return  res.status(400).send({ status: false, msg: 'User not found with this phone number'});
-                // Handle the case where the user is not found
-              } 
-            const apiUrl = `https://api.vialogue.in/pushapi/sendbulkmsg?username=${process.env.USERNAME_OTP}&dest=${req.body.phone}&apikey=${process.env.APIKEY_OTP}&signature=${process.env.SIGNATURE_OTP}&msgtype=PM&msgtxt=${req.body.otp}${msgFormate}&entityid=${process.env.ENTITYIT_IT_OTP}&templateid=${process.env.TMPLATE_ID}`;
-
-            // console.log(apiUrl);
-            if(thisUser){
-                axios.get(apiUrl)
-                .then(function (response) {
-                    // Handle successful response here
-                    console.log('Response Data:', response.data);
-                   return res.status(200).send({ status: true, msg: 'Otp sent successfully',user : userId});
-                })
-                .catch(function (error) {
-                    // Handle error here
-                    console.error('Error:', error);
-                   return res.status(400).send({ status: false, msg: 'Something went wrong' });
-                });
+            console.log(req.body);
+            if (!phone) {
+                return res.status(400).json({ status: false, msg: 'Please enter a valid phone number' });
             }
-        } catch (error) {
-            console.log("Error : ", error);
-           return res.status(400).send({ status: false, msg: error.message });
 
+
+
+            let userIdForChagePassword = '';
+            if (type !== 'register') {
+                const thisUser = await users.findOne({ mobile: phone, userType: userType });
+                if (!thisUser) {
+                    return res.status(400).json({ status: false, msg: 'User not found with this phone number' });
+                }
+                thisUser._id
+
+            }
+
+            const msgFormat = `${req.body.otp} is the OTP for signing up into your BizFinn account. Keep the OTP safe. We will never call you to ask for your OTP. - BizFinn (RKSP)`;
+
+            const apiUrl = `https://api.vialogue.in/pushapi/sendbulkmsg?username=${process.env.USERNAME_OTP}&dest=${phone}&apikey=${process.env.APIKEY_OTP}&signature=${process.env.SIGNATURE_OTP}&msgtype=PM&msgtxt=${msgFormat}&entityid=${process.env.ENTITYIT_IT_OTP}&templateid=${process.env.TMPLATE_ID}`;
+
+            const response = await axios.get(apiUrl);
+
+            // console.log('Response Data:', response.data);
+
+            return res.status(200).json({ status: true, msg: 'OTP sent successfully', user: userIdForChagePassword });
+        } catch (error) {
+            // console.error('Error:', error);
+
+            return res.status(400).json({ status: false, msg: 'Something went wrong' });
+        }
+    },
+
+    updateDocStatus: async (req, res) => {
+        const { userId, schemaType, docType } = req.params;
+        const { status } = req.body;
+
+        // Ensure that status is either 0 or 1
+        if (status !== 0 && status !== 1) {
+            return res.status(400).json({ message: 'Status must be 0 or 1' });
         }
 
-    }
+        try {
+            // Find the user document by userId
+            const user = await users.findOne({ _id: userId });
+        
+            if (!user) {
+              return res.status(404).json({ message: 'User not found' });
+            }
+        
+            // Determine the schema based on schemaType and update the status accordingly
+            let schemaToUpdate;
+        
+            if (schemaType === 'kycSchema') {
+              schemaToUpdate = user.kyc_details;
+            } else if (schemaType === 'financialSchema') {
+              schemaToUpdate = user.financial_details;
+            } else {
+              return res.status(400).json({ message: 'Invalid schema type' });
+            }
+        
+            if (schemaToUpdate && schemaToUpdate[docType] && schemaToUpdate[docType].status !== undefined) {
+              schemaToUpdate[docType].status = status;
+              await user.save();
+              return res.status(200).json(user);
+            } else {
+              return res.status(404).json({ message: 'Document type not found' });
+            }
+          } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Internal server error' });
+          }
+    },
+
 }
 
 

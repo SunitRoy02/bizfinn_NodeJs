@@ -33,6 +33,7 @@ router.put('/updateProfile/:id',authController.updateProfile)
 router.post('/sendOtp',authController.sendOtp)
 router.patch('/changePassword',authController.changePasswordFun)
 router.put('/setActiveStatus/:id',authController.setActiveStatus)
+router.put('/updateDocStatus/:userId/:schemaType/:docType',authController.updateDocStatus)
 
 //Lenders ---------
 router.post('/registerLenders' , createLenderValidation , lenderController.createLender)
