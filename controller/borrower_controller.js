@@ -53,8 +53,6 @@ module.exports = {
                 }
             }
             
-
-            const phoneData = await users.findOne({ mobile: mobile })
             // console.log("Find IN Register >>> ", find);
 
             let reqData = req.body;

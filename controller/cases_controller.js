@@ -263,7 +263,7 @@ module.exports = {
 
     lenderCaseStatus: async (req, res) => {
         const caseId = req.params.id;
-        const { lenderId, approved, lander_approved, ...updates } = req.body;
+        const { lenderId, approved, lander_approved,lender_remark, ...updates } = req.body;
 
         console.log("CaseId >> ", caseId)
         console.log("lenderId >> ", lenderId)
@@ -285,6 +285,9 @@ module.exports = {
             // Check if 'lander_approved' is present in the request body, and update it if necessary.
             if (typeof lander_approved !== 'undefined') {
                 update['lenders.$.lander_approved'] = lander_approved;
+            }
+            if (typeof lender_remark !== 'undefined') {
+                update['lenders.$.lender_remark'] = lender_remark;
             }
 
             const updatedCase = await cases.findOneAndUpdate(

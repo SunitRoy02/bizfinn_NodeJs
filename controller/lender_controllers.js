@@ -33,34 +33,52 @@ module.exports = {
                 return res.status(400).send({ success: false, errors: errors.array()[0] });
             }
 
-            const email = await users.findOne({ email: req.body.email ,})
-            const phone = await users.findOne({ mobile: req.body.mobile })
-            // console.log("Find IN Register >>> ", find);
-            if (!email && !phone) {
+            const {email, mobile } = req.body;
 
-                let reqData = req.body;
-                reqData.case_logged = 0;
-                reqData.case_approved = 0;
-                reqData.case_pending = 0;
-                reqData.lender_id = await generateRandomSixDigitNumber();
-                reqData.userType = 2; // admin 1 lender 2 borrower 3
+            console.log(req.body);
+            console.log(email);
+            console.log(mobile);
 
-                // console.log(reqDataUser);
-                let dataUser = new users(reqData);
-                let resultUser = await dataUser.save();
-
-
-                const msfIfSuccess = "Register Successfully";
-                res.status(200).send({ success: true, msg: msfIfSuccess, data: resultUser });
-
-            } else {
-                const msfIferror = email ?  "User with this Email Already Exixts" 
-                : phone ? "User with this Mobile Number Already Exixts" : "";
-                res.status(400).send({ success: false, msg: msfIferror });
+            if(email != undefined){
+                console.log('inside email');
+                const emailData = await users.findOne({ email: email })
+                if(emailData !== null){
+                    console.log('emailData >> ', emailData);
+                  return res.status(400).send({ success: false,
+                         msg: "User with this email already exixts" });
+                }
             }
+            if(mobile !== undefined){
+                console.log('inside phone');
+
+                const phoneData = await users.findOne({ mobile: mobile })
+                if(phoneData !== null){
+                    console.log('phoneData >> ', phoneData);
+
+                  return res.status(400).send({ success: false,
+                         msg: "User with this mobile number already exixts" });
+                }
+            }
+
+
+            let reqData = req.body;
+            reqData.case_logged = 0;
+            reqData.case_approved = 0;
+            reqData.case_pending = 0;
+            reqData.lender_id = await generateRandomSixDigitNumber();
+            reqData.userType = 2; // admin 1 lender 2 borrower 3
+
+            // console.log(reqDataUser);
+            let dataUser = new users(reqData);
+            let resultUser = await dataUser.save();
+
+
+            const msfIfSuccess = "Register Successfully";
+          return   res.status(200).send({ success: true, msg: msfIfSuccess, data: resultUser });
+
         } catch (error) {
             console.log("Error : ", error);
-            res.status(400).send({ success: false, msg: error.message });
+          return   res.status(400).send({ success: false, msg: error.message });
 
         }
 
