@@ -27,10 +27,16 @@ module.exports = {
     createQuery: async (req, res) => {
         try {
             let reqData = req.body;
+            const {case_no , lenderId } = req.body;
 
             let lender = await users.findOne({ _id: req.body.lenderId});
-            if(lender == null){
-                res.status(400).send({ success: false, msg: "Lender not found !!",});
+            if(!lender){
+               return res.status(400).send({ success: false, msg: "Lender not found !!",});
+            }
+
+            let alreadyQuery = await query.findOne({ lenderId: lenderId, case_no : case_no });
+            if(alreadyQuery){
+               return  res.status(400).send({ success: false, msg: "A query with this lender is already exists !!", data : alreadyQuery});
             }
 
             reqData.query_no = await generateRandomSixDigitNumber();
@@ -59,11 +65,11 @@ module.exports = {
 
 
             const msfIfSuccess = "Query Created Successfully";
-            res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
+           return res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
 
         } catch (error) {
             console.log("Error : ", error);
-            res.status(400).send({ success: false, msg: error.message });
+           return  res.status(400).send({ success: false, msg: error.message });
 
         }
     },

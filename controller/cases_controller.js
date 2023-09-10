@@ -29,38 +29,31 @@ module.exports = {
         let reqData = req.body;
         let lenders = [];
         if (lenderId) {
-            try {
-                const lenderData = await users.findOne({ _id: lenderId }); // Adjust the query to find the lender based on your schema.
+            const lenderData = await users.findOne({ _id: lenderId }); // Adjust the query to find the lender based on your schema.
 
-                if (!lenderData) {
-                    return res.status(400).json({ success: false, message: 'Lender not found' });
-                }
-
-                const creatingLender = {
-                    lenderId: String(lenderData._id),
-                    lenderName: lenderData.name,
-                    approved: 1,
-                    lander_approved: 1,
-
-                };
-
-                lenders.push(creatingLender);
-                reqData.status = 1;
-                reqData.lender_remark = "Approved";
-            } catch (error) {
-                console.error('Error finding lender:', error);
-                return res.status(500).json({ success: false, message: 'Internal server error' });
+            if (!lenderData) {
+                return res.status(400).json({ success: false, message: 'Lender not found' });
             }
+
+            const creatingLender = {
+                lenderId: String(lenderData._id),
+                lenderName: lenderData.name,
+                approved: 1,
+                lander_approved: 1,
+
+            };
+
+            lenders.push(creatingLender);
+            reqData.status = 1;
+            reqData.lender_remark = "Approved";
+
         }
         try {
 
             reqData.lenders = lenders;
-
             reqData.case_no = await generateRandomSixDigitNumber();
 
             let filterData = { _id: req.body.borrowerId, userType: 3 }
-            // let filterData = { _id: mongoose.Types.ObjectId(req.body.borrowerId), userType: 3 }
-            // console.log('findBorrower ......>> ', filterData);
             const findBorrower = await users.find(filterData)
 
             // console.log('findBorrower >> ', findBorrower);
@@ -298,7 +291,7 @@ module.exports = {
                 { ...query, 'lenders.lenderId': { $in: lenderIds } },
                 { $set: update },
                 { new: true, multi: true } // Use multi: true to update multiple documents (if lenderId is an array).
-              );
+            );
 
             if (!updatedCase) {
                 return res.status(400).json({ status: false, message: 'Case or lender not found' });
