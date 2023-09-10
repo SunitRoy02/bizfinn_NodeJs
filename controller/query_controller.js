@@ -40,7 +40,7 @@ module.exports = {
             const find = await cases.find({ case_no: parseInt(caseNo.replace(/\s/g, '')) });
             console.log('FindeCase >> ', find);
             if(find.length === 0){
-                res.status(400).send({ success: false, msg: "Case not found !!", data: result });
+                res.status(400).send({ success: false, msg: "Case not found !!"});
             }
 
 

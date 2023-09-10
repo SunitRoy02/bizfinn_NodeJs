@@ -25,8 +25,21 @@ async function generateRandomSixDigitNumber() {
 
 module.exports = {
     createCases: async (req, res) => {
+           const  { lenderId } = req.body;
+           let reqData = req.body;
+           let lenders = [];
+           if(lenderId){
+            let creatingLender = {};
+            const lenderData = await users.findOne({})
+            creatingLender.lenderId = lenderData._id
+            creatingLender.landerName = lenderData.name
+            creatingLender.approved = 1
+            creatingLender.lander_approved = 1
+            lenders.push(creatingLender);
+            reqData.status = 1
+           }
         try {
-            let reqData = req.body;
+            
             let filterData = { _id: req.body.borrowerId, userType: 3 }
             // let filterData = { _id: mongoose.Types.ObjectId(req.body.borrowerId), userType: 3 }
             console.log('findBorrower ......>> ', filterData);
@@ -45,7 +58,7 @@ module.exports = {
             reqData.borrowerTurnOver = findBorrower[0].annual_turn_over;
             reqData.business_structure = findBorrower[0].bussiness_details.bussiness_structure;
             reqData.lender_remark = "";
-            reqData.lender = [];
+            reqData.lender = lenders;
             reqData.case_no = await generateRandomSixDigitNumber();
 
             console.log(reqData);
