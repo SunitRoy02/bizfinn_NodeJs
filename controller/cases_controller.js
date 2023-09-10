@@ -28,24 +28,42 @@ module.exports = {
            const  { lenderId } = req.body;
            let reqData = req.body;
            let lenders = [];
-           if(lenderId){
-            let creatingLender = {};
-            const lenderData = await users.findOne({})
-            creatingLender.lenderId = lenderData._id
-            creatingLender.landerName = lenderData.name
-            creatingLender.approved = 1
-            creatingLender.lander_approved = 1
-            lenders.push(creatingLender);
-            reqData.status = 1
-           }
+           if (lenderId) {
+            try {
+              const lenderData = await users.findOne({ _id: lenderId }); // Adjust the query to find the lender based on your schema.
+              
+              if (!lenderData) {
+                return res.status(400).json({ success: false, message: 'Lender not found' });
+              }
+        
+              const creatingLender = {
+                lenderId: String(lenderData._id),
+                lenderName: lenderData.name,
+                approved: 1,
+                lander_approved: 1,
+                
+              };
+        
+              lenders.push(creatingLender);
+              reqData.status = 1;
+              reqData.lender_remark = "Approved";
+            } catch (error) {
+              console.error('Error finding lender:', error);
+              return res.status(500).json({ success: false, message: 'Internal server error' });
+            }
+          }
         try {
             
+            reqData.lenders = lenders;
+            
+            reqData.case_no = await generateRandomSixDigitNumber();
+
             let filterData = { _id: req.body.borrowerId, userType: 3 }
             // let filterData = { _id: mongoose.Types.ObjectId(req.body.borrowerId), userType: 3 }
-            console.log('findBorrower ......>> ', filterData);
+            // console.log('findBorrower ......>> ', filterData);
             const findBorrower = await users.find(filterData)
 
-            console.log('findBorrower >> ', findBorrower);
+            // console.log('findBorrower >> ', findBorrower);
             if (findBorrower.length == 0) {
                 return res.status(400).json({ status: false, message: 'Borrower not found' });
             }
@@ -57,9 +75,9 @@ module.exports = {
             reqData.borrowerName = findBorrower[0].name;
             reqData.borrowerTurnOver = findBorrower[0].annual_turn_over;
             reqData.business_structure = findBorrower[0].bussiness_details.bussiness_structure;
-            reqData.lender_remark = "";
-            reqData.lender = lenders;
-            reqData.case_no = await generateRandomSixDigitNumber();
+            
+           
+            
 
             console.log(reqData);
             let data = new cases(reqData);
