@@ -25,37 +25,37 @@ async function generateRandomSixDigitNumber() {
 
 module.exports = {
     createCases: async (req, res) => {
-           const  { lenderId } = req.body;
-           let reqData = req.body;
-           let lenders = [];
-           if (lenderId) {
+        const { lenderId } = req.body;
+        let reqData = req.body;
+        let lenders = [];
+        if (lenderId) {
             try {
-              const lenderData = await users.findOne({ _id: lenderId }); // Adjust the query to find the lender based on your schema.
-              
-              if (!lenderData) {
-                return res.status(400).json({ success: false, message: 'Lender not found' });
-              }
-        
-              const creatingLender = {
-                lenderId: String(lenderData._id),
-                lenderName: lenderData.name,
-                approved: 1,
-                lander_approved: 1,
-                
-              };
-        
-              lenders.push(creatingLender);
-              reqData.status = 1;
-              reqData.lender_remark = "Approved";
+                const lenderData = await users.findOne({ _id: lenderId }); // Adjust the query to find the lender based on your schema.
+
+                if (!lenderData) {
+                    return res.status(400).json({ success: false, message: 'Lender not found' });
+                }
+
+                const creatingLender = {
+                    lenderId: String(lenderData._id),
+                    lenderName: lenderData.name,
+                    approved: 1,
+                    lander_approved: 1,
+
+                };
+
+                lenders.push(creatingLender);
+                reqData.status = 1;
+                reqData.lender_remark = "Approved";
             } catch (error) {
-              console.error('Error finding lender:', error);
-              return res.status(500).json({ success: false, message: 'Internal server error' });
+                console.error('Error finding lender:', error);
+                return res.status(500).json({ success: false, message: 'Internal server error' });
             }
-          }
+        }
         try {
-            
+
             reqData.lenders = lenders;
-            
+
             reqData.case_no = await generateRandomSixDigitNumber();
 
             let filterData = { _id: req.body.borrowerId, userType: 3 }
@@ -75,9 +75,9 @@ module.exports = {
             reqData.borrowerName = findBorrower[0].name;
             reqData.borrowerTurnOver = findBorrower[0].annual_turn_over;
             reqData.business_structure = findBorrower[0].bussiness_details.bussiness_structure;
-            
-           
-            
+
+
+
 
             console.log(reqData);
             let data = new cases(reqData);
@@ -216,62 +216,101 @@ module.exports = {
     },
 
 
+    // lenderCaseStatus: async (req, res) => {
+
+    //     const caseId = req.params.id;
+    //     const lenderId = req.body.lenderId;
+    //     const newActiveValue = req.body.approved;
+
+    //     console.log('CaseId >> ', caseId);
+    //     console.log('lenderId >> ', lenderId);
+    //     console.log('approved >> ', newActiveValue);
+
+    //     try {
+    //         let singleCase = await cases.findOne({ _id: ObjectId(caseId) });
+    //         console.log('singleCase >> ', singleCase);
+    //         if (!singleCase) {
+    //             return res.status(200).json({ msg: 'Case not found' });
+    //         }
+
+    //         let didUpdated = false;
+    //         let lenders = singleCase.lenders;
+    //         for (let i = 0; i < lenders.length; i++) {
+    //             if (lenders[i].lenderId == lenderId) {
+    //                 console.log('Found at Obj >>>', lenders[i]._id);
+    //                 for (const keys in req.body) {
+    //                     lenders[i][keys] = req.body[keys]
+    //                 }
+    //                 didUpdated = true;
+    //             }
+    //         }
+
+    //         if (!didUpdated) {
+    //             return res.status(400).json({status : false, message: ' Lender not found in this case' });
+    //         }
+
+    //         const updatedCase = await cases.findOneAndUpdate(
+    //             ObjectId(caseId),
+    //             {
+    //                 $set: { lenders: lenders },
+    //             },
+    //             { new: true }
+    //         );
+
+    //         if (!updatedCase) {
+    //             return res.status(400).json({status : false, message: 'Case or lender not found' });
+    //         }
+
+    //         return res.status(200).json({ status: true, msg: 'Status Updated Successfully !!', result: updatedCase });
+    //     } catch (error) {
+    //         console.error('Error:', error);
+    //         return res.status(400).json({ status: false, msg: error });
+    //     }
+    // },
+
     lenderCaseStatus: async (req, res) => {
-
         const caseId = req.params.id;
-        const lenderId = req.body.lenderId;
-        const newActiveValue = req.body.approved;
+        const { lenderId, approved, lander_approved, ...updates } = req.body;
 
-        console.log('CaseId >> ', caseId);
-        console.log('lenderId >> ', lenderId);
-        console.log('approved >> ', newActiveValue);
+        console.log("CaseId >> ", caseId)
+        console.log("lenderId >> ", lenderId)
+        console.log("approved >> ", approved)
 
         try {
-            let singleCase = await cases.findOne({ _id: caseId });
-            console.log('singleCase >> ', singleCase);
-            if (!singleCase) {
-                return res.status(404).json({ msg: 'Case not found' });
+            const query = { _id: caseId };
+
+            // If lenderId is a single string, convert it to an array to handle both cases.
+            const lenderIds = Array.isArray(lenderId) ? lenderId : [lenderId];
+
+            const update = { ...updates };
+
+            // Check if 'approved' is present in the request body, and update it if necessary.
+            if (typeof approved !== 'undefined') {
+                update['lenders.$.approved'] = approved;
             }
 
-            let didUpdated = false;
-            let lenders = singleCase.lenders;
-            for (let i = 0; i < lenders.length; i++) {
-                if (lenders[i].lenderId == lenderId) {
-                    console.log('Found at Obj >>>', lenders[i]._id);
-
-                    for (const keys in req.body) {
-                        lenders[i][keys] = req.body[keys]
-                    }
-
-                    // lenders[i].approved = newActiveValue
-                    // lenders[i].remark = req.body.remark
-                    // lenders[i].lander_approved = req.body.lander_approved
-                    didUpdated = true;
-                }
-            }
-
-            if (!didUpdated) {
-                return res.status(404).json({ message: ' lender not found' });
+            // Check if 'lander_approved' is present in the request body, and update it if necessary.
+            if (typeof lander_approved !== 'undefined') {
+                update['lenders.$.lander_approved'] = lander_approved;
             }
 
             const updatedCase = await cases.findOneAndUpdate(
-                ObjectId(caseId),
-                {
-                    $set: { lenders: lenders },
-                },
-                { new: true }
-            );
+                { ...query, 'lenders.lenderId': { $in: lenderIds } },
+                { $set: update },
+                { new: true, multi: true } // Use multi: true to update multiple documents (if lenderId is an array).
+              );
 
             if (!updatedCase) {
-                return res.status(404).json({ message: 'Case or lender not found' });
+                return res.status(400).json({ status: false, message: 'Case or lender not found' });
             }
 
             return res.status(200).json({ status: true, msg: 'Status Updated Successfully !!', result: updatedCase });
         } catch (error) {
             console.error('Error:', error);
-            return res.status(400).json({ status: false, msg: error });
+            return res.status(400).json({ status: false, msg: error.message });
         }
     },
+
 
     getCases: async (req, res) => {
         try {
@@ -371,7 +410,7 @@ module.exports = {
     addCommentInCase: async (req, res) => {
 
         const caseId = req.params.caseId;
-        const { commenterId, remark , type } = req.body;
+        const { commenterId, remark, type } = req.body;
 
         try {
             const updatedCase = await cases.findByIdAndUpdate(
