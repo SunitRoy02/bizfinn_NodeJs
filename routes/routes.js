@@ -52,6 +52,7 @@ router.put('/updateBorrowerBusinessDetails/:id' , borrowerController.updateBorro
 router.put('/updateBorrowerKycDetails/:id' , borrowerController.updateBorrowerKycDetails)
 router.put('/updateBorrowerFinancialDetails/:id' , borrowerController.updateBorrowerFinancialDetails)
 router.get('/borrowerCases/:borrowerId',borrowerController.getCases)
+router.get('/borrowerDashbord/:borrowerId',borrowerController.borrowerDashbord)
 
 //Notification ---------
 router.post('/createNotification' , notificationController.createNotification)
@@ -71,6 +72,8 @@ router.get('/getCases',casesController.getCases)
 router.get('/getSingleCase/:id',casesController.getSingleCase)
 router.get('/getSingleCase/',casesController.getSingleCaseByNo)
 router.post('/cases/:caseId/comments',casesController.addCommentInCase)
+router.post('/cases/:caseId/shortedLenders',casesController.addShortedLenders)
+router.delete('/cases/:caseId/shortedLenders/:lenderId',casesController.deleteShortedLenders)
 
 router.delete('/deleteCase/:id',casesController.deleteCase)
 

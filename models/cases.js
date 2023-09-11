@@ -1,6 +1,13 @@
 const mongoose = require('mongoose');
 
 
+const commentOnCase = mongoose.Schema({
+    commenterId: String,
+    type: String,
+    remark: { type: String, default: ""},
+    createdAt : { type: Date, default: Date.now },
+});
+
 const lendersSchema = mongoose.Schema({
     lenderId: String,
     approved: { type: Number, default: 0 },
@@ -11,14 +18,10 @@ const lendersSchema = mongoose.Schema({
     lender_remark: { type: String, default: ""},    
 });
 
-
-const commentOnCase = mongoose.Schema({
-    commenterId: String,
-    type: String,
-    remark: { type: String, default: ""},
-    createdAt : { type: Date, default: Date.now },
+const shortedSchema = mongoose.Schema({
+    lenderId: String,
+    landerName: String,
 });
-
 
 const casesSchema = mongoose.Schema({
 
@@ -36,6 +39,7 @@ const casesSchema = mongoose.Schema({
     business_structure: String,
     doc_passwords: String,
     lenders:[lendersSchema],
+    shortedLenders:{ type: [shortedSchema], unique: true },
     comments:[commentOnCase]
     
 });

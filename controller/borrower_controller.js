@@ -359,18 +359,37 @@ module.exports = {
 
 
     getCases: async (req, res) => {
-        try {
 
+        try {
             const borrowerId = req.params.borrowerId;
 
-            console.log("Borrower >> ", borrowerId);
-            const find = await cases.find({ 'borrower': ObjectId(borrowerId) });
+            const { name, fromDate, toDate } = req.query;
+
+            let queryMap = { 'borrower': ObjectId(borrowerId) };
+        
+            if (name) {
+                queryMap.borrowerName = { $regex: new RegExp(name, 'i') }; // Case-insensitive name search
+            }
+        
+            if (fromDate && toDate) {
+                queryMap.createdAt = {
+                $gte: new Date(fromDate),
+                $lte: new Date(toDate),
+              };
+            }
+
+
+            console.log("borrowerId >> ",borrowerId);
+            const userByborrowerId = await users.findOne({ _id:  borrowerId});
+            if(!userByborrowerId){
+               return  res.status(400).send({ success: false,msg:"Borrower not found",});
+            }
+            const find = await cases.find(queryMap);
             if (find.length === 0) {
-                res.status(200).send({ success: false, msg: "No Cases Found ", data: find });
+               return  res.status(200).send({ success: false,msg:"No Cases Found ", data: find });
             } else {
-                //send otp work here 
                 const message = "Cases Found successfully";
-                res.status(200).send({ success: true, msg: message, data: find });
+               return  res.status(200).send({ success: true, msg: message, data: find });
             }
 
         } catch (error) {
@@ -379,6 +398,49 @@ module.exports = {
         }
     },
 
+
+    borrowerDashbord: async (req, res) => {
+
+        try {
+            const borrowerId = req.params.borrowerId;
+
+            const {fromDate, toDate } = req.query;
+
+            let queryMap = { 'borrower': ObjectId(borrowerId) };
+  
+        
+            if (fromDate && toDate) {
+                queryMap.createdAt = {
+                $gte: new Date(fromDate),
+                $lte: new Date(toDate),
+              };
+            }
+
+
+            console.log("borrowerId >> ",borrowerId);
+            const userByborrowerId = await users.findOne({ _id:  borrowerId});
+            if(!userByborrowerId){
+               return  res.status(400).send({ success: false,msg:"Borrower not found",});
+            }
+            const find = await cases.find(queryMap);
+            if (find.length === 0) {
+               return  res.status(200).send({ success: false,msg:"No Cases Found ", data: find });
+            } else {
+                const message = "Cases Found successfully";
+                let dataObjact = {
+                    pendingCases : find.filter(obj => obj.status === 0).length,
+                    completeCases : find.filter(obj => obj.status === 1).length,
+                    rejectedCases : find.filter(obj => obj.status === 2).length,
+                    inprogressCases : find.filter(obj => obj.status === 3).length,
+                }
+               return  res.status(200).send({ success: true, msg: message, data: dataObjact });
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            return res.status(400).json({ status: false, msg: error });
+        }
+    },
 
 }
 
