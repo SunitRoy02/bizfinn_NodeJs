@@ -146,58 +146,69 @@ module.exports = {
     // },
 
     updateLender: async (req, res) => {
-    try {
-        const { id: itemId } = req.params;
-        const { lenderIds } = req.body; // Change to accept an array of lenderIds
-
-        // Ensure lenderIds is an array
-        if (!Array.isArray(lenderIds)) {
-            return res.status(400).json({ status: false, message: 'LenderIds should be an array' });
+        try {
+            const { id: itemId } = req.params;
+            const { lenderIds } = req.body; // Change to accept an array of lenderIds
+    
+            // Ensure lenderIds is an array
+            if (!Array.isArray(lenderIds)) {
+                return res.status(400).json({ status: false, message: 'LenderIds should be an array' });
+            }
+    
+            // Find all lenders with userType 2 whose IDs are in lenderIds
+            const lenders = await users.find({ _id: { $in: lenderIds }, userType: 2 });
+    
+            if (lenders.length !== lenderIds.length) {
+                return res.status(400).json({ status: false, message: 'One or more lenders not found or have incorrect userType' });
+            }
+    
+            const caseFound = await cases.findOne({ _id: itemId });
+    
+            if (!caseFound) {
+                return res.status(400).json({ status: false, message: 'Case not found' });
+            }
+    
+            const existingLenderIds = caseFound.lenders.map((lender) => lender.lenderId);
+    
+            // Filter lenderIds to exclude those already assigned to the case
+            const newLenderIds = lenderIds.filter((lenderId) => !existingLenderIds.includes(lenderId));
+    
+            if (newLenderIds.length === 0) {
+                return res.status(400).json({ status: false, message: 'All lenders are already assigned to this case' });
+            }
+    
+            const newLenders = newLenderIds.map((lenderId) => {
+                const lender = lenders.find((lender) => lender._id.toString() === lenderId);
+                return {
+                    landerName: lender.name, // Include lenderName
+                    lenderId,
+                };
+            });
+    
+            // Remove lenders from the shortedLenders array
+            const updatedShortedLenders = caseFound.shortedLenders.filter((shortedLender) => !newLenderIds.includes(shortedLender.lenderId));
+            console.log("newLenders >> ",newLenders);
+            const updatedItem = await cases.findByIdAndUpdate(
+                itemId,
+                { 
+                    $push: { lenders: { $each: newLenders } },
+                    shortedLenders: updatedShortedLenders // Update the shortedLenders array
+                },
+                { new: true }
+            );
+    
+            if (!updatedItem) {
+                return res.status(400).json({ status: false, message: 'Failed to update case' });
+            }
+    
+            return res.status(200).json({ status: true, message: 'Case Updated Successfully',result: updatedItem });
+        } catch (error) {
+            console.error("Error:", error);
+            res.status(400).json({ status: false, message: error.message });
         }
-
-        // Find all lenders with userType 2 whose IDs are in lenderIds
-        const lenders = await users.find({ _id: { $in: lenderIds }, userType: 2 });
-
-        if (lenders.length !== lenderIds.length) {
-            return res.status(400).json({ status: false, message: 'One or more lenders not found or have incorrect userType' });
-        }
-
-        const caseFound = await cases.findOne({ _id: itemId });
-
-        if (!caseFound) {
-            return res.status(400).json({ status: false, message: 'Case not found' });
-        }
-
-        const existingLenderIds = caseFound.lenders.map((lender) => lender.lenderId);
-
-        // Filter lenderIds to exclude those already assigned to the case
-        const newLenderIds = lenderIds.filter((lenderId) => !existingLenderIds.includes(lenderId));
-
-        if (newLenderIds.length === 0) {
-            return res.status(400).json({ status: false, message: 'All lenders are already assigned to this case' });
-        }
-
-        const newLenders = newLenderIds.map((lenderId) => ({
-            lenderName: lenders.find((lender) => lender._id.toString() === lenderId).name,
-            lenderId,
-        }));
-
-        const updatedItem = await cases.findByIdAndUpdate(
-            itemId,
-            { $push: { lenders: { $each: newLenders } } },
-            { new: true }
-        );
-
-        if (!updatedItem) {
-            return res.status(400).json({ status: false, message: 'Failed to update case' });
-        }
-
-        return res.status(200).json({ status: true, message: 'Case Updated Successfully', result: updatedItem });
-    } catch (error) {
-        console.error("Error:", error);
-        res.status(400).json({ status: false, message: error.message });
-    }
-},
+    },
+    
+    
 
 
     updateBorrower: async (req, res) => {
@@ -352,7 +363,11 @@ module.exports = {
                 return res.status(400).json({ status: false, message: 'Case or lender not found' });
             }
 
+            if (typeof approved !== 'undefined') {
+                updateBorrowerCaseData(caseId);
+            }
             return res.status(200).json({ status: true, msg: 'Status Updated Successfully !!', result: updatedCase });
+            
         } catch (error) {
             console.error('Error:', error);
             return res.status(400).json({ status: false, msg: error.message });
@@ -541,3 +556,31 @@ module.exports = {
 }
 
 
+async function updateBorrowerCaseData  (caseId){
+
+    //get and update borrower case count -----
+    const find = await cases.findOne({ _id: ObjectId(caseId) });
+    if (!find) {
+        return res.status(400).json({ status: false, message: 'Case not found' });
+    }
+    const allCases = await cases.find({ 'borrower': ObjectId(find.borrower) });
+
+    let updateFields = {
+        case_pending : allCases.filter(obj => obj.status === 0).length,
+        case_approved : allCases.filter(obj => obj.status === 1).length,
+        // rejectedCases : allCases.filter(obj => obj.status === 2).length,
+        case_logged : allCases.filter(obj => obj.status === 3).length,
+    }
+
+    // Find and update the document with the provided ID
+    const updatedItem = await users.findByIdAndUpdate(
+        find.borrower,
+        { $set: updateFields },
+        { new: true } // Return the updated document
+    );
+
+    if(updatedItem){
+        console.log("Borrower Updated Successfully !\n\n")
+    }
+
+}

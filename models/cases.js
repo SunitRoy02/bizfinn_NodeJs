@@ -9,10 +9,10 @@ const commentOnCase = mongoose.Schema({
 });
 
 const lendersSchema = mongoose.Schema({
-    lenderId: String,
+    lenderId: { type: String, default: ""},
     approved: { type: Number, default: 0 },
     lander_approved: { type: Number, default: 0 },
-    landerName: String,
+    landerName: { type: String, default: ""},
     createdAt : { type: Date, default: Date.now },
     updatedAt : Date,
     lender_remark: { type: String, default: ""},    
@@ -38,7 +38,7 @@ const casesSchema = mongoose.Schema({
     borrowerTurnOver: String,
     business_structure: String,
     doc_passwords: String,
-    lenders:[lendersSchema],
+    lenders:{ type: [lendersSchema], unique: true },
     shortedLenders:{ type: [shortedSchema], unique: true },
     comments:[commentOnCase]
     
