@@ -42,7 +42,7 @@ const bussinessSchema = mongoose.Schema({
     type_of_business: String,
     annual_turn_over: String,
     type_of_loan: String,
-    loan_amount: String,
+    gst_number: String,
 })
 
 const userSchema = mongoose.Schema({

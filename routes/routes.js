@@ -83,6 +83,8 @@ router.get('/getQuery',queryController.getQuery)
 router.get('/getSingleQuery/:queryId',queryController.getSingleQuery)
 router.delete('/deleteQuery/:queryId',queryController.deleteQuery)
 router.put('/queryStatus/:id',queryController.queryStatus)
+router.post('/query/:queryId/document',queryController.addQueryDoc)
+router.delete('/query/:queryId/document/:docId',queryController.deleteQueryDoc)
 
 
 //Chat -------------

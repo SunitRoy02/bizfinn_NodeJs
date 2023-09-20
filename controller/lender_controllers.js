@@ -88,15 +88,21 @@ module.exports = {
     getLenders: async (req, res) => {
         try {
 
-            const { name } = req.query;
+            const { name, fromDate, toDate } = req.query;
 
             const queryMap = {};
             queryMap.userType = 2;
-        
+
             if (name) {
                 queryMap.name = { $regex: new RegExp(name, 'i') }; // Case-insensitive name search
             }
 
+            if (fromDate && toDate) {
+                queryMap.createdAt = {
+                    $gte: new Date(fromDate),
+                    $lte: new Date(toDate),
+                };
+            }
             const find = await users.find(queryMap)
             // console.log("Find IN GetProfile >>> ", find);
             if (find.length === 0) {

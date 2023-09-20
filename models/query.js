@@ -1,6 +1,13 @@
 const mongoose = require('mongoose');
 
-const userSchema = mongoose.Schema({
+
+const docSchema = mongoose.Schema({
+    url : String,
+    docId : mongoose.Types.ObjectId,
+    createdAt : { type: Date, default: Date.now },
+})
+
+const querySchema = mongoose.Schema({
 
     lender_name: String,
     lenderId: String,
@@ -16,7 +23,8 @@ const userSchema = mongoose.Schema({
     business_structure: String,
     loan_ask: String,
     status: { type: Number, default: 0 },
+    extraDocs : { type: [docSchema], unique: true },
     
 });
 
-module.exports = mongoose.model('query', userSchema);
+module.exports = mongoose.model('query', querySchema);
