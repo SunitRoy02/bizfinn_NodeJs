@@ -9,7 +9,7 @@ async function createOrGetConversationRoom(senderId, receiverId,data) {
   
     // Check if a conversation room already exists between the users
     const existingConversation = await chatConversation.findOne({
-      users: sortedUserIds,
+      $or:[ {users:sortedUserIds},{users:sortedUserIds.reverse}],
     });
   
     if (existingConversation) {
