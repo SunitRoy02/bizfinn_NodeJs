@@ -5,6 +5,7 @@ const borrowerController = require('../controller/borrower_controller')
 const notificationController = require('../controller/notification_controller')
 const casesController = require('../controller/cases_controller')
 const queryController = require('../controller/query_controller')
+const adminController = require('../controller/admin_controllers')
 
 const { upload } = require('../routes/upload')
 
@@ -20,6 +21,8 @@ const chat_controller = require('../controller/chat_controller')
 
 
 
+//Admin--------
+router.get('/admin/dashbord',adminController.dashbord)
 
 
 
@@ -41,6 +44,7 @@ router.get('/getLeanders' , lenderController.getLenders)
 router.post('/getSingleLender' , getSingleLenderValidation , lenderController.getSingleLender)
 router.delete('/deleteLeander/:lenderId' , getSingleLenderValidation , lenderController.deleteLeander)
 router.get('/lenderCases/:lenderId',lenderController.getCases)
+router.get('/lender/dashbord',lenderController.lenderDashbord)
 
 //Borrower ---------
 router.post('/registerBorrower' , borrowerController.createBrowwer)

@@ -8,20 +8,20 @@ const { ObjectId } = require('mongodb');
 async function generateRandomSixDigitNumber() {
     const min = 100000; // Smallest 6-digit number
     const max = 9999999; // Largest 6-digit number
-  
+
     let generatedNum;
     let isUnique = false;
-  
+
     while (!isUnique) {
-      generatedNum = Math.floor(Math.random() * (max - min + 1)) + min;
-  
-      const existingCase = await users.findOne({ lender_id: generatedNum });
-      if (!existingCase) {
-        isUnique = true;
-      }
+        generatedNum = Math.floor(Math.random() * (max - min + 1)) + min;
+
+        const existingCase = await users.findOne({ lender_id: generatedNum });
+        if (!existingCase) {
+            isUnique = true;
+        }
     }
     return generatedNum;
-  }
+}
 
 
 module.exports = {
@@ -33,30 +33,34 @@ module.exports = {
                 return res.status(400).send({ success: false, errors: errors.array()[0] });
             }
 
-            const {email, mobile } = req.body;
+            const { email, mobile } = req.body;
 
             console.log(req.body);
             console.log(email);
             console.log(mobile);
 
-            if(email != undefined){
+            if (email != undefined) {
                 console.log('inside email');
                 const emailData = await users.findOne({ email: email })
-                if(emailData !== null){
+                if (emailData !== null) {
                     console.log('emailData >> ', emailData);
-                  return res.status(400).send({ success: false,
-                         msg: "User with this email already exixts" });
+                    return res.status(400).send({
+                        success: false,
+                        msg: "User with this email already exixts"
+                    });
                 }
             }
-            if(mobile !== undefined){
+            if (mobile !== undefined) {
                 console.log('inside phone');
 
                 const phoneData = await users.findOne({ mobile: mobile })
-                if(phoneData !== null){
+                if (phoneData !== null) {
                     console.log('phoneData >> ', phoneData);
 
-                  return res.status(400).send({ success: false,
-                         msg: "User with this mobile number already exixts" });
+                    return res.status(400).send({
+                        success: false,
+                        msg: "User with this mobile number already exixts"
+                    });
                 }
             }
 
@@ -74,11 +78,11 @@ module.exports = {
 
 
             const msfIfSuccess = "Register Successfully";
-          return   res.status(200).send({ success: true, msg: msfIfSuccess, data: resultUser });
+            return res.status(200).send({ success: true, msg: msfIfSuccess, data: resultUser });
 
         } catch (error) {
             console.log("Error : ", error);
-          return   res.status(400).send({ success: false, msg: error.message });
+            return res.status(400).send({ success: false, msg: error.message });
 
         }
 
@@ -172,8 +176,8 @@ module.exports = {
                 reqData.case_approved = 0;
                 reqData.case_pending = 0;
                 reqData.lender_id = generateRandomSixDigitNumber();
-                 
-                let reqDataUser  = {};
+
+                let reqDataUser = {};
                 reqDataUser.lenderData = reqData;
                 reqDataUser.name = reqData.name;
                 reqDataUser.email = reqData.email;
@@ -223,38 +227,38 @@ module.exports = {
     },
 
 
-    getCases : async (req,res)=> {
+    getCases: async (req, res) => {
         try {
             const lenderId = req.params.lenderId;
 
             const { name, fromDate, toDate } = req.query;
 
-            const queryMap = {'lenders.lenderId': ObjectId(lenderId)};
-        
+            const queryMap = { 'lenders.lenderId': ObjectId(lenderId) };
+
             if (name) {
                 queryMap.borrowerName = { $regex: new RegExp(name, 'i') }; // Case-insensitive name search
             }
-        
+
             if (fromDate && toDate) {
                 queryMap.createdAt = {
-                $gte: new Date(fromDate),
-                $lte: new Date(toDate),
-              };
+                    $gte: new Date(fromDate),
+                    $lte: new Date(toDate),
+                };
             }
 
 
-            console.log("lenderId >> ",lenderId);
-            const userByLenderId = await users.findOne({ _id:  lenderId});
-            if(!userByLenderId){
-               return  res.status(400).send({ success: false,msg:"Lander not found",});
+            console.log("lenderId >> ", lenderId);
+            const userByLenderId = await users.findOne({ _id: lenderId });
+            if (!userByLenderId) {
+                return res.status(400).send({ success: false, msg: "Lander not found", });
             }
             const find = await cases.find(queryMap);
             if (find.length === 0) {
-               return  res.status(200).send({ success: false,msg:"No Cases Found ", data: find });
+                return res.status(200).send({ success: false, msg: "No Cases Found ", data: find });
             } else {
                 //send otp work here 
                 const message = "Cases Found successfully";
-               return  res.status(200).send({ success: true, msg: message, data: find });
+                return res.status(200).send({ success: true, msg: message, data: find });
             }
 
         } catch (error) {
@@ -263,6 +267,63 @@ module.exports = {
         }
     },
 
+    lenderDashbord: async (req, res) => {
+        try {
+           
+                    // Count the occurrences of each lender remark in cases with status 3
+                    const rejectedCounts = await cases.aggregate([
+                        {
+                            $match: { status: 3 },
+                        },
+                        {
+                            $group: {
+                                _id: null,
+                                lender_remark_counts: {
+                                    $sum: {
+                                        $cond: [
+                                            { $in: ['$lender_remark', lenderRemarksToCount] },
+                                            1,
+                                            0,
+                                        ],
+                                    },
+                                },
+                            },
+                        },
+                    ]);
+
+                    // Prepare the rejected_chart object
+                    const rejected_chart = {
+                        incomplete_data: 0,
+                        low_cibil: 0,
+                        high_leverage: 0,
+                        low_runway: 0,
+                    };
+
+                    // Populate the counts based on the lender remark
+                    for (const countObj of rejectedCounts) {
+                        rejected_chart.incomplete_data += countObj.lender_remark_counts;
+                        rejected_chart.low_cibil += countObj.lender_remark_counts;
+                        rejected_chart.high_leverage += countObj.lender_remark_counts;
+                        rejected_chart.low_runway += countObj.lender_remark_counts;
+                    }
+
+                    // Send the response with the rejected_chart object
+                    res.json({ rejected_chart });
+            
+
+        } catch (error) {
+            console.error('Error:', error);
+            return res.status(400).json({ status: false, msg: error });
+        }
+    },
+
+
+
 }
 
-
+const lenderRemarksToCount = [
+    'Incomplete data',
+    'Low CIBIL',
+    'High Leverage',
+    'Low Runway',
+];

@@ -68,7 +68,6 @@ module.exports = {
         }
     },
 
-
     getChatRooms: async (data) => {
 
         console.log(data);
@@ -181,6 +180,30 @@ module.exports = {
             const findChatComplete = await chatDetails.find({ roomId: data.roomId })
             const msfIfSuccess = "Chat Deleted Successfully";
             return { success: true, msg: msfIfSuccess, data: findChatComplete };
+
+        } catch (error) {
+
+            console.log("Error : ", error);
+            return { success: false, msg: error.message };
+        }
+
+    },
+
+
+    deleteChatRoom: async (data) => {
+
+        const { roomId } = data;
+
+        try {
+            // Delete the item based on its _id and userId
+            const deletionResult = await chatConversation.deleteOne({ roomId: roomId,new :  true});
+
+            if (deletionResult.deletedCount === 0) {
+                const msgIfSuccess = "Item not found or not deletable";
+                return { success: false, msg: msgIfSuccess };
+            }
+            const msfIfSuccess = "ChatRoom Deleted Successfully";
+            return { success: true, msg: msfIfSuccess, };
 
         } catch (error) {
 

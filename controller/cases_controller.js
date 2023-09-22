@@ -63,17 +63,16 @@ module.exports = {
             }
             if (findBorrower[0].kyc_details == null || findBorrower[0].financial_details == null) {
                 return res.status(400).json({ status: false, message: 'Please update all related documents first!!' });
-            }
+            }   
 
             reqData.borrower = findBorrower[0]._id;
             reqData.borrowerName = findBorrower[0].name;
             reqData.borrowerTurnOver = findBorrower[0].annual_turn_over;
             reqData.business_structure = findBorrower[0].bussiness_details.bussiness_structure;
+            reqData.kyc_details = findBorrower[0].kyc_details;
+            reqData.financial_details = findBorrower[0].financial_details;
 
-
-
-
-            console.log(reqData);
+            // console.log(reqData);
             let data = new cases(reqData);
             let result = await data.save();
 
@@ -187,7 +186,7 @@ module.exports = {
 
             // Remove lenders from the shortedLenders array
             const updatedShortedLenders = caseFound.shortedLenders.filter((shortedLender) => !newLenderIds.includes(shortedLender.lenderId));
-            console.log("newLenders >> ", newLenders);
+            // console.log("newLenders >> ", newLenders);
             const updatedItem = await cases.findByIdAndUpdate(
                 itemId,
                 {

@@ -41,10 +41,14 @@ const io = socketIO(server, {
      });
 
      socket.on('deleteSingleMsg', async  (data) => {
-
         var result = await  chatController.deleteSingleMsg(data);
          io.emit('getMessagesOfRoom', result);
      });
+
+     socket.on('deleteConversation', async  (data) => {
+      var result = await  chatController.deleteChatRoom(data);
+       io.emit('msgListner', result);
+   });
 
     socket.on('disconnect', () => console.log('User disconnected'));
   });
