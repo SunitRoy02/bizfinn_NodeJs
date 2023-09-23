@@ -12,6 +12,12 @@ module.exports = {
   dashbord: async (req, res) => {
     try {
 
+      const {lenderId} = req.params;
+      let filterBody = {};
+      if(lenderId){
+        filterBody = { 'lenders.lenderId': ObjectId(lenderId)  };
+      }
+
       const allCases = await cases.find({});
 
       //Rejection reason graph data
@@ -92,25 +98,67 @@ module.exports = {
         },
       };
 
-      const k = {
-        gross_revenue : 0,
-        gross_transaction : 0,
-        disbursement : 0
-      };
-
       const kummyData = {
-        jan : k,
-        feb : k,
-        mar : k,
-        apr : k,
-        may : k,
-        jun : k,
-        jul : k,
-        aug : k,
-        sep : k,
-        oct : k,
-        nov : k,
-        dec : k,
+        jan : {
+          gross_revenue : 23,
+          gross_transaction : 32,
+          disbursement : 23
+        },
+        feb : {
+          gross_revenue : 43,
+          gross_transaction : 23,
+          disbursement : 34
+        },
+        mar : {
+          gross_revenue : 23,
+          gross_transaction : 34,
+          disbursement : 53
+        },
+        apr : {
+          gross_revenue : 93,
+          gross_transaction : 12,
+          disbursement : 32
+        },
+        may : {
+          gross_revenue : 42,
+          gross_transaction : 52,
+          disbursement : 24
+        },
+        jun : {
+          gross_revenue : 32,
+          gross_transaction : 52,
+          disbursement : 12
+        },
+        jul : {
+          gross_revenue : 0,
+          gross_transaction : 0,
+          disbursement : 0
+        },
+        aug : {
+          gross_revenue : 0,
+          gross_transaction : 0,
+          disbursement : 0
+        },
+        sep : {
+          gross_revenue : 0,
+          gross_transaction : 0,
+          disbursement : 0
+        },
+        oct : {
+          gross_revenue : 0,
+          gross_transaction : 0,
+          disbursement : 0
+        },
+        nov : {
+          gross_revenue : 0,
+          gross_transaction : 0,
+          disbursement : 0
+        },
+        dec : {
+          gross_revenue : 0,
+          gross_transaction : 0,
+          disbursement : 0
+        },
       }
 
       res.json(

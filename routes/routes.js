@@ -23,6 +23,8 @@ const chat_controller = require('../controller/chat_controller')
 
 //Admin--------
 router.get('/admin/dashbord',adminController.dashbord)
+router.get('/admin/dashbord/:lenderId',adminController.dashbord)
+
 
 
 
