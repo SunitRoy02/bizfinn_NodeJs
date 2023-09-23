@@ -29,26 +29,67 @@ module.exports = {
       const activeCases = await activeCasesCount(allCases);
       console.log('Acive Cases >>>',activeCases);
       // Send the response with the rejected_chart object
-
-      const d = {
-        approved : 0,
-        rejected : 0,
-        progress : 0
-      };
-
       const dummyData = {
-        jan : d,
-        feb : d,
-        mar : d,
-        apr : d,
-        may : d,
-        jun : d,
-        jul : d,
-        aug : d,
-        sep : d,
-        oct : d,
-        nov : d,
-        dec : d,
+        jan : {
+          approved : 5,
+          rejected : 7,
+          progress : 3
+        },
+        feb : {
+          approved : 5,
+          rejected : 4,
+          progress : 6
+        },
+        mar : {
+          approved : 2,
+          rejected : 4,
+          progress : 5
+        },
+        apr :{
+          approved : 6,
+          rejected : 3,
+          progress : 4
+        },
+        may : {
+          approved : 4,
+          rejected : 5,
+          progress : 6
+        },
+        jun : {
+          approved : 2,
+          rejected : 5,
+          progress : 1
+        },
+        jul : {
+          approved : 2,
+          rejected : 3,
+          progress : 4
+        },
+        aug : {
+          approved : 0,
+          rejected : 0,
+          progress : 0
+        },
+        sep : {
+          approved : 0,
+          rejected : 0,
+          progress : 0
+        },
+        oct : {
+          approved : 0,
+          rejected : 0,
+          progress : 0
+        },
+        nov : {
+          approved : 0,
+          rejected : 0,
+          progress : 0
+        },
+        dec : {
+          approved : 0,
+          rejected : 0,
+          progress : 0
+        },
       };
 
       const k = {
