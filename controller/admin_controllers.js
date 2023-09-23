@@ -22,13 +22,25 @@ module.exports = {
       console.log(approved_cases);
       //AllType Of  graph data
       const all_cases_type = allGraphCount(typesOfLoan, allCases,);
-      console.log(all_cases_type);
+      console.log(allCases);
 
-      const totalValue = await calculateReq();
+      const totalValue = await calculateReq(allCases);
 
+      console.log('TOtal >>>',totalValue);
 
       // Send the response with the rejected_chart object
-      res.json({ total_origination_value: totalValue, all_cases_chart: all_cases_type, approved_chart: approved_cases, rejection_chart: rejection_reason, });
+      res.json(
+        { 
+        total_origination_value: totalValue,
+        gross_transaction_value: 0,
+        active_cases_count: 0,
+        gross_revenue: 0,
+
+        total_origination_value: totalValue,
+        all_cases_chart: all_cases_type,
+        approved_chart: approved_cases, 
+        rejection_chart: rejection_reason, 
+      });
 
 
     } catch (error) {
@@ -148,7 +160,12 @@ function allGraphCount(remarksToCount, data,) {
 
 
 async function calculateReq( data ) {
-  let totalRequirement;
-
-    return totalRequirement;
+  let totalRequirement = 0;
+  for (let i = 0; i < data.length; i++) {
+    if (typeof data[i].requirement === 'number') {
+      console.log(data[i].requirement);
+      totalRequirement += data[i].requirement;
+    }
+  }
+  return totalRequirement;
 }
