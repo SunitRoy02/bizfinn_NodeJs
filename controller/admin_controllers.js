@@ -18,7 +18,7 @@ module.exports = {
         filterBody = { 'lenders.lenderId': ObjectId(lenderId)  };
       }
 
-      const allCases = await cases.find({});
+      const allCases = await cases.find(filterBody);
 
       //Rejection reason graph data
       const rejection_reason = errorGraphCount(lenderRemarksToCount, allCases, 3);
