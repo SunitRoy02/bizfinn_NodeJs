@@ -29,12 +29,37 @@ module.exports = {
       const activeCases = await activeCasesCount(allCases);
       console.log('Acive Cases >>>',activeCases);
       // Send the response with the rejected_chart object
+
+      const d = {
+        approved : 0,
+        rejected : 0,
+        progress : 0
+      };
+
+      const dummyData = {
+        jan : d,
+        feb : d,
+        mar : d,
+        apr : d,
+        may : d,
+        jun : d,
+        jul : d,
+        aug : d,
+        sep : d,
+        oct : d,
+        nov : d,
+        dec : d,
+      }
+
       res.json(
         { 
         total_origination_value: totalValue,
         gross_transaction_value: 0,
         active_cases_count: activeCases,
         gross_revenue: 0,
+
+        growth_statistics_year : dummyData,
+        loan_status_year : dummyData,
 
         total_origination_value: totalValue,
         all_cases_chart: all_cases_type,
