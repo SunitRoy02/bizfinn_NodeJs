@@ -25,15 +25,15 @@ module.exports = {
       console.log(allCases);
 
       const totalValue = await calculateReq(allCases);
-
       console.log('TOtal >>>',totalValue);
-
+      const activeCases = await activeCasesCount(allCases);
+      console.log('Acive Cases >>>',activeCases);
       // Send the response with the rejected_chart object
       res.json(
         { 
         total_origination_value: totalValue,
         gross_transaction_value: 0,
-        active_cases_count: 0,
+        active_cases_count: activeCases,
         gross_revenue: 0,
 
         total_origination_value: totalValue,
@@ -163,9 +163,18 @@ async function calculateReq( data ) {
   let totalRequirement = 0;
   for (let i = 0; i < data.length; i++) {
     if (typeof data[i].requirement === 'number') {
-      console.log(data[i].requirement);
       totalRequirement += data[i].requirement;
     }
   }
   return totalRequirement;
+}
+
+async function activeCasesCount( data ) {
+  let activeCases = 0;
+  for (let i = 0; i < data.length; i++) {
+    if(data[i].status === 1){
+        activeCases ++ ;
+    }
+  }
+  return activeCases;
 }
