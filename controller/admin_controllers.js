@@ -49,6 +49,27 @@ module.exports = {
         oct : d,
         nov : d,
         dec : d,
+      };
+
+      const k = {
+        gross_revenue : 0,
+        gross_transaction : 0,
+        disbursement : 0
+      };
+
+      const kummyData = {
+        jan : k,
+        feb : k,
+        mar : k,
+        apr : k,
+        may : k,
+        jun : k,
+        jul : k,
+        aug : k,
+        sep : k,
+        oct : k,
+        nov : k,
+        dec : k,
       }
 
       res.json(
@@ -58,7 +79,7 @@ module.exports = {
         active_cases_count: activeCases,
         gross_revenue: 0,
 
-        growth_statistics_year : dummyData,
+        growth_statistics_year : kummyData,
         loan_status_year : dummyData,
 
         total_origination_value: totalValue,
