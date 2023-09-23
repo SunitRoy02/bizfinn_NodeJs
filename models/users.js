@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const docSchema = mongoose.Schema({
     url : String,
     docId : mongoose.Types.ObjectId,
-    status : { type: Number, default: 0 },
+    status : { type: Number, default: 3 },
     createdAt : { type: Date, default: Date.now },
     updatedAt : { type: Date,},
 })

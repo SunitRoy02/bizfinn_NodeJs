@@ -24,6 +24,7 @@ async function generateRandomSixDigitNumber() {
 }
 
 
+
 module.exports = {
     createCases: async (req, res) => {
         const { lenderId } = req.body;
@@ -69,8 +70,13 @@ module.exports = {
             reqData.borrowerName = findBorrower[0].name;
             reqData.borrowerTurnOver = findBorrower[0].annual_turn_over;
             reqData.business_structure = findBorrower[0].bussiness_details.bussiness_structure;
-            reqData.kyc_details = findBorrower[0].kyc_details;
-            reqData.financial_details = findBorrower[0].financial_details;
+            
+            // findBorrower[0].kyc_details.values().array.forEach(element => delete details.status );
+    
+            let new_kyc = findBorrower[0].kyc_details;
+            reqData.kyc_details = new_kyc;
+            let new_financial = findBorrower[0].financial_details;
+            reqData.kyc_details = new_financial;
 
             // console.log(reqData);
             let data = new cases(reqData);

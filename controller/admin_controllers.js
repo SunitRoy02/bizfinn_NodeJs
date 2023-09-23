@@ -15,13 +15,15 @@ module.exports = {
                 const allCases = await cases.find({});
 
                 //Rejection reason graph data
-                const rejection_reason = errorGraphCount(lenderRemarksToCount, allCases);
+                const rejection_reason = errorGraphCount(lenderRemarksToCount, allCases, 3);
                 console.log(rejection_reason);
+                //Rejection reason graph data
+                const approved_cases = approveGraphCount(typesOfLoan, allCases, 2 );
+                console.log(approved_cases);
 
                 
-
                     // Send the response with the rejected_chart object
-                    res.json({ rejection_reason });
+                    res.json({ approved_cases , rejection_reason , });
             
 
         } catch (error) {
@@ -41,7 +43,17 @@ const lenderRemarksToCount = [
     'Low Runway',
 ];
 
-function errorGraphCount(remarksToCount, data) {
+const typesOfLoan = [
+  'Unsecured Short term loan',
+  'Vendor Financing',
+  'Sales Bill discounting',
+  'EXIM Financing',
+  'Scured Term Loan',
+  'Credit Line Or OD',
+  'Other',
+];
+
+function errorGraphCount(remarksToCount, data,status) {
     // Create an object to store the counts of each lender remark
     const remarkCounts = {};
   
@@ -52,8 +64,38 @@ function errorGraphCount(remarksToCount, data) {
   
     // Iterate through the data and count the occurrences of lender remarks
     for (const item of data) {
-      if (item.status === 3) {
+      if (item.status === status) {
         const lenderRemark = item.lender_remark;
+        if (remarksToCount.includes(lenderRemark)) {
+          remarkCounts[lenderRemark]++;
+        }
+      }
+    }
+  
+    // Create the desired mapping
+    const remarkMapping = {};
+    for (const remark of remarksToCount) {
+      // Convert the remark to lowercase and replace spaces with underscores
+      const formattedRemark = remark.toLowerCase().replace(/ /g, '_');
+      remarkMapping[formattedRemark] = remarkCounts[remark];
+    }
+  
+    return remarkMapping;
+}
+
+  function approveGraphCount(remarksToCount, data,status) {
+    // Create an object to store the counts of each lender remark
+    const remarkCounts = {};
+  
+    // Initialize the counts to 0 for all lender remarks
+    for (const remark of remarksToCount) {
+      remarkCounts[remark] = 0;
+    }
+  
+    // Iterate through the data and count the occurrences of lender remarks
+    for (const item of data) {
+      if (item.status === status) {
+        const lenderRemark = item.type_of_loan;
         if (remarksToCount.includes(lenderRemark)) {
           remarkCounts[lenderRemark]++;
         }
