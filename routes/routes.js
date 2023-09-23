@@ -81,6 +81,9 @@ router.delete('/cases/:caseId/shortedLenders/:lenderId',casesController.deleteSh
 
 router.delete('/deleteCase/:id',casesController.deleteCase)
 
+router.put('/updateCaseDocStatus/:caseId/:schemaType/:docType',casesController.updateDocStatus)
+
+
 //Query -------------
 router.post('/createQuery' , queryController.createQuery)
 router.get('/getQuery',queryController.getQuery)

@@ -553,6 +553,49 @@ module.exports = {
             res.status(500).json({ status: false, message: 'Internal server error' });
         }
     },
+
+
+    updateDocStatus: async (req, res) => {
+        const { caseId, schemaType, docType } = req.params;
+        const { status } = req.body;
+
+        // Ensure that status is either 0 or 1
+        
+        if (status !== 0 && status !== 1) {
+            return res.status(400).json({ message: 'Status must be 0 or 1' });
+        }
+
+        try {
+            // Find the user document by userId
+            const caseData = await cases.findOne({ _id: caseId });
+        
+            if (!caseData) {
+              return res.status(404).json({ message: 'Case not found' });
+            }
+        
+            // Determine the schema based on schemaType and update the status accordingly
+            let schemaToUpdate;
+        
+            if (schemaType === 'kycSchema') {
+              schemaToUpdate = caseData.kyc_details;
+            } else if (schemaType === 'financialSchema') {
+              schemaToUpdate = caseData.financial_details;
+            } else {
+              return res.status(400).json({ message: 'Invalid schema type' });
+            }
+        
+            if (schemaToUpdate && schemaToUpdate[docType] && schemaToUpdate[docType].status !== undefined) {
+              schemaToUpdate[docType].status = status;
+              await caseData.save();
+              return res.status(200).json(caseData);
+            } else {
+              return res.status(404).json({ message: 'Document type not found' });
+            }
+          } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Internal server error' });
+          }
+    },
 }
 
 
