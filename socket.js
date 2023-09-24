@@ -19,14 +19,16 @@ const io = socketIO(server, {
        var result = await  chatController.sendMessage(data);
 
         console.log("Result >> ", result);
-        try {
+        if(result.success){
+          try {
             var result = await  chatController.getMsgsOnRooms(result.data);
             // console.log(result);
              io.emit('getMessagesOfRoom', result);
           } catch (error) {
             console.error('Error:', error);
           }
-       
+        }
+        
     });
 
     socket.on('getChatRooms', async  (data) => {
