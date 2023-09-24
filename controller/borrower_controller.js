@@ -317,6 +317,7 @@ module.exports = {
 
         try {
             const userId = req.params.id;
+            const {caseId} = req.params
             const updatedBusinessDetails = req.body;
 
             // Find the user by userId
@@ -326,8 +327,6 @@ module.exports = {
                 return res.status(400).json({ status: false, message: 'User not found' });
             }
 
-
-            
             if (userData.financial_details !== null) {
                 // Update only non-null, non-undefined, and non-empty values in business details
                 for (const key in updatedBusinessDetails) {
@@ -351,6 +350,25 @@ module.exports = {
                 { $set: { financial_details: userData.financial_details } },
                 { new: true } // Return the updated document
             );
+
+            if(caseId){
+                const caseData = await cases.findOne({ _id: caseId });
+                if (caseData.financial_details !== null) {
+                    // Update only non-null, non-undefined, and non-empty values in business details
+                    for (const key in updatedBusinessDetails) {
+                        const value = updatedBusinessDetails[key];
+                        if (value !== null && value !== undefined && value !== '') {
+                            caseData.financial_details[key] = { url: value, };
+                        }
+                    }
+                }
+
+                const caseUpdatedItem = await cases.findByIdAndUpdate(
+                    caseId,
+                    { $set: { financial_details: caseData.financial_details } }, 
+                );
+            }
+
 
             if (!updatedItem) {
                 return res.status(400).json({ status: false, message: 'User not found' });

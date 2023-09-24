@@ -250,18 +250,44 @@ module.exports = {
     },
 
     caseStatus: async (req, res) => {
-        const permissionId = req.params.id;
+        const caseId = req.params.id;
 
         try {
+
+            let updatedLenders = [];
+            let caseData = await cases.findOne({_id : caseId});
+
+            if(req.body.status == 2){
+                if(caseData){
+                  let lenders = caseData.lenders;
+  
+                  for(let i = 0;  i < lenders.length ; i++ ){
+  
+                      if(lenders[i].approved != 1){
+                          lenders[i].approved = 3;
+                          lenders[i].lander_approved = 1;
+                          console.log(lenders[i]);
+                      }
+                  }
+                  updatedLenders = lenders;
+                }else{
+                  console.log('Error >> ')
+                }
+              }
+
             const updatedPermission = await cases.findByIdAndUpdate(
-                permissionId,
+                caseId,
                 {
                     status: req.body.status,
                     lender_remark: req.body.lender_remark,
+                    lenders : updatedLenders.length !== 0 ? updatedLenders : caseData.lenders
 
                 },
                 { new: true } // Return the updated document
             );
+
+            
+            
 
             if (!updatedPermission) {
 
