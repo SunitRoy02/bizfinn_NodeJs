@@ -69,7 +69,7 @@ module.exports = {
             reqData.borrower = findBorrower[0]._id;
             reqData.borrowerName = findBorrower[0].name;
             reqData.borrowerTurnOver = findBorrower[0].annual_turn_over;
-            reqData.business_structure = findBorrower[0].bussiness_details.bussiness_structure;    
+            reqData.business_structure = findBorrower[0].bussiness_details.type_of_business;    
             reqData.kyc_details = findBorrower[0].kyc_details;
             reqData.financial_details = findBorrower[0].financial_details;
 
