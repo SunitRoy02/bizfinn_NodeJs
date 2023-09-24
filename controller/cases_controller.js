@@ -335,7 +335,7 @@ module.exports = {
 
     lenderCaseStatus: async (req, res) => {
         const caseId = req.params.id;
-        const { lenderId, approved, lander_approved, lender_remark, ...updates } = req.body;
+        const { lenderId, approved, lander_approved, lender_remark,approved_amount, ...updates } = req.body;
 
         try {
             const query = { _id: caseId };
@@ -357,6 +357,9 @@ module.exports = {
             }
             if (typeof lender_remark !== 'undefined') {
                 update['lenders.$.lender_remark'] = lender_remark;
+            }
+            if (typeof approved_amount !== 'undefined') {
+                update['lenders.$.approved_amount'] = approved_amount;
             }
 
             const updatedCase = await cases.findOneAndUpdate(

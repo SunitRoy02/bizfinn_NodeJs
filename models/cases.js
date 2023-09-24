@@ -44,6 +44,7 @@ const lendersSchema = mongoose.Schema({
     lenderId: { type: String, default: ""},
     approved: { type: Number, default: 0 },
     lander_approved: { type: Number, default: 0 },
+    approved_amount: { type: Number, default: 0 },
     landerName: { type: String, default: ""},
     createdAt : { type: Date, default: Date.now },
     updatedAt : Date,
