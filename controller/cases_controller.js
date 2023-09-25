@@ -257,12 +257,12 @@ module.exports = {
             let updatedLenders = [];
             let caseData = await cases.findOne({ _id: caseId });
 
-            if (req.body.status == 2 || req.body.status == 3) {
+            if (req.body.status == 1 || req.body.status == 2) {
                 if (caseData) {
                     let lenders = caseData.lenders;
                     if (lenders.length !== 0) {
                         for (let i = 0; i < lenders.length; i++) {
-                            if (req.body.status == 2) {
+                            if (req.body.status == 1) {
                                 if (lenders[i].approved !== 1) {
                                     lenders[i].approved = 3;
                                     lenders[i].lander_approved = 1;

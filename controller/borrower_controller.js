@@ -511,8 +511,7 @@ async function checkGstNumber(gstNumber){
             method: 'POST',
             url: testingUrl,
             headers: {
-              'Accept-Language': 'en-US,en;q=0.8',
-              Accept: '*/*',
+              'Content-type': 'application/json',
               Authorization: res.id
             },
             data: {task: 'gstnSearch', essentials: {gstin: gstNumber}}
@@ -521,7 +520,7 @@ async function checkGstNumber(gstNumber){
           axios.request(options).then(function (response) {
             console.log(response.data);
           }).catch(function (error) {
-            console.error(error);
+            console.error(error.message);
           });
     }
 
