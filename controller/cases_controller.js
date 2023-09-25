@@ -64,12 +64,12 @@ module.exports = {
             }
             if (findBorrower[0].kyc_details == null || findBorrower[0].financial_details == null) {
                 return res.status(400).json({ status: false, message: 'Please update all related documents first!!' });
-            }   
+            }
 
             reqData.borrower = findBorrower[0]._id;
             reqData.borrowerName = findBorrower[0].name;
             reqData.borrowerTurnOver = findBorrower[0].annual_turn_over;
-            reqData.business_structure = findBorrower[0].bussiness_details.type_of_business;    
+            reqData.business_structure = findBorrower[0].bussiness_details.type_of_business;
             reqData.kyc_details = findBorrower[0].kyc_details;
             reqData.financial_details = findBorrower[0].financial_details;
 
@@ -255,39 +255,46 @@ module.exports = {
         try {
 
             let updatedLenders = [];
-            let caseData = await cases.findOne({_id : caseId});
+            let caseData = await cases.findOne({ _id: caseId });
 
-            if(req.body.status == 2){
-                if(caseData){
-                  let lenders = caseData.lenders;
-  
-                  for(let i = 0;  i < lenders.length ; i++ ){
-  
-                      if(lenders[i].approved != 1){
-                          lenders[i].approved = 3;
-                          lenders[i].lander_approved = 1;
-                          console.log(lenders[i]);
-                      }
-                  }
-                  updatedLenders = lenders;
-                }else{
-                  console.log('Error >> ')
+            if (req.body.status == 2 || req.body.status == 3) {
+                if (caseData) {
+                    let lenders = caseData.lenders;
+                    if (lenders.length !== 0) {
+                        for (let i = 0; i < lenders.length; i++) {
+                            if (req.body.status == 2) {
+                                if (lenders[i].approved !== 1) {
+                                    lenders[i].approved = 3;
+                                    lenders[i].lander_approved = 1;
+                                    console.log(lenders[i]);
+                                }
+                            } else if (req.body.status == 3) {
+                                lenders[i].approved = 3;
+                                lenders[i].lander_approved = 1;
+                                console.log(lenders[i]);
+                            }
+                        }
+                    }
+
+                    updatedLenders = lenders;
+                } else {
+                    console.log('Error >> ')
                 }
-              }
+            }
 
             const updatedPermission = await cases.findByIdAndUpdate(
                 caseId,
                 {
                     status: req.body.status,
                     lender_remark: req.body.lender_remark,
-                    lenders : updatedLenders.length !== 0 ? updatedLenders : caseData.lenders
+                    lenders: updatedLenders.length !== 0 ? updatedLenders : caseData.lenders
 
                 },
                 { new: true } // Return the updated document
             );
 
-            
-            
+
+
 
             if (!updatedPermission) {
 
@@ -356,47 +363,49 @@ module.exports = {
 
     lenderCaseStatus: async (req, res) => {
         const caseId = req.params.id;
-        const { lenderId, approved, lander_approved, lender_remark,approved_amount, ...updates } = req.body;
-
+        const { lenderId, approved, lander_approved, lender_remark, approved_amount } = req.body;
         try {
-            const query = { _id: caseId };
+            const queryObj = { _id: caseId };
 
             // If lenderId is a single string, convert it to an array to handle both cases.
             const lenderIds = Array.isArray(lenderId) ? lenderId : [lenderId];
 
-            const update = { ...updates };
-
-            // Check if 'approved' is present in the request body, and update it if necessary.
-            if (typeof approved !== 'undefined') {
-                update['lenders.$.approved'] = approved;
-                update['status'] = 1;
+            let caseData = await cases.findOne(queryObj);
+            if (!caseData) {
+                return res.status(200).json({ status: false, msg: 'Case Not Found !!', });
             }
 
-            // Check if 'lander_approved' is present in the request body, and update it if necessary.
-            if (typeof lander_approved !== 'undefined') {
-                update['lenders.$.lander_approved'] = lander_approved;
+            let lenders = caseData.lenders;
+            for (let i = 0; i < lenderIds.length; i++) {
+                for (let k = 0; k < lenders.length; k++) {
+                    if (lenders[k].lenderId == lenderIds[i]) {
+                        if (typeof approved !== 'undefined') {
+                            lenders[k].approved = approved;
+                        }
+                        if (typeof lander_approved !== 'undefined') {
+                            lenders[k].lander_approved = lander_approved;
+                        }
+                        if (typeof lender_remark !== 'undefined') {
+                            lenders[k].lender_remark = lender_remark;
+                        }
+                        if (typeof approved_amount !== 'undefined') {
+                            lenders[k].approved_amount = approved_amount;
+                        }
+                        break;
+                    }
+                }
             }
-            if (typeof lender_remark !== 'undefined') {
-                update['lenders.$.lender_remark'] = lender_remark;
-            }
-            if (typeof approved_amount !== 'undefined') {
-                update['lenders.$.approved_amount'] = approved_amount;
-            }
-
-            const updatedCase = await cases.findOneAndUpdate(
-                { ...query, 'lenders.lenderId': { $in: lenderIds } },
-                { $set: update },
-                { new: true, multi: true } // Use multi: true to update multiple documents (if lenderId is an array).
+            const updateddCase = await cases.findByIdAndUpdate(
+                caseId,
+                { lenders: lenders},
+                { new: true } // Return the updated document
             );
-
-            if (!updatedCase) {
-                return res.status(400).json({ status: false, message: 'Case or lender not found' });
-            }
-
             if (typeof approved !== 'undefined') {
                 await updateBorrowerCaseData(caseId, approved);
             }
-            return res.status(200).json({ status: true, msg: 'Status Updated Successfully !!', result: updatedCase });
+
+            return res.status(200).json({ status: true, msg: 'Case Status Updated Successfully !!', result: updateddCase });
+
 
         } catch (error) {
             console.error('Error:', error);
@@ -590,7 +599,7 @@ module.exports = {
         const { status } = req.body;
 
         // Ensure that status is either 0 or 1
-        
+
         if (status !== 0 && status !== 1) {
             return res.status(400).json({ message: 'Status must be 0 or 1' });
         }
@@ -598,33 +607,33 @@ module.exports = {
         try {
             // Find the user document by userId
             const caseData = await cases.findOne({ _id: caseId });
-        
+
             if (!caseData) {
-              return res.status(404).json({ message: 'Case not found' });
+                return res.status(404).json({ message: 'Case not found' });
             }
-        
+
             // Determine the schema based on schemaType and update the status accordingly
             let schemaToUpdate;
-        
+
             if (schemaType === 'kycSchema') {
-              schemaToUpdate = caseData.kyc_details;
+                schemaToUpdate = caseData.kyc_details;
             } else if (schemaType === 'financialSchema') {
-              schemaToUpdate = caseData.financial_details;
+                schemaToUpdate = caseData.financial_details;
             } else {
-              return res.status(400).json({ message: 'Invalid schema type' });
+                return res.status(400).json({ message: 'Invalid schema type' });
             }
-        
+
             if (schemaToUpdate && schemaToUpdate[docType] && schemaToUpdate[docType].status !== undefined) {
-              schemaToUpdate[docType].status = status;
-              await caseData.save();
-              return res.status(200).json(caseData);
+                schemaToUpdate[docType].status = status;
+                await caseData.save();
+                return res.status(200).json(caseData);
             } else {
-              return res.status(404).json({ message: 'Document type not found' });
+                return res.status(404).json({ message: 'Document type not found' });
             }
-          } catch (error) {
+        } catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Internal server error' });
-          }
+        }
     },
 }
 

@@ -2,7 +2,7 @@ const { validationResult } = require('express-validator');
 const users = require('../models/users');
 const cases = require('../models/cases');
 const { ObjectId } = require('mongodb');
-
+const axios = require('axios');
 
 async function generateRandomSixDigitNumber() {
     const min = 100000; // Smallest 6-digit number
@@ -225,10 +225,15 @@ module.exports = {
                 return res.status(400).json({ status: false, message: 'User not found' });
             }
 
+            if(!updatedBusinessDetails.gst_number){
+                return res.status(400).json({ status: false, message: 'Gst Number not found' });
+            }
+            var result = await checkGstNumber(updatedBusinessDetails.gst_number);
+
             // Update only non-null, non-undefined, and non-empty values in business details
             if (userData.bussiness_details !== null) {
-                console.log('userData.bussiness_details >> ', userData.bussiness_details);
-                console.log('updatedBusinessDetails >> ', updatedBusinessDetails);
+                // console.log('userData.bussiness_details >> ', userData.bussiness_details);
+                // console.log('updatedBusinessDetails >> ', updatedBusinessDetails);
                 for (const key in updatedBusinessDetails) {
                     const value = updatedBusinessDetails[key];
                     if (value !== null && value !== undefined && value !== '') {
@@ -471,4 +476,56 @@ module.exports = {
 
 }
 
+async function getAccessTocken(){
+
+    var testingUrl = "https://preproduction.signzy.tech/api/v2/patrons/login";
+    // var prodgUrl = "https://signzy.tech/api/v2/patrons/login";
+
+    var options = {
+        method: 'POST',
+        url: testingUrl,
+        headers: {'Accept-Language': 'en-US,en;q=0.8', Accept: '*/*'},
+        data: {username: 'Bizfinn_test', password: '9r5fruraclko9wug'}
+      };
+      
+     let res = await  axios.request(options).catch(function (error) {
+        console.error(error);
+      });
+    //   console.log("Axios Responce >>>> ",res.data);
+      return res.data;
+}
+
+
+async function checkGstNumber(gstNumber){
+
+    var res = await  getAccessTocken();
+    console.log("Axios Responce >>>> ",res);
+
+    if(res !== null){
+
+        var testingUrl = `https://preproduction.signzy.tech/api/v2/patrons/${res.userId}/gstns`;
+        // var prodgUrl = `https://signzy.tech/api/v2/patrons/${res.userId}/gstns`;
+
+        console.log(testingUrl);
+        var options = {
+            method: 'POST',
+            url: testingUrl,
+            headers: {
+              'Accept-Language': 'en-US,en;q=0.8',
+              Accept: '*/*',
+              Authorization: res.id
+            },
+            data: {task: 'gstnSearch', essentials: {gstin: gstNumber}}
+          };
+          
+          axios.request(options).then(function (response) {
+            console.log(response.data);
+          }).catch(function (error) {
+            console.error(error);
+          });
+    }
+
+
+
+}
 
