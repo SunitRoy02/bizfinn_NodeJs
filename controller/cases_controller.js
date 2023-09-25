@@ -367,8 +367,11 @@ module.exports = {
         try {
             const queryObj = { _id: caseId };
 
+            console.log("CaseId >>>",queryObj);
             // If lenderId is a single string, convert it to an array to handle both cases.
             const lenderIds = Array.isArray(lenderId) ? lenderId : [lenderId];
+
+            console.log("lenderIds >>>",lenderIds);
 
             let caseData = await cases.findOne(queryObj);
             if (!caseData) {
@@ -376,25 +379,41 @@ module.exports = {
             }
 
             let lenders = caseData.lenders;
-            for (let i = 0; i < lenderIds.length; i++) {
-                for (let k = 0; k < lenders.length; k++) {
-                    if (lenders[k].lenderId == lenderIds[i]) {
-                        if (typeof approved !== 'undefined') {
+            console.log("Lender before Admin approvel >>> \n\n",lenders)
+
+            if(typeof approved !== 'undefined'){
+                console.log("In Approved")
+                for (let i = 0; i < lenderIds.length; i++) {
+                    for (let k = 0; k < lenders.length; k++) {
+                        if (lenders[k].lenderId == lenderIds[i]) {
                             lenders[k].approved = approved;
+                            break;
                         }
-                        if (typeof lander_approved !== 'undefined') {
-                            lenders[k].lander_approved = lander_approved;
+                    }
+                }
+            }else{
+                console.log("In Other")
+
+                for (let i = 0; i < lenderIds.length; i++) {
+                    for (let k = 0; k < lenders.length; k++) {
+                        if (lenders[k].lenderId == lenderIds[i]) {
+                            if (typeof lander_approved !== 'undefined') {
+                                lenders[k].lander_approved = lander_approved;
+                            }
+                            if (typeof lender_remark !== 'undefined') {
+                                lenders[k].lender_remark = lender_remark;
+                            }
+                            if (typeof approved_amount !== 'undefined') {
+                                lenders[k].approved_amount = approved_amount;
+                            }
+                            break;
                         }
-                        if (typeof lender_remark !== 'undefined') {
-                            lenders[k].lender_remark = lender_remark;
-                        }
-                        if (typeof approved_amount !== 'undefined') {
-                            lenders[k].approved_amount = approved_amount;
-                        }
-                        break;
                     }
                 }
             }
+
+            
+            console.log("Lender after Admin approvel >>> \n\n",lenders)
             const updateddCase = await cases.findByIdAndUpdate(
                 caseId,
                 { lenders: lenders},
