@@ -251,34 +251,45 @@ module.exports = {
 
     caseStatus: async (req, res) => {
         const caseId = req.params.id;
+        const {lenderId } = req.params;
 
+    
         try {
 
-            let updatedLenders = [];
             let caseData = await cases.findOne({ _id: caseId });
+            let lenders = caseData.lenders;
 
-            if (req.body.status == 1 || req.body.status == 2) {
-                if (caseData) {
-                    let lenders = caseData.lenders;
-                    if (lenders.length !== 0) {
-                        for (let i = 0; i < lenders.length; i++) {
-                            if (req.body.status == 1) {
-                                if (lenders[i].approved !== 1) {
+            if(lenderId && req.body.status == 2){
+                for (let i = 0; i < lenders.length; i++) {
+                    if (lenders[i].lenderId === lenderId) {
+                        lenders[i].approved = 3;
+                        lenders[i].lander_approved = 1;
+                    
+                    }
+                    console.log(lenders[i]);
+                }
+            }else{
+                if (req.body.status == 1 || req.body.status == 2) {
+                    if (caseData) {
+                        let lenders = caseData.lenders;
+                        if (lenders.length !== 0) {
+                            for (let i = 0; i < lenders.length; i++) {
+                                if (req.body.status == 1) {
+                                    if (lenders[i].approved !== 1) {
+                                        lenders[i].approved = 3;
+                                        lenders[i].lander_approved = 1;
+                                        console.log(lenders[i]);
+                                    }
+                                } else if (req.body.status == 3) {
                                     lenders[i].approved = 3;
                                     lenders[i].lander_approved = 1;
                                     console.log(lenders[i]);
                                 }
-                            } else if (req.body.status == 3) {
-                                lenders[i].approved = 3;
-                                lenders[i].lander_approved = 1;
-                                console.log(lenders[i]);
                             }
                         }
+                    } else {
+                        console.log('Error >> ')
                     }
-
-                    updatedLenders = lenders;
-                } else {
-                    console.log('Error >> ')
                 }
             }
 
@@ -287,7 +298,7 @@ module.exports = {
                 {
                     status: req.body.status,
                     lender_remark: req.body.lender_remark,
-                    lenders: updatedLenders.length !== 0 ? updatedLenders : caseData.lenders
+                    lenders: lenders
 
                 },
                 { new: true } // Return the updated document
