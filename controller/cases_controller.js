@@ -264,6 +264,7 @@ module.exports = {
                     if (lenders[i].lenderId === lenderId) {
                         lenders[i].approved = 3;
                         lenders[i].lander_approved = 1;
+                        lenders[i].lender_remark = req.body.lender_remark;
                     
                     }
                     console.log(lenders[i]);
