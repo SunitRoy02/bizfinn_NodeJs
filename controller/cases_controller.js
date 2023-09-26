@@ -296,7 +296,7 @@ module.exports = {
             const updatedPermission = await cases.findByIdAndUpdate(
                 caseId,
                 {
-                    status: req.body.status,
+                    status: lenderId ? caseData.status : req.body.status,
                     lender_remark: req.body.lender_remark,
                     lenders: lenders
 
@@ -308,10 +308,8 @@ module.exports = {
 
 
             if (!updatedPermission) {
-
                 return res.status(404).json({ msg: 'Case not found' });
             }
-
             return res.status(200).json({ status: true, msg: 'Status Updated Successfully !!', result: updatedPermission });
         } catch (error) {
             console.error('Error:', error);
