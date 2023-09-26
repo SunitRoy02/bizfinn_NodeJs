@@ -281,7 +281,7 @@ module.exports = {
                                         lenders[i].lander_approved = 1;
                                         console.log(lenders[i]);
                                     }
-                                } else if (req.body.status == 3) {
+                                } else if (req.body.status == 2) {
                                     lenders[i].approved = 3;
                                     lenders[i].lander_approved = 1;
                                     console.log(lenders[i]);
