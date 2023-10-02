@@ -57,6 +57,7 @@ router.put('/updateBorrowerProfile/:id' , borrowerController.updateBorrowerProfi
 router.put('/updateBorrowerBusinessDetails/:id' , borrowerController.updateBorrowerBusinessDetails)
 router.put('/updateBorrowerKycDetails/:id' , borrowerController.updateBorrowerKycDetails)
 router.put('/updateBorrowerFinancialDetails/:id/:caseId' , borrowerController.updateBorrowerFinancialDetails)
+router.put('/updateBorrowerFinancialDetails/:id' , borrowerController.updateBorrowerFinancialDetails)
 router.get('/borrowerCases/:borrowerId',borrowerController.getCases)
 router.get('/borrowerDashbord/:borrowerId',borrowerController.borrowerDashbord)
 
