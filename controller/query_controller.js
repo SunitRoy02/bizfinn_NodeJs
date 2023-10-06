@@ -78,8 +78,13 @@ module.exports = {
         try {
 
             const { name, fromDate, toDate } = req.query;
+            const { borrowerId } = req.params;
 
             const queryMap = {};
+
+            if(borrowerId){
+                queryMap.borrower = borrowerId
+            }
 
             if (name) {
                 queryMap.lender_name = { $regex: new RegExp(name, 'i') }; // Case-insensitive name search
@@ -189,40 +194,40 @@ module.exports = {
         }
     },
 
-    queryStatus: async (req, res) => {
-        const permissionId = req.params.id;
-        try {
-            const itemId = req.params.id;
-            const updateFields = {};
+    // queryStatus: async (req, res) => {
+    //     const permissionId = req.params.id;
+    //     try {
+    //         const itemId = req.params.id;
+    //         const updateFields = {};
 
-            // Iterate through request body and populate updateFields object
-            for (const key in req.body) {
-                if (req.body[key] !== undefined && req.body[key] !== null && req.body[key] !== '') {
-                    updateFields[key] = req.body[key];
-                }
-            }
+    //         // Iterate through request body and populate updateFields object
+    //         for (const key in req.body) {
+    //             if (req.body[key] !== undefined && req.body[key] !== null && req.body[key] !== '') {
+    //                 updateFields[key] = req.body[key];
+    //             }
+    //         }
 
 
-            console.log('ID >> ', itemId);
-            console.log('updateFields >> ', updateFields);
+    //         console.log('ID >> ', itemId);
+    //         console.log('updateFields >> ', updateFields);
 
-            // Find and update the document with the provided ID
-            const updatedItem = await query.findByIdAndUpdate(
-                itemId,
-                { $set: updateFields },
-                { new: true } // Return the updated document
-            );
+    //         // Find and update the document with the provided ID
+    //         const updatedItem = await query.findByIdAndUpdate(
+    //             itemId,
+    //             { $set: updateFields },
+    //             { new: true } // Return the updated document
+    //         );
 
-            if (!updatedItem) {
-                return res.status(400).json({ status: false, message: 'Query not found' });
-            }
+    //         if (!updatedItem) {
+    //             return res.status(400).json({ status: false, message: 'Query not found' });
+    //         }
 
-            return res.status(200).json({ status: true, msg: 'Status Updated Successfully !!', result: updatedItem });
-        } catch (error) {
-            console.error('Error:', error);
-            return res.status(400).json({ status: false, msg: error });
-        }
-    },
+    //         return res.status(200).json({ status: true, msg: 'Status Updated Successfully !!', result: updatedItem });
+    //     } catch (error) {
+    //         console.error('Error:', error);
+    //         return res.status(400).json({ status: false, msg: error });
+    //     }
+    // },
 
     addQueryDoc: async (req, res) => {
         try {
@@ -289,6 +294,34 @@ module.exports = {
             return res.status(400).json({ status: false, msg: error });
         }
     },
+
+    
+    addCommentInCase: async (req, res) => {
+
+        const queryId = req.params.queryId;
+        const { commenterId, remark, type } = req.body;
+
+        try {
+            const updatedCase = await query.findByIdAndUpdate(
+                queryId.toString(),
+                {
+                    $push: {
+                        comments: { commenterId, remark, type },
+                    },
+                },
+                { new: true }
+            );
+
+            if (!updatedCase) {
+                return res.status(404).json({ error: 'Query not found' });
+            }
+            return res.status(200).json(updatedCase);
+        } catch (error) {
+            console.error(error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    },
+
 }
 
 

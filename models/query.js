@@ -7,6 +7,13 @@ const docSchema = mongoose.Schema({
     createdAt : { type: Date, default: Date.now },
 })
 
+const commentOnCase = mongoose.Schema({
+    commenterId: String,
+    type: String,
+    remark: { type: String, default: ""},
+    createdAt : { type: Date, default: Date.now },
+});
+
 const querySchema = mongoose.Schema({
 
     lender_name: String,
@@ -22,6 +29,7 @@ const querySchema = mongoose.Schema({
     borrowerTurnOver: String,
     business_structure: String,
     loan_ask: String,
+    comments:[commentOnCase],
     status: { type: Number, default: 0 },
     extraDocs : { type: [docSchema], unique: true },
     

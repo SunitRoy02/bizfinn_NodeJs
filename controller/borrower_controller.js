@@ -511,10 +511,11 @@ async function checkGstNumber(gstNumber){
             method: 'POST',
             url: testingUrl,
             headers: {
-              'Content-type': 'application/json',
-              Authorization: res.id
+              'Accept-Language': 'en-US,en;q=0.8',
+              'content-type': 'application/json',
+              'Authorization': res.id
             },
-            data: {task: 'gstnSearch', essentials: {gstin: gstNumber}}
+            data: {task: 'gstinSearch', essentials: {gstin: gstNumber}}
           };
           
           axios.request(options).then(function (response) {

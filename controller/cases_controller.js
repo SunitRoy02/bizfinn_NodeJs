@@ -538,32 +538,6 @@ module.exports = {
         }
     },
 
-    addCommentInCase: async (req, res) => {
-
-        const caseId = req.params.caseId;
-        const { commenterId, remark, type } = req.body;
-
-        try {
-            const updatedCase = await cases.findByIdAndUpdate(
-                caseId,
-                {
-                    $push: {
-                        comments: { commenterId, remark, type },
-                    },
-                },
-                { new: true }
-            );
-
-            if (!updatedCase) {
-                return res.status(404).json({ error: 'Case not found' });
-            }
-
-            return res.status(200).json(updatedCase);
-        } catch (error) {
-            console.error(error);
-            return res.status(500).json({ error: 'Internal server error' });
-        }
-    },
 
 
     addShortedLenders: async (req, res) => {
@@ -621,7 +595,6 @@ module.exports = {
             res.status(500).json({ status: false, message: 'Internal server error' });
         }
     },
-
 
     updateDocStatus: async (req, res) => {
         const { caseId, schemaType, docType } = req.params;

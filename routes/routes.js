@@ -79,7 +79,6 @@ router.put('/lenderCaseStatus/:id',casesController.lenderCaseStatus)
 router.get('/getCases',casesController.getCases)
 router.get('/getSingleCase/:id',casesController.getSingleCase)
 router.get('/getSingleCase/',casesController.getSingleCaseByNo)
-router.post('/cases/:caseId/comments',casesController.addCommentInCase)
 router.post('/cases/:caseId/shortedLenders',casesController.addShortedLenders)
 router.delete('/cases/:caseId/shortedLenders/:lenderId',casesController.deleteShortedLenders)
 
@@ -91,12 +90,13 @@ router.put('/updateCaseDocStatus/:caseId/:schemaType/:docType',casesController.u
 //Query -------------
 router.post('/createQuery' , queryController.createQuery)
 router.get('/getQuery',queryController.getQuery)
+router.get('/getQuery/:borrowerId',queryController.getQuery)
 router.get('/getSingleQuery/:queryId',queryController.getSingleQuery)
 router.delete('/deleteQuery/:queryId',queryController.deleteQuery)
 router.put('/queryStatus/:id',queryController.queryStatus)
 router.post('/query/:queryId/document',queryController.addQueryDoc)
 router.delete('/query/:queryId/document/:docId',queryController.deleteQueryDoc)
-
+router.post('/query/:queryId/comments',queryController.addCommentInCase)
 
 //Chat -------------
 router.get('/getOldMessages/:roomId',chat_controller.getMsgs)
