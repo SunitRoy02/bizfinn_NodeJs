@@ -230,6 +230,11 @@ module.exports = {
             }
             var result = await checkGstNumber(updatedBusinessDetails.gst_number);
 
+            console.log('Check GST result >> ',result);
+            if(!result && result != 200){
+                return res.status(400).json({ status: false, message: 'Please enter a valid GST number' });
+            }
+
             // Update only non-null, non-undefined, and non-empty values in business details
             if (userData.bussiness_details !== null) {
                 // console.log('userData.bussiness_details >> ', userData.bussiness_details);
@@ -518,11 +523,13 @@ async function checkGstNumber(gstNumber){
             data: {task: 'gstinSearch', essentials: {gstin: gstNumber}}
           };
           
-          axios.request(options).then(function (response) {
-            console.log(response.data);
-          }).catch(function (error) {
+          try{
+            var result = await  axios.request(options);
+            return result.status;
+          }catch(error){
             console.error(error.message);
-          });
+          }
+    
     }
 
 
