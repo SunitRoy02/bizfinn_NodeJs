@@ -391,12 +391,13 @@ module.exports = {
             let lenders = caseData.lenders;
             console.log("Lender before Admin approvel >>> \n\n",lenders)
 
-            if(typeof approved !== 'undefined'){
+            if(approved){
                 console.log("In Approved")
                 for (let i = 0; i < lenderIds.length; i++) {
                     for (let k = 0; k < lenders.length; k++) {
                         if (lenders[k].lenderId == lenderIds[i]) {
                             lenders[k].approved = approved;
+                            lenders[k].approved_amount = approved_amount;
                             break;
                         }
                     }
