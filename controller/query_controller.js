@@ -34,10 +34,10 @@ module.exports = {
                 return res.status(400).send({ success: false, msg: "Lender not found !!", });
             }
 
-            let alreadyQuery = await query.findOne({ lenderId: lenderId, case_no: case_no });
-            if (alreadyQuery) {
-                return res.status(400).send({ success: false, msg: "A query with this lender is already exists !!", data: alreadyQuery });
-            }
+            // let alreadyQuery = await query.findOne({ lenderId: lenderId, case_no: case_no });
+            // if (alreadyQuery) {
+            //     return res.status(400).send({ success: false, msg: "A query with this lender is already exists !!", data: alreadyQuery });
+            // }
 
             reqData.query_no = await generateRandomSixDigitNumber();
             const caseNo = reqData.case_no.toString(); // Fix 1: Correct destructuring
