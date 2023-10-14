@@ -11,6 +11,7 @@ async function addNotification(title, subtitle, userId) {
         userId,
       });
   
+      
       // Save the notification to the database
       await newNotification.save();
   
@@ -21,7 +22,7 @@ async function addNotification(title, subtitle, userId) {
   }
 
 
-  
+
 module.exports = {
     createNotification: async (req, res) => {
         try {
