@@ -399,7 +399,7 @@ module.exports = {
                     for (let k = 0; k < lenders.length; k++) {
                         if (lenders[k].lenderId == lenderIds[i]) {
                             lenders[k].approved = approved;
-                            lenders[k].approved_amount = approved_amount;
+                            lenders[k].approved_amount = approved_amount ? approved_amount : lenders[k].approved_amount;
                             break;
                         }
                     }
