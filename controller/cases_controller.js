@@ -80,9 +80,10 @@ module.exports = {
 
 
             const msfIfSuccess = "Cases Created Successfully";
-            res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
             notiCont.localNotification(msfIfSuccess,"Kindly wait for Admin and lender approvel",reqData.borrower);
             notiCont.localNotification(msfIfSuccess,"Please assign lenders to proceed forward",'64fb697d8ae2c074f1319981');
+            return res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
+           
 
         } catch (error) {
             console.log("Error : ", error);

@@ -66,10 +66,11 @@ module.exports = {
 
 
             const msfIfSuccess = "Query Created Successfully";
-            return res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
             notiCont.localNotification(msfIfSuccess,"Kindly wait for a revert from  Admin",lenderId);
             notiCont.localNotification("Query alert !!","New query has been found kindly check and update",'64fb697d8ae2c074f1319981');
 
+            return res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
+        
 
         } catch (error) {
             console.log("Error : ", error);
@@ -189,11 +190,11 @@ module.exports = {
                 return res.status(400).json({ status: false, message: 'Query not found' });
             }
 
-
-
-            return res.status(200).json({ status: true, msg: 'Status Updated Successfully !!', result: updatedItem });
             notiCont.localNotification("Query status  update !! ","Update on  query  has been found kindly check ",updatedItem.lenderId);
             notiCont.localNotification("Query status  update !! ","Update on  query has been found kindly check ",'64fb697d8ae2c074f1319981');
+
+            return res.status(200).json({ status: true, msg: 'Status Updated Successfully !!', result: updatedItem });
+            
 
         } catch (error) {
             console.error('Error:', error);
@@ -258,7 +259,8 @@ module.exports = {
             if (!updatedQuery) {
                 return res.status(404).json({ message: 'Query not found' });
             }
-
+            notiCont.localNotification("Query status  update !! ","Document Update on  query  has been found kindly check ",updatedItem.lenderId);
+            notiCont.localNotification("Query status  update !! ","Document Update on  query has been found kindly check ",'64fb697d8ae2c074f1319981');
             return res.status(200).json({ status: true, msg: 'Document added successfullt ,', data: updatedQuery });
 
         } catch (error) {
