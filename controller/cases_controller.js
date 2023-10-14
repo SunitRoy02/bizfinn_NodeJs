@@ -3,6 +3,7 @@ const cases = require('../models/cases');
 // const shortedLenders = require('../models/cases');
 const users = require('../models/users');
 const { ObjectId } = require('mongodb');
+const notiCont = require('../controller/notification_controller')
 
 
 async function generateRandomSixDigitNumber() {
@@ -80,6 +81,8 @@ module.exports = {
 
             const msfIfSuccess = "Cases Created Successfully";
             res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
+            notiCont.localNotification(msfIfSuccess,"Kindly wait for Admin and lender approvel",reqData.borrower);
+            notiCont.localNotification(msfIfSuccess,"Please assign lenders to proceed forward",'64fb697d8ae2c074f1319981');
 
         } catch (error) {
             console.log("Error : ", error);
@@ -186,7 +189,8 @@ module.exports = {
             });
 
             // Remove lenders from the shortedLenders array
-            const updatedShortedLenders = caseFound.shortedLenders.filter((shortedLender) => !newLenderIds.includes(shortedLender.lenderId));
+            const updatedShortedLenders = caseFound.shortedLenders.filter((shortedLender) => 
+            !newLenderIds.includes(shortedLender.lenderId));
             // console.log("newLenders >> ", newLenders);
             const updatedItem = await cases.findByIdAndUpdate(
                 itemId,

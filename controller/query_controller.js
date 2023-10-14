@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 const cases = require('../models/cases');
 const users = require('../models/users');
 const query = require('../models/query');
+const notiCont = require('../controller/notification_controller')
 
 
 async function generateRandomSixDigitNumber() {
@@ -66,6 +67,9 @@ module.exports = {
 
             const msfIfSuccess = "Query Created Successfully";
             return res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
+            notiCont.localNotification(msfIfSuccess,"Kindly wait for a revert from  Admin",lenderId);
+            notiCont.localNotification("Query alert !!","New query has been found kindly check and update",'64fb697d8ae2c074f1319981');
+
 
         } catch (error) {
             console.log("Error : ", error);
@@ -163,8 +167,6 @@ module.exports = {
             const itemId = req.params.id;
             const updateFields = {};
 
-
-
             // Iterate through request body and populate updateFields object
             for (const key in req.body) {
                 if (req.body[key] !== undefined && req.body[key] !== null && req.body[key] !== '') {
@@ -187,7 +189,12 @@ module.exports = {
                 return res.status(400).json({ status: false, message: 'Query not found' });
             }
 
+
+
             return res.status(200).json({ status: true, msg: 'Status Updated Successfully !!', result: updatedItem });
+            notiCont.localNotification("Query status  update !! ","Update on  query  has been found kindly check ",updatedItem.lenderId);
+            notiCont.localNotification("Query status  update !! ","Update on  query has been found kindly check ",'64fb697d8ae2c074f1319981');
+
         } catch (error) {
             console.error('Error:', error);
             return res.status(400).json({ status: false, msg: error });
