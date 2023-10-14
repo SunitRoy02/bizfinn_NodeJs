@@ -1,8 +1,27 @@
 const { validationResult } = require('express-validator');
 const notification = require('../models/notifications');
 
+// Function to add a notification
+async function addNotification(title, subtitle, userId) {
+    try {
+      // Create a new notification object
+      const newNotification = new notification({
+        title,
+        subtitle,
+        userId,
+      });
+  
+      // Save the notification to the database
+      await newNotification.save();
+  
+      console.log('Notification added successfully.');
+    } catch (error) {
+      console.error('Error adding notification:', error);
+    }
+  }
 
 
+  
 module.exports = {
     createNotification: async (req, res) => {
         try {

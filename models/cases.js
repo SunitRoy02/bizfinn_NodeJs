@@ -64,6 +64,7 @@ const casesSchema = mongoose.Schema({
     createdAt : { type: Date, default: Date.now },
     updatedAt : Date,
     status: { type: Number, default: 0 },
+    approved_amount: { type: Number, default: 0 },
     lender_remark: { type: String, default: "" },
     case_no: Number,
     borrower: String,

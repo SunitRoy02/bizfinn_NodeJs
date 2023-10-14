@@ -208,9 +208,6 @@ module.exports = {
         }
     },
 
-
-
-
     updateBorrower: async (req, res) => {
 
         try {
@@ -251,25 +248,25 @@ module.exports = {
 
     caseStatus: async (req, res) => {
         const caseId = req.params.id;
-        const {lenderId } = req.params;
+        const { lenderId } = req.params;
 
-    
+
         try {
 
             let caseData = await cases.findOne({ _id: caseId });
             let lenders = caseData.lenders;
 
-            if(lenderId && req.body.status == 2){
+            if (lenderId && req.body.status == 2) {
                 for (let i = 0; i < lenders.length; i++) {
                     if (lenders[i].lenderId === lenderId) {
                         lenders[i].approved = 3;
                         lenders[i].lander_approved = 1;
                         lenders[i].lender_remark = req.body.lender_remark;
-                    
+
                     }
                     console.log(lenders[i]);
                 }
-            }else{
+            } else {
                 if (req.body.status == 1 || req.body.status == 2) {
                     if (caseData) {
                         let lenders = caseData.lenders;
@@ -377,11 +374,11 @@ module.exports = {
         try {
             const queryObj = { _id: caseId };
 
-            console.log("CaseId >>>",queryObj);
+            console.log("CaseId >>>", queryObj);
             // If lenderId is a single string, convert it to an array to handle both cases.
             const lenderIds = Array.isArray(lenderId) ? lenderId : [lenderId];
 
-            console.log("lenderIds >>>",lenderIds);
+            console.log("lenderIds >>>", lenderIds);
 
             let caseData = await cases.findOne(queryObj);
             if (!caseData) {
@@ -389,9 +386,9 @@ module.exports = {
             }
 
             let lenders = caseData.lenders;
-            console.log("Lender before Admin approvel >>> \n\n",lenders)
+            console.log("Lender before Admin approvel >>> \n\n", lenders)
 
-            if(approved){
+            if (approved) {
                 console.log("In Approved")
                 for (let i = 0; i < lenderIds.length; i++) {
                     for (let k = 0; k < lenders.length; k++) {
@@ -402,7 +399,7 @@ module.exports = {
                         }
                     }
                 }
-            }else{
+            } else {
                 console.log("In Other")
 
                 for (let i = 0; i < lenderIds.length; i++) {
@@ -423,11 +420,11 @@ module.exports = {
                 }
             }
 
-            
-            console.log("Lender after Admin approvel >>> \n\n",lenders)
+
+            console.log("Lender after Admin approvel >>> \n\n", lenders)
             const updateddCase = await cases.findByIdAndUpdate(
                 caseId,
-                { lenders: lenders},
+                { lenders: lenders },
                 { new: true } // Return the updated document
             );
             if (typeof approved !== 'undefined') {
@@ -636,6 +633,34 @@ module.exports = {
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Internal server error' });
+        }
+    },
+
+    updateCase: async (req, res) => {
+        const caseId = req.params.id;
+        const updateFields = {};
+
+        // Loop through the request body and add non-empty/non-undefined fields to the update object
+        for (const key in req.body) {
+            if (req.body[key] !== undefined && req.body[key] !== '') {
+                updateFields[key] = req.body[key];
+            }
+        }
+
+        try {
+            // Update the document in the MongoDB collection
+            const updatedCase = await cases.findByIdAndUpdate(caseId, updateFields, { new: true });
+
+            if (!updatedCase) {
+                return res.status(200).json({ status: false, message: 'Case not found' });
+            }
+
+            //   return res.json(updatedCase);
+            return res.status(200).json({ status: true, message: 'Case updated successfully !!',
+             data: updatedCase });
+
+        } catch (error) {
+            return res.status(500).json({ error: 'Internal server error' });
         }
     },
 }
