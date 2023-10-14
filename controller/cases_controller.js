@@ -647,7 +647,7 @@ module.exports = {
 
         // Loop through the request body and add non-empty/non-undefined fields to the update object
         for (const key in req.body) {
-            if (req.body[key] !== undefined && req.body[key] !== '') {
+            if (req.body[key] && req.body[key] !== '') {
                 updateFields[key] = req.body[key];
             }
         }
