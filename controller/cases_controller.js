@@ -80,10 +80,10 @@ module.exports = {
 
 
             const msfIfSuccess = "Cases Created Successfully";
-            notiCont.localNotification(msfIfSuccess,"Kindly wait for Admin and lender approvel",reqData.borrower);
-            notiCont.localNotification(msfIfSuccess,"Please assign lenders to proceed forward",'64fb697d8ae2c074f1319981');
+            notiCont.localNotification(msfIfSuccess, "Kindly wait for Admin and lender approvel", reqData.borrower);
+            notiCont.localNotification(msfIfSuccess, "Please assign lenders to proceed forward", '64fb697d8ae2c074f1319981');
             return res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
-           
+
 
         } catch (error) {
             console.log("Error : ", error);
@@ -190,8 +190,8 @@ module.exports = {
             });
 
             // Remove lenders from the shortedLenders array
-            const updatedShortedLenders = caseFound.shortedLenders.filter((shortedLender) => 
-            !newLenderIds.includes(shortedLender.lenderId));
+            const updatedShortedLenders = caseFound.shortedLenders.filter((shortedLender) =>
+                !newLenderIds.includes(shortedLender.lenderId));
             // console.log("newLenders >> ", newLenders);
             const updatedItem = await cases.findByIdAndUpdate(
                 itemId,
@@ -383,6 +383,8 @@ module.exports = {
             // If lenderId is a single string, convert it to an array to handle both cases.
             const lenderIds = Array.isArray(lenderId) ? lenderId : [lenderId];
 
+            const lenderUserData = await users.findById({ _id: lenderId })
+            console.log(lenderUserData)
             console.log("lenderIds >>>", lenderIds);
 
             let caseData = await cases.findOne(queryObj);
@@ -400,6 +402,8 @@ module.exports = {
                         if (lenders[k].lenderId == lenderIds[i]) {
                             lenders[k].approved = approved;
                             lenders[k].approved_amount = approved_amount ? approved_amount : lenders[k].approved_amount;
+                            lenders[k].lender_comission = lenderUserData.commission;
+                            lenders[k].comissioned_amount = approved_amount ? (approved_amount * lenderUserData.commission) / 100 : lenders[k].comissioned_amount;
                             break;
                         }
                     }
@@ -419,6 +423,8 @@ module.exports = {
                             if (typeof approved_amount !== 'undefined') {
                                 lenders[k].approved_amount = approved_amount;
                             }
+                            lenders[k].lender_comission = lenderUserData.commission;
+                            lenders[k].comissioned_amount = approved_amount ? (approved_amount * lenderUserData.commission) / 100 : lenders[k].comissioned_amount;
                             break;
                         }
                     }
@@ -432,11 +438,30 @@ module.exports = {
                 { lenders: lenders },
                 { new: true } // Return the updated document
             );
+
+            let totalSum = 0;
+
+            //Calculated updated case_commisoned_amount
+            updateddCase.lenders.forEach(item => {
+                const commission = parseFloat(item.lender_comission);
+                const amount = parseFloat(item.approved_amount);
+                totalSum += (amount * commission) / 100;
+                console.log(commission , amount , totalSum);
+            });
+
+            console.log("Total case_comissioned_amount is : ", totalSum);
+            const updateddCaseWithAmount = await cases.findByIdAndUpdate(
+                caseId,
+                { case_comissioned_amount: parseFloat(totalSum) },
+                { new: true } // Return the updated document
+            );
+
+
             if (typeof approved !== 'undefined') {
                 await updateBorrowerCaseData(caseId, approved);
             }
 
-            return res.status(200).json({ status: true, msg: 'Case Status Updated Successfully !!', result: updateddCase });
+            return res.status(200).json({ status: true, msg: 'Case Status Updated Successfully !!', result: updateddCaseWithAmount });
 
 
         } catch (error) {
@@ -661,8 +686,10 @@ module.exports = {
             }
 
             //   return res.json(updatedCase);
-            return res.status(200).json({ status: true, message: 'Case updated successfully !!',
-             data: updatedCase });
+            return res.status(200).json({
+                status: true, message: 'Case updated successfully !!',
+                data: updatedCase
+            });
 
         } catch (error) {
             return res.status(500).json({ error: 'Internal server error' });

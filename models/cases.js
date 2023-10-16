@@ -48,7 +48,9 @@ const lendersSchema = mongoose.Schema({
     landerName: { type: String, default: ""},
     createdAt : { type: Date, default: Date.now },
     updatedAt : Date,
-    lender_remark: { type: String, default: ""},    
+    lender_remark: { type: String, default: ""}, 
+    lender_comission: {type:String , default:'0'},
+    comissioned_amount:{type:String, default:'0'}   
 });
 
 const shortedSchema = mongoose.Schema({
@@ -77,6 +79,7 @@ const casesSchema = mongoose.Schema({
     comments:[commentOnCase],
     kyc_details: kycSchema,
     financial_details: financialSchema,
+    case_comissioned_amount:{type: Number, default:'0'}
     
 });
 
