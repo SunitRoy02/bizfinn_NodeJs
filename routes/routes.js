@@ -1,4 +1,5 @@
-
+const express = require('express');
+const router = require('express').Router();
 const authController = require('../controller/auth_controllers')
 const lenderController = require('../controller/lender_controllers')
 const borrowerController = require('../controller/borrower_controller')
@@ -6,10 +7,12 @@ const notificationController = require('../controller/notification_controller')
 const casesController = require('../controller/cases_controller')
 const queryController = require('../controller/query_controller')
 const adminController = require('../controller/admin_controllers')
+//const { getLenderRemarksCounts } = require('./yourControllerFile');
+
 
 const { upload } = require('../routes/upload')
 
-const router = require('express').Router();
+
 
 
 
@@ -102,5 +105,11 @@ router.post('/query/:queryId/comments',queryController.addCommentInCase)
 //Chat -------------
 router.get('/getOldMessages/:roomId',chat_controller.getMsgs)
 
-
+//rejection Counts;
+router.get('/remarks/count', casesController.getRejectionCounts);
+router.get('/get/apporved-monthly/count',casesController.getMonthlyApprovedCounts);
+router.get('/get/rejected-monthly/count',casesController.getMonthlyRejectedCounts);
+router.get('/get/inprogress-monthly/count',casesController.getMonthlyInProgressCounts);
+router.get('/get/tov/count',casesController.getTotalRequirementsMonthly);
+router.get('/get/gtv/count',casesController.getGrossTransactionMonthly);
 module.exports = router

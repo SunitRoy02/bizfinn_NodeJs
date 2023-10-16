@@ -668,9 +668,193 @@ module.exports = {
             return res.status(500).json({ error: 'Internal server error' });
         }
     },
+    //rejections counts
+    getRejectionCounts:async(req,res) =>{
+        try {
+            const pipeline = [
+              {
+                $unwind: '$lenders'
+              },
+              {
+                $match: {
+                  'lenders.lender_remark': {
+                    $in: ['Low CIBIL', 'High Leverage', 'Low Runway', 'Incomplete data']
+                  },
+                  'status':2
+                }
+              },
+              {
+                $group: {
+                  _id: '$lenders.lender_remark',
+                  count: { $sum: 1 }
+                }
+              }
+            ];
+        
+            const result = await cases.aggregate(pipeline);
+        
+            res.json(result);
+          } catch (error) {
+            res.status(500).json({ error: 'Internal Server Error' });
+          }
+    },
+
+    //number of approval ,rejection,number of no response
+    getMonthlyApprovedCounts:async (req,res) => {
+        try {
+          const pipeline = [
+            {
+              $match: {
+                status: 1
+              }
+            },
+            {
+              $group: {
+                _id: {
+                  $month: '$createdAt'
+                },
+                count: { $sum: 1 }
+              }
+            }
+          ];
+          const result = await cases.aggregate(pipeline);
+          return res.status(200).json({
+              message:"success",
+              result:result
+          })
+
+        } catch (error) {
+          console.error('Error:', error);
+          throw error;
+        }
+      },
+      //rejcted counts according to the months
+      getMonthlyRejectedCounts:async (req,res) => {
+        try {
+          const pipeline = [
+            {
+              $match: {
+                status: 2
+              }
+            },
+            {
+              $group: {
+                _id: {
+                  $month: '$createdAt'
+                },
+                count: { $sum: 1 }
+              }
+            }
+          ];
+      
+          const result = await cases.aggregate(pipeline);
+        return res.status(200).json({
+            message:"success",
+            result:result
+        })
+        } catch (error) {
+          console.error('Error:', error);
+          throw error;
+        }
+      },
+     //get monthly in progress counts
+      getMonthlyInProgressCounts:async (req,res) => {
+        try {
+            const pipeline = [
+              {
+                $match: {
+                  status: { $in: [0, 3] }
+                }
+              },
+              {
+                $group: {
+                  _id: {
+                    month: { $month: '$createdAt' },
+                    status: '$status'
+                  },
+                  count: { $sum: 1 }
+                }
+              },
+              {
+                $group: {
+                  _id: '$_id.month',
+                  totalCounts: { $sum: '$count' }
+                }
+              },
+              {
+                $project: {
+                  _id: 0,
+                  month: '$_id',
+                  totalCounts: 1
+                }
+              }
+            ];
+        
+            const result = await cases.aggregate(pipeline);
+            res.json(result);
+          } catch (error) {
+            console.error('Error:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+          }
+         
+    },  
+    //calculate tov  total requirements monthly wise
+    getTotalRequirementsMonthly:async (req, res) => {
+        try {
+          const pipeline = [
+            {
+              $group: {
+                _id: {
+                  month: { $month: '$createdAt' }
+                },
+                total_requirements: { $sum: '$requirement' }
+              }
+            },
+            {
+              $project: {
+                _id: 0,
+                month: '$_id.month',
+                total_requirements: 1
+              }
+            }
+          ];
+      
+          const result = await Cases.aggregate(pipeline);
+          res.json(result);
+        } catch (error) {
+          console.error('Error:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+      }, 
+      //gross transaction value(GTV)
+      getGrossTransactionMonthly:async (req, res) => {
+        try {
+          const pipeline = [
+            {
+              $group: {
+                _id: {
+                  month: { $month: '$createdAt' }
+                },
+                total_requirements: { $sum: '$approved_amount' }
+              }
+            },
+            {
+              $project: {
+                _id: 0,
+                month: '$_id.month',
+                total_requirements: 1
+              }
+            }
+          ];
+      
+          const result = await cases.aggregate(pipeline);
+          res.json(result);
+        } catch (error) {
+          console.error('Error:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+      }, 
 }
-
-
 async function updateBorrowerCaseData(caseId, approved) {
 
     try {
@@ -680,10 +864,6 @@ async function updateBorrowerCaseData(caseId, approved) {
         if (!find) {
             return res.status(400).json({ status: false, message: 'Case not found' });
         }
-
-
-
-
         const allCases = await cases.find({ 'borrower': ObjectId(find.borrower) });
 
         let updateFields = {
@@ -707,6 +887,7 @@ async function updateBorrowerCaseData(caseId, approved) {
     } catch (error) {
         console.log("Error 1 >> ", error)
     }
-
-
 }
+
+
+

@@ -25,6 +25,9 @@ app.use(
 );
 
 app.use('/', apis);
+app.get('/', (req, res) => {
+    res.send('Welcome to the API!');
+  });
 
 //socket -------------------
 // Initialize and use the socket instance

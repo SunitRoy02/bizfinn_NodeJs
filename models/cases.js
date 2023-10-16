@@ -20,7 +20,6 @@ const kycSchema = mongoose.Schema({
     pan_certificate: docSchema,
     kyc_pan_aadhar_all: docSchema,
 })
-
 const financialSchema = mongoose.Schema({
     createdAt : { type: Date, default: Date.now },
     updatedAt : String,
@@ -32,7 +31,6 @@ const financialSchema = mongoose.Schema({
     debt_service: docSchema,
     mis_additional: docSchema,
 })
-
 const commentOnCase = mongoose.Schema({
     commenterId: String,
     type: String,
@@ -48,16 +46,14 @@ const lendersSchema = mongoose.Schema({
     landerName: { type: String, default: ""},
     createdAt : { type: Date, default: Date.now },
     updatedAt : Date,
-    lender_remark: { type: String, default: ""},    
+    lender_remark: { type: String, default: ""},  
 });
-
 const shortedSchema = mongoose.Schema({
     lenderId: String,
     landerName: String,
 });
 
 const casesSchema = mongoose.Schema({
-
     requirement: Number,
     type_of_loan: String,
     nature_of_collateral: String,
@@ -76,8 +72,6 @@ const casesSchema = mongoose.Schema({
     shortedLenders:{ type: [shortedSchema], unique: true },
     comments:[commentOnCase],
     kyc_details: kycSchema,
-    financial_details: financialSchema,
-    
+    financial_details: financialSchema,  
 });
-
 module.exports = mongoose.model('cases', casesSchema);

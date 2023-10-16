@@ -14,7 +14,6 @@ async function generateRandomSixDigitNumber() {
 
     while (!isUnique) {
         generatedNum = Math.floor(Math.random() * (max - min + 1)) + min;
-
         const existingCase = await query.findOne({ query_no: generatedNum });
         if (!existingCase) {
             isUnique = true;
@@ -78,7 +77,6 @@ module.exports = {
 
         }
     },
-
     getQuery: async (req, res) => {
         try {
 
