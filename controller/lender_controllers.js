@@ -284,7 +284,11 @@ module.exports = {
                 allTypeOfLoan, 
                 approved_chart, 
                 rejected_chart, 
-                NewsBullitin
+                NewsBullitin,
+                total_origination_value:10000,
+                gross_transaction_value:213221,
+                active_cases_count:12,
+                gross_revenue:120001
             })
         } catch (error) {
             console.error('Error:', error);
