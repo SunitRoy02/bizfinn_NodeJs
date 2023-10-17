@@ -3,7 +3,10 @@ const { validationResult } = require('express-validator');
 const users = require('../models/users');
 const cases = require('../models/cases');
 const { ObjectId } = require('mongodb');
+const LenderDashboardUtils = require('./DashboardUtils/LenderDashboardUtils');
 
+const currentYear = new Date().getFullYear();
+const currentMonth = new Date().getMonth() + 1;
 
 async function generateRandomSixDigitNumber() {
     const min = 100000; // Smallest 6-digit number
@@ -269,48 +272,20 @@ module.exports = {
 
     lenderDashbord: async (req, res) => {
         try {
-           
-                    // Count the occurrences of each lender remark in cases with status 3
-                    const rejectedCounts = await cases.aggregate([
-                        {
-                            $match: { status: 3 },
-                        },
-                        {
-                            $group: {
-                                _id: null,
-                                lender_remark_counts: {
-                                    $sum: {
-                                        $cond: [
-                                            { $in: ['$lender_remark', lenderRemarksToCount] },
-                                            1,
-                                            0,
-                                        ],
-                                    },
-                                },
-                            },
-                        },
-                    ]);
+            const lenderId = req.params.lenderId
+            const loan_status_year = await LenderDashboardUtils.getLoanStatus(lenderId);
+            const allTypeOfLoan = await LenderDashboardUtils.getAllTypeOfLoanCount(lenderId)
+            const approved_chart = await LenderDashboardUtils.getLenderApprovedCount(lenderId) 
+            const rejected_chart = await LenderDashboardUtils.getLenderRejectedCount(lenderId)
+            const NewsBullitin = await LenderDashboardUtils.getDisbursementMonthVise(lenderId);
 
-                    // Prepare the rejected_chart object
-                    const rejected_chart = {
-                        incomplete_data: 0,
-                        low_cibil: 0,
-                        high_leverage: 0,
-                        low_runway: 0,
-                    };
-
-                    // Populate the counts based on the lender remark
-                    for (const countObj of rejectedCounts) {
-                        rejected_chart.incomplete_data += countObj.lender_remark_counts;
-                        rejected_chart.low_cibil += countObj.lender_remark_counts;
-                        rejected_chart.high_leverage += countObj.lender_remark_counts;
-                        rejected_chart.low_runway += countObj.lender_remark_counts;
-                    }
-
-                    // Send the response with the rejected_chart object
-                    res.json({ rejected_chart });
-            
-
+            res.json({
+                loan_status_year, 
+                allTypeOfLoan, 
+                approved_chart, 
+                rejected_chart, 
+                NewsBullitin
+            })
         } catch (error) {
             console.error('Error:', error);
             return res.status(400).json({ status: false, msg: error });

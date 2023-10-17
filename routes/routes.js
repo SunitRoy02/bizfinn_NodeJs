@@ -48,7 +48,7 @@ router.get('/getLeanders' , lenderController.getLenders)
 router.post('/getSingleLender' , getSingleLenderValidation , lenderController.getSingleLender)
 router.delete('/deleteLeander/:lenderId' , getSingleLenderValidation , lenderController.deleteLeander)
 router.get('/lenderCases/:lenderId',lenderController.getCases)
-router.get('/lender/dashbord',lenderController.lenderDashbord)
+router.get('/lender/dashbord/:lenderId',lenderController.lenderDashbord)
 
 //Borrower ---------
 router.post('/registerBorrower' , borrowerController.createBrowwer)

@@ -4,7 +4,7 @@ const currentYear = new Date().getFullYear();
 const currentMonth = new Date().getMonth() + 1;
 
 module.exports = {
-    get6MData: async () => {
+    get6MData: async (lenderId) => {
         try {
             //For 1year
             const startOfYear = new Date(currentYear, 0, 1);
@@ -25,16 +25,24 @@ module.exports = {
                     }
                 },
                 {
+                    $unwind: "$lenders"
+                },
+                {
+                    $match: {
+                        "lenders.lenderId": lenderId
+                    }
+                },
+                {
                     $group: {
                         _id: { $month: "$createdAt" },
-                        approved_amount: { $sum: "$approved_amount" },
+                        approved_amount: { $sum: "$lenders.approved_amount" }
                     }
                 },
                 {
                     $project: {
                         _id: 0,
                         month: "$_id",
-                        approved_amount: 1,
+                        approved_amount: 1
                     }
                 }
             ]);
@@ -71,7 +79,7 @@ module.exports = {
         }
 
     },
-    getY_YData: async () => {
+    getY_YData: async (lenderId) => {
 
         try {
             //For 1year
@@ -83,7 +91,9 @@ module.exports = {
             const endOfMonth = new Date(currentYear, currentMonth, 0);
             console.log(startOfMonth, endOfMonth);
 
-            const result = await cases.aggregate([
+           
+
+            const result = await cases. aggregate([
                 {
                     $match: {
                         createdAt: {
@@ -93,20 +103,27 @@ module.exports = {
                     }
                 },
                 {
+                    $unwind: "$lenders"
+                },
+                {
+                    $match: {
+                        "lenders.lenderId": lenderId
+                    }
+                },
+                {
                     $group: {
                         _id: { $month: "$createdAt" },
-                        approved_amount: { $sum: "$approved_amount" },
+                        approved_amount: { $sum: "$lenders.approved_amount" }
                     }
                 },
                 {
                     $project: {
                         _id: 0,
                         month: "$_id",
-                        approved_amount: 1,
+                        approved_amount: 1
                     }
                 }
-            ]);
-
+            ])
             console.log('result', result);
 
             let monthlyData = {};
@@ -132,7 +149,7 @@ module.exports = {
             return error
         }
     },
-    getYTD_Data: async () => {
+    getYTD_Data: async (lenderId) => {
         try {
             const today = new Date(currentYear, currentMonth, 0); // Get the last day of the current month
 
@@ -151,16 +168,24 @@ module.exports = {
                     }
                 },
                 {
+                    $unwind: "$lenders"
+                },
+                {
+                    $match: {
+                        "lenders.lenderId": lenderId
+                    }
+                },
+                {
                     $group: {
                         _id: { $month: "$createdAt" },
-                        approved_amount: { $sum: "$approved_amount" },
+                        approved_amount: { $sum: "$lenders.approved_amount" }
                     }
                 },
                 {
                     $project: {
                         _id: 0,
                         month: "$_id",
-                        approved_amount: 1,
+                        approved_amount: 1
                     }
                 }
             ]);
@@ -196,7 +221,7 @@ module.exports = {
             console.log(error);
         }
     },
-    getQuarterdata: async () => {
+    getQuarterdata: async (lenderId) => {
         try {
 
             // Determine the current quarter
@@ -226,16 +251,24 @@ module.exports = {
                     }
                 },
                 {
+                    $unwind: "$lenders"
+                },
+                {
+                    $match: {
+                        "lenders.lenderId": lenderId
+                    }
+                },
+                {
                     $group: {
                         _id: { $month: "$createdAt" },
-                        approved_amount: { $sum: "$approved_amount" },
+                        approved_amount: { $sum: "$lenders.approved_amount" }
                     }
                 },
                 {
                     $project: {
                         _id: 0,
                         month: "$_id",
-                        approved_amount: 1,
+                        approved_amount: 1
                     }
                 }
             ]);
@@ -292,7 +325,7 @@ module.exports = {
             console.log(error);
         }
     },
-    getCurrentMonthData: async () => {
+    getCurrentMonthData: async (lenderId) => {
         // Calculate the current and previous month
 
         const firstDayOfMonth = new Date(currentYear, currentMonth - 1, 1);
@@ -316,16 +349,24 @@ module.exports = {
                 }
             },
             {
+                $unwind: "$lenders"
+            },
+            {
+                $match: {
+                    "lenders.lenderId": lenderId
+                }
+            },
+            {
                 $group: {
                     _id: { $month: "$createdAt" },
-                    approved_amount: { $sum: "$approved_amount" },
+                    approved_amount: { $sum: "$lenders.approved_amount" }
                 }
             },
             {
                 $project: {
                     _id: 0,
                     month: "$_id",
-                    approved_amount: 1,
+                    approved_amount: 1
                 }
             }
         ]);
@@ -340,16 +381,24 @@ module.exports = {
                 }
             },
             {
+                $unwind: "$lenders"
+            },
+            {
+                $match: {
+                    "lenders.lenderId": lenderId
+                }
+            },
+            {
                 $group: {
                     _id: { $month: "$createdAt" },
-                    approved_amount: { $sum: "$approved_amount" },
+                    approved_amount: { $sum: "$lenders.approved_amount" }
                 }
             },
             {
                 $project: {
                     _id: 0,
                     month: "$_id",
-                    approved_amount: 1,
+                    approved_amount: 1
                 }
             }
         ]);
