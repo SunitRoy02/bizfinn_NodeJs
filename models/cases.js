@@ -50,7 +50,7 @@ const lendersSchema = mongoose.Schema({
     updatedAt : Date,
     lender_remark: { type: String, default: ""}, 
     lender_comission: {type:String , default:'0'},
-    comissioned_amount:{type:String, default:'0'}   
+    comissioned_amount:{type:Number, default:0}   
 });
 
 const shortedSchema = mongoose.Schema({

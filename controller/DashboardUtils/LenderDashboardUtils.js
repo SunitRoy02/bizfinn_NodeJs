@@ -90,7 +90,8 @@ module.exports = {
                         $gte: startOfMonth,
                         $lte: endOfMonth
                     },
-                    "lenders.lander_approved": { $in: [0, 3] },
+                    "lenders.approved":0,
+                    "lenders.lander_approved": { $ne: 3 },
                     "lenders.lenderId": lenderId
                 }
             },
@@ -331,6 +332,109 @@ module.exports = {
              
 
     },
+    getTovValue: async (lenderId) =>{
+        const result = await cases.aggregate([
+            {
+                $match: {
+                    "lenders.lenderId": lenderId
+                }
+            },
+            {
+                $unwind: "$lenders"
+            },
+            {
+                $group: {
+                    _id: null,
+                    result: { $sum: "$requirement" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    result: 1
+                }
+            }
+        ]);
+
+        return result[0]?.result
+
+    },
+    getGTvValue: async (lenderId) =>{
+        const result = await cases.aggregate([
+            {
+                $match: {
+                    "lenders.lenderId": lenderId
+                }
+            },
+            {
+                $unwind: "$lenders"
+            },
+            {
+                $group: {
+                    _id: null,
+                    result: { $sum: "$lenders.approved_amount" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    result: 1
+                }
+            }
+        ]);
+        return result[0]?.result
+    },
+    getCommissionValue: async (lenderId) =>{
+        const result = await cases.aggregate([
+            {
+                $match: {
+                    "lenders.lenderId": lenderId
+                }
+            },
+            {
+                $unwind: "$lenders"
+            },
+            {
+                $group: {
+                    _id: null,
+                    result: { $sum: "$lenders.comissioned_amount" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    result: 1
+                }
+            }
+        ]);
+        console.log(result);
+        return result[0]?.result
+    },
+    getActiveDealCounts: async (lenderId)=>{
+        const progressCount = await cases.aggregate([
+            {
+                $match: {
+                    "lenders.approved":0,
+                    "lenders.lander_approved": { $ne: 3 },
+                    "lenders.lenderId": lenderId
+                }
+            },
+            {
+                $group: {
+                    _id:null,
+                    progress: { $sum: 1 },
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    progress: 1,
+                }
+            }
+        ])
+
+        return progressCount[0]?.progress
+    }
 }
 
 
