@@ -292,7 +292,7 @@ module.exports = {
                 NewsBullitin,
                 total_origination_value:TovValue,
                 gross_transaction_value:GtvValue,
-                active_cases_count:activeDealValue,
+                active_cases_count:activeDealValue ? activeDealValue : 0,
                 gross_revenue:CommissionValue
             })
 
