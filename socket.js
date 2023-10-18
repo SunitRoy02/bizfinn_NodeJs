@@ -30,14 +30,17 @@ module.exports = function initializeSocket(server) {
 
     socket.on('createMessage', async (data) => {
       var result = await chatController.sendMessage(data);
-      const user = await users.find(user => user._id === data.receiverId)
+      console.log("Create message data",data)
+      const user = await users.find(user => user._id === data.receiverId) ; //senderId
+      const senderUser  = await users.find(user => user._id === data.senderId)
 
-      console.log("Result >> ", result);
+      console.log("Result >> ", result , '\nuser ' , user);
       if (result.success) {
         try {
           var result = await chatController.getMsgsOnRooms(result.data);
           // console.log(result);
-          io.to(`${user.socketId}`).emit('getMessagesOfRoom', result);
+          if(user) io.to(`${user.socketId}`).emit('getMessagesOfRoom', result);
+          if(senderUser) io.to(`${senderUser.socketId}`).emit('getMessagesOfRoom', result);
         } catch (error) {
           console.error('Error:', error);
         }
@@ -52,9 +55,12 @@ module.exports = function initializeSocket(server) {
 
 
     socket.on('getMessages', async (data) => {
+      console.log('getMessages Req' , data);
+      if(!data.receiverId) return;
       var result = await chatController.getMsgsOnRooms(data);
-      const user = await users.find(user => user._id === result.user._id)
-      io.to(`${user.socketId}`).emit('getMessagesOfRoom', result);
+      const user = await users.find(user => user._id === data.receiverId)
+      console.log('getMessages Response' , result.user.name , 'user\n' , user);
+      if(user) io.to(`${user.socketId}`).emit('getMessagesOfRoom', result);
     });
 
     socket.on('deleteSingleMsg', async (data) => {
@@ -67,7 +73,6 @@ module.exports = function initializeSocket(server) {
       io.emit('msgListner', result);
     });
 
-    socket.on('disconnect', () => console.log('User disconnected'));
   });
 
   return io;

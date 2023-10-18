@@ -112,7 +112,7 @@ module.exports = {
 
 
 
-        const recever = await users.findOne({_id : receiverId});
+        const recever = await users.findById({_id : receiverId});
 
         try {
             const findChat = await chatDetails.find({ roomId: data.roomId })
