@@ -50,7 +50,8 @@ module.exports = function initializeSocket(server) {
 
     socket.on('getChatRooms', async (data) => {
       var result = await chatController.getChatRooms(data);
-      io.emit('listOfRooms', result);
+      const user = await users.find(user => user._id === data.userId)
+      io.to(`${user.socketId}`).emit('listOfRooms', result);
     });
 
 

@@ -704,6 +704,8 @@ module.exports = {
         const caseId = req.params.caseId
         const case_financialDetail = await cases.findById({ _id: caseId })
 
+        if(!case_financialDetail) return;
+
 
         let links = [];
 
@@ -741,7 +743,7 @@ module.exports = {
         const zipBlob = await zip.generateAsync({ type: 'nodebuffer' });
 
         res.setHeader('Content-Type', 'application/zip');
-        res.setHeader('Content-Disposition', `attachment; filename=Bizfinn-${caseId}.zip`);
+        res.setHeader('Content-Disposition', `attachment; filename=Bizfinn-${case_financialDetail.case_no}.zip`);
         res.send(zipBlob);
     } catch (error) {
         res.status(500).send(error)
