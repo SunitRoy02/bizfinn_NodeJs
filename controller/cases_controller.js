@@ -702,7 +702,7 @@ module.exports = {
         try {
             
         const caseId = req.params.caseId
-        const case_financialDetail = await cases.findOne({ case_no: caseId })
+        const case_financialDetail = await cases.findById({ _id: caseId })
 
 
         let links = [];
