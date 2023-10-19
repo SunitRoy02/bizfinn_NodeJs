@@ -4,6 +4,8 @@ const cases = require('../models/cases');
 const users = require('../models/users');
 const { ObjectId } = require('mongodb');
 const notiCont = require('../controller/notification_controller')
+const JSZip = require('jszip');
+const axios = require('axios');
 
 
 async function generateRandomSixDigitNumber() {
@@ -446,7 +448,7 @@ module.exports = {
                 const commission = parseFloat(item.lender_comission);
                 const amount = parseFloat(item.approved_amount);
                 totalSum += (amount * commission) / 100;
-                console.log(commission , amount , totalSum);
+                console.log(commission, amount, totalSum);
             });
 
             console.log("Total case_comissioned_amount is : ", totalSum);
@@ -695,6 +697,56 @@ module.exports = {
             return res.status(500).json({ error: 'Internal server error' });
         }
     },
+
+    downloadZipFile: async (req, res) => {
+        try {
+            
+        const caseId = req.params.caseId
+        const case_financialDetail = await cases.findOne({ case_no: caseId })
+
+
+        let links = [];
+
+        // Iterate through the object properties
+        for (const key in case_financialDetail.financial_details) {
+            if (key !== 'createdAt' && case_financialDetail.financial_details[key]?.url) {
+                // Exclude 'createdAt' property and check if the 'url' property exists
+                links.push(case_financialDetail.financial_details[key]?.url);
+            }
+        }
+
+        console.log(links);
+
+
+        const zip = new JSZip();
+
+        const promises = links.map(async (link, index) => {
+            try {
+                const response = await axios.get(link, { responseType: 'arraybuffer' });
+
+                if (response.status !== 200) {
+                    throw new Error(`Failed to fetch: ${link}`);
+                }
+
+                const buffer = response.data;
+                const fileName = `file${index + 1}.jpeg`;
+                zip.file(fileName, buffer);
+            } catch (error) {
+                console.error(`Error fetching ${link}: ${error.message}`);
+            }
+        });
+
+        await Promise.all(promises);
+
+        const zipBlob = await zip.generateAsync({ type: 'nodebuffer' });
+
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', `attachment; filename=Bizfinn-${caseId}.zip`);
+        res.send(zipBlob);
+    } catch (error) {
+        res.status(500).send(error)
+    }
+    }
 }
 
 

@@ -77,6 +77,7 @@ router.put('/updateBorrower/:id' , casesController.updateBorrower)
 router.put('/caseStatus/:id',casesController.updateCase)
 router.put('/caseStatus/:id/:lenderId',casesController.caseStatus)
 // router.put('/updateCase/:id',casesController.updateCase)
+router.get('/download-zip/:caseId' , casesController.downloadZipFile)
 
 router.put('/lenderCaseStatus/:id',casesController.lenderCaseStatus)
 router.get('/getCases',casesController.getCases)
