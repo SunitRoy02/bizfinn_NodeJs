@@ -316,7 +316,13 @@ module.exports = {
                     return res.status(400).json({ status: false, msg: 'User not found with this phone number' });
                 }
                 thisUser._id
+            }
 
+            if(type =='register'){
+                const thisUser = await users.findOne({ mobile: phone, userType: userType });
+                if (thisUser) {
+                    return res.status(400).json({ status: false, msg: 'User already exists with this phone number' });
+                }
             }
 
             const msgFormat = `${req.body.otp} is the OTP for signing up into your BizFinn account. Keep the OTP safe. We will never call you to ask for your OTP. - BizFinn (RKSP)`;
