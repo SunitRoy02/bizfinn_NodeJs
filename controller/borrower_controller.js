@@ -26,33 +26,37 @@ async function generateRandomSixDigitNumber() {
 module.exports = {
     createBrowwer: async (req, res) => {
         try {
-            const {email , mobile } = req.body;
+            const { email, mobile } = req.body;
 
             console.log(req.body);
             console.log(email);
             console.log(mobile);
 
-            if(email != undefined){
+            if (email != undefined) {
                 console.log('inside email');
                 const emailData = await users.findOne({ email: email })
-                if(emailData !== null){
+                if (emailData !== null) {
                     console.log('emailData >> ', emailData);
-                  return res.status(400).send({ success: false,
-                         msg: "User with this email already exixts" });
+                    return res.status(400).send({
+                        success: false,
+                        msg: "User with this email already exixts"
+                    });
                 }
             }
-            if(mobile !== undefined ){
+            if (mobile !== undefined) {
                 console.log('inside phone');
 
                 const phoneData = await users.findOne({ mobile: mobile })
-                if(phoneData !== null){
+                if (phoneData !== null) {
                     console.log('phoneData >> ', phoneData);
 
-                  return res.status(400).send({ success: false,
-                         msg: "User with this mobile number already exixts" });
+                    return res.status(400).send({
+                        success: false,
+                        msg: "User with this mobile number already exixts"
+                    });
                 }
             }
-            
+
             // console.log("Find IN Register >>> ", find);
 
             let reqData = req.body;
@@ -61,7 +65,7 @@ module.exports = {
             reqData.case_pending = 0;
             reqData.userType = 3;
             reqData.bussiness_details = {
-                bussiness_structure : ""
+                bussiness_structure: ""
             };
             reqData.kyc_details = null;
             reqData.financial_details = null;
@@ -74,10 +78,10 @@ module.exports = {
 
 
             const msfIfSuccess = "Borrower Created Successfully";
-           return  res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
+            return res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
         } catch (error) {
             console.log("Error : ", error);
-           return  res.status(400).send({ success: false, msg: error.message });
+            return res.status(400).send({ success: false, msg: error.message });
 
         }
 
@@ -86,7 +90,7 @@ module.exports = {
 
     getBorrowers: async (req, res) => {
         try {
-            
+
             const { name, fromDate, toDate } = req.query;
 
             const queryMap = {};
@@ -103,7 +107,7 @@ module.exports = {
                 };
             }
 
-            
+
             const find = await users.find(queryMap)
             // console.log("Find IN GetProfile >>> ", find);
             if (find.length === 0) {
@@ -225,13 +229,13 @@ module.exports = {
                 return res.status(400).json({ status: false, message: 'User not found' });
             }
 
-            if(!updatedBusinessDetails.gst_number){
+            if (!updatedBusinessDetails.gst_number) {
                 return res.status(400).json({ status: false, message: 'Gst Number not found' });
             }
             var result = await checkGstNumber(updatedBusinessDetails.gst_number);
 
-            console.log('Check GST result >> ',result);
-            if(!result && result != 200){
+            console.log('Check GST result >> ', result);
+            if (!result && result != 200) {
                 return res.status(400).json({ status: false, message: 'Please enter a valid GST number' });
             }
 
@@ -322,12 +326,68 @@ module.exports = {
 
     },
 
+    updateBorrowerExtraDocs: async (req, res) => {
+
+        try {
+            const userId = req.params.id;
+            const newObjects = req.body.extraDocArray;
+
+            // Find the user by userId
+            const userData = await users.findOne({ _id: userId });
+
+            if (!userData) {
+                return res.status(400).json({ status: false, message: 'User not found' });
+            }
+
+            const updatedUser = await users.findOneAndUpdate(
+                { _id: userId },
+                { $push: { userExtraDocs: { $each: newObjects } } });
+
+
+            // const updatedUser =  users.findOneAndUpdate(
+            //         { _id: documentId },
+            //         { $pull: { userExtraDocs: { _id: objectIdToRemove } } })
+
+
+            return res.json({ status: true, message: "Kyc updated successfully.", data: updatedUser });
+        } catch (error) {
+            console.error(error);
+            return res.status(400).json({ status: false, message: 'An error occurred', error });
+        }
+
+    },
+
+    removeBorrowerExtraDocs: async (req, res) => {
+
+        try {
+            const userId = req.query.id;
+            const imageId = req.query.imageId;
+
+            // Find the user by userId
+            const userData = await users.findOne({ _id: userId });
+
+            if (!userData) {
+                return res.status(400).json({ status: false, message: 'User not found' });
+            }
+            const updatedUser =  users.findOneAndUpdate(
+                    { _id: documentId },
+                    { $pull: { userExtraDocs: { _id: imageId } } })
+
+
+            return res.json({ status: true, message: "Kyc updated successfully.", data: updatedUser });
+        } catch (error) {
+            console.error(error);
+            return res.status(400).json({ status: false, message: 'An error occurred', error });
+        }
+
+    },
+
     updateBorrowerFinancialDetails: async (req, res) => {
 
 
         try {
             const userId = req.params.id;
-            const {caseId} = req.params
+            const { caseId } = req.params
             const updatedBusinessDetails = req.body;
 
             // Find the user by userId
@@ -361,7 +421,7 @@ module.exports = {
                 { new: true } // Return the updated document
             );
 
-            if(caseId){
+            if (caseId) {
                 const caseData = await cases.findOne({ _id: caseId });
                 if (caseData.financial_details !== null) {
                     // Update only non-null, non-undefined, and non-empty values in business details
@@ -375,7 +435,7 @@ module.exports = {
 
                 const caseUpdatedItem = await cases.findByIdAndUpdate(
                     caseId,
-                    { $set: { financial_details: caseData.financial_details } }, 
+                    { $set: { financial_details: caseData.financial_details } },
                 );
             }
 
@@ -401,30 +461,30 @@ module.exports = {
             const { name, fromDate, toDate } = req.query;
 
             let queryMap = { 'borrower': ObjectId(borrowerId) };
-        
+
             if (name) {
                 queryMap.borrowerName = { $regex: new RegExp(name, 'i') }; // Case-insensitive name search
             }
-        
+
             if (fromDate && toDate) {
                 queryMap.createdAt = {
-                $gte: new Date(fromDate),
-                $lte: new Date(toDate),
-              };
+                    $gte: new Date(fromDate),
+                    $lte: new Date(toDate),
+                };
             }
 
 
-            console.log("borrowerId >> ",borrowerId);
-            const userByborrowerId = await users.findOne({ _id:  borrowerId});
-            if(!userByborrowerId){
-               return  res.status(400).send({ success: false,msg:"Borrower not found",});
+            console.log("borrowerId >> ", borrowerId);
+            const userByborrowerId = await users.findOne({ _id: borrowerId });
+            if (!userByborrowerId) {
+                return res.status(400).send({ success: false, msg: "Borrower not found", });
             }
             const find = await cases.find(queryMap);
             if (find.length === 0) {
-               return  res.status(200).send({ success: false,msg:"No Cases Found ", data: find });
+                return res.status(200).send({ success: false, msg: "No Cases Found ", data: find });
             } else {
                 const message = "Cases Found successfully";
-               return  res.status(200).send({ success: true, msg: message, data: find });
+                return res.status(200).send({ success: true, msg: message, data: find });
             }
 
         } catch (error) {
@@ -439,36 +499,36 @@ module.exports = {
         try {
             const borrowerId = req.params.borrowerId;
 
-            const {fromDate, toDate } = req.query;
+            const { fromDate, toDate } = req.query;
 
             let queryMap = { 'borrower': ObjectId(borrowerId) };
-  
-        
+
+
             if (fromDate && toDate) {
                 queryMap.createdAt = {
-                $gte: new Date(fromDate),
-                $lte: new Date(toDate),
-              };
+                    $gte: new Date(fromDate),
+                    $lte: new Date(toDate),
+                };
             }
 
 
-            console.log("borrowerId >> ",borrowerId);
-            const userByborrowerId = await users.findOne({ _id:  borrowerId});
-            if(!userByborrowerId){
-               return  res.status(400).send({ success: false,msg:"Borrower not found",});
+            console.log("borrowerId >> ", borrowerId);
+            const userByborrowerId = await users.findOne({ _id: borrowerId });
+            if (!userByborrowerId) {
+                return res.status(400).send({ success: false, msg: "Borrower not found", });
             }
             const find = await cases.find(queryMap);
             if (find.length === 0) {
-               return  res.status(200).send({ success: false,msg:"No Cases Found ", data: find });
+                return res.status(200).send({ success: false, msg: "No Cases Found ", data: find });
             } else {
                 const message = "Cases Found successfully";
                 let dataObjact = {
-                    pendingCases : find.filter(obj => obj.status === 0).length,
-                    completeCases : find.filter(obj => obj.status === 1).length,
-                    rejectedCases : find.filter(obj => obj.status === 2).length,
-                    inprogressCases : find.filter(obj => obj.status === 3).length,
+                    pendingCases: find.filter(obj => obj.status === 0).length,
+                    completeCases: find.filter(obj => obj.status === 1).length,
+                    rejectedCases: find.filter(obj => obj.status === 2).length,
+                    inprogressCases: find.filter(obj => obj.status === 3).length,
                 }
-               return  res.status(200).send({ success: true, msg: message, data: dataObjact });
+                return res.status(200).send({ success: true, msg: message, data: dataObjact });
             }
 
         } catch (error) {
@@ -481,7 +541,7 @@ module.exports = {
 
 }
 
-async function getAccessTocken(){
+async function getAccessTocken() {
 
     var testingUrl = "https://preproduction.signzy.tech/api/v2/patrons/login";
     // var prodgUrl = "https://signzy.tech/api/v2/patrons/login";
@@ -489,24 +549,24 @@ async function getAccessTocken(){
     var options = {
         method: 'POST',
         url: testingUrl,
-        headers: {'Accept-Language': 'en-US,en;q=0.8', Accept: '*/*'},
-        data: {username: 'Bizfinn_test', password: '9r5fruraclko9wug'}
-      };
-      
-     let res = await  axios.request(options).catch(function (error) {
+        headers: { 'Accept-Language': 'en-US,en;q=0.8', Accept: '*/*' },
+        data: { username: 'Bizfinn_test', password: '9r5fruraclko9wug' }
+    };
+
+    let res = await axios.request(options).catch(function (error) {
         console.error(error);
-      });
+    });
     //   console.log("Axios Responce >>>> ",res.data);
-      return res.data;
+    return res.data;
 }
 
 
-async function checkGstNumber(gstNumber){
+async function checkGstNumber(gstNumber) {
 
-    var res = await  getAccessTocken();
-    console.log("Axios Responce >>>> ",res);
+    var res = await getAccessTocken();
+    console.log("Axios Responce >>>> ", res);
 
-    if(res !== null){
+    if (res !== null) {
 
         var testingUrl = `https://preproduction.signzy.tech/api/v2/patrons/${res.userId}/gstns`;
         // var prodgUrl = `https://signzy.tech/api/v2/patrons/${res.userId}/gstns`;
@@ -516,20 +576,20 @@ async function checkGstNumber(gstNumber){
             method: 'POST',
             url: testingUrl,
             headers: {
-              'Accept-Language': 'en-US,en;q=0.8',
-              'content-type': 'application/json',
-              'Authorization': res.id
+                'Accept-Language': 'en-US,en;q=0.8',
+                'content-type': 'application/json',
+                'Authorization': res.id
             },
-            data: {task: 'gstinSearch', essentials: {gstin: gstNumber}}
-          };
-          
-          try{
-            var result = await  axios.request(options);
+            data: { task: 'gstinSearch', essentials: { gstin: gstNumber } }
+        };
+
+        try {
+            var result = await axios.request(options);
             return result.status;
-          }catch(error){
+        } catch (error) {
             console.error(error.message);
-          }
-    
+        }
+
     }
 
 

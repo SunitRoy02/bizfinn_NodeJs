@@ -45,6 +45,10 @@ const bussinessSchema = mongoose.Schema({
     gst_number: String,
 })
 
+const userExtraDoc = mongoose.Schema({
+  
+})
+
 const userSchema = mongoose.Schema({
 
     id : mongoose.Types.ObjectId, 
@@ -80,6 +84,12 @@ const userSchema = mongoose.Schema({
     bussiness_details: bussinessSchema,
     kyc_details: kycSchema,
     financial_details: financialSchema,
+    userExtraDocs:[{
+        url:{type:String},
+        name:{type:String},
+        createdAt : { type: Date, default: Date.now },
+        updatedAt : { type: Date,},
+    }]
 
 });
 
