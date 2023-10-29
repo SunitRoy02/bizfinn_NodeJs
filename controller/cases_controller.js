@@ -700,54 +700,74 @@ module.exports = {
 
     downloadZipFile: async (req, res) => {
         try {
-            
-        const caseId = req.params.caseId
-        const case_financialDetail = await cases.findById({ _id: caseId })
 
-        if(!case_financialDetail) return;
+            const caseId = req.params.caseId
+            const case_financialDetail = await users.findById({ _id: caseId })
+            const fileType = req.query.fileType;
 
-
-        let links = [];
-
-        // Iterate through the object properties
-        for (const key in case_financialDetail.financial_details) {
-            if (key !== 'createdAt' && case_financialDetail.financial_details[key]?.url) {
-                // Exclude 'createdAt' property and check if the 'url' property exists
-                links.push(case_financialDetail.financial_details[key]?.url);
-            }
-        }
-
-        console.log(links);
+            if (!case_financialDetail) return;
 
 
-        const zip = new JSZip();
+            let links = [];
 
-        const promises = links.map(async (link, index) => {
-            try {
-                const response = await axios.get(link, { responseType: 'arraybuffer' });
-
-                if (response.status !== 200) {
-                    throw new Error(`Failed to fetch: ${link}`);
+            if(fileType == 'Financial_Details'){
+                for (const key in case_financialDetail.financial_details) {
+                    if (key !== 'createdAt' && case_financialDetail.financial_details[key]?.url) {
+                        // Exclude 'createdAt' property and check if the 'url' property exists
+                        links.push(case_financialDetail.financial_details[key]?.url);
+                    }
                 }
-
-                const buffer = response.data;
-                const fileName = `file${index + 1}.jpeg`;
-                zip.file(fileName, buffer);
-            } catch (error) {
-                console.error(`Error fetching ${link}: ${error.message}`);
             }
-        });
+            else  if(fileType == 'KYC_Details'){
+                for (const key in case_financialDetail.kyc_details) {
+                    if (key !== 'createdAt' && case_financialDetail.kyc_details[key]?.url) {
+                        // Exclude 'createdAt' property and check if the 'url' property exists
+                        links.push(case_financialDetail.kyc_details[key]?.url);
+                    }
+                }
+            }
+            else  if(fileType == 'Business_Details'){
+                for (const key in case_financialDetail.bussiness_details) {
+                    if (key !== 'createdAt' && case_financialDetail.bussiness_details[key]?.url) {
+                        // Exclude 'createdAt' property and check if the 'url' property exists
+                        links.push(case_financialDetail.bussiness_details[key]?.url);
+                    }
+                }
+            }
+            // Iterate through the object properties
+           
 
-        await Promise.all(promises);
+            console.log(links);
 
-        const zipBlob = await zip.generateAsync({ type: 'nodebuffer' });
 
-        res.setHeader('Content-Type', 'application/zip');
-        res.setHeader('Content-Disposition', `attachment; filename=Bizfinn-${case_financialDetail.case_no}.zip`);
-        res.send(zipBlob);
-    } catch (error) {
-        res.status(500).send(error)
-    }
+            const zip = new JSZip();
+
+            const promises = links.map(async (link, index) => {
+                try {
+                    const response = await axios.get(link, { responseType: 'arraybuffer' });
+
+                    if (response.status !== 200) {
+                        throw new Error(`Failed to fetch: ${link}`);
+                    }
+
+                    const buffer = response.data;
+                    const fileName = `file${index + 1}.jpeg`;
+                    zip.file(fileName, buffer);
+                } catch (error) {
+                    console.error(`Error fetching ${link}: ${error.message}`);
+                }
+            });
+
+            await Promise.all(promises);
+
+            const zipBlob = await zip.generateAsync({ type: 'nodebuffer' });
+
+            res.setHeader('Content-Type', 'application/zip');
+            res.setHeader('Content-Disposition', `attachment; filename=Bizfinn-${case_financialDetail.case_no}.zip`);
+            res.send(zipBlob);
+        } catch (error) {
+            res.status(500).send(error)
+        }
     }
 }
 

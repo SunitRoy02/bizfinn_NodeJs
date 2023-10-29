@@ -375,8 +375,8 @@ module.exports = {
             if (!userData) {
                 return res.status(400).json({ status: false, message: 'User not found' });
             }
-            const updatedUser =  users.findOneAndUpdate(
-                    { _id: documentId },
+            const updatedUser = await users.findOneAndUpdate(
+                    { _id: userId },
                     { $pull: { userExtraDocs: { _id: imageId } } })
 
 
