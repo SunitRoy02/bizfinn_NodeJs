@@ -331,17 +331,23 @@ module.exports = {
         try {
             const userId = req.params.id;
             const newObjects = req.body.extraDocArray;
-
+            console.log("body => ",req.body);
             // Find the user by userId
             const userData = await users.findOne({ _id: userId });
 
             if (!userData) {
                 return res.status(400).json({ status: false, message: 'User not found' });
             }
+            const formattedExtraDocArray = newObjects.map(url => {
+                const name = url.split('/').pop(); // Extract the name from the URL
+                return { name, url };
+              });
+
+              console.log("docs  => ",formattedExtraDocArray);
 
             const updatedUser = await users.findOneAndUpdate(
                 { _id: userId },
-                { $push: { userExtraDocs: { $each: newObjects } } });
+                { $push: { userExtraDocs: { $each: formattedExtraDocArray } } });
 
 
             // const updatedUser =  users.findOneAndUpdate(
