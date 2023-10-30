@@ -8,10 +8,10 @@ module.exports = {
     loginFun: async (req, res) => {
         try {
 
-            const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                return res.status(400).send({ success: false, errors: errors.array()[0] });
-            }
+            // const errors = validationResult(req)
+            // if (!errors.isEmpty()) {
+            //     return res.status(400).send({ success: false, errors: errors.array()[0] });
+            // }
 
             let find = await users.find({ email: req.body.email, password: req.body.password, userType: req.body.userType })
 
