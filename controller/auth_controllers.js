@@ -19,9 +19,9 @@ module.exports = {
                 const msfIferror = "User Not Found";
                 find = await users.find({ mobile: req.body.email, password: req.body.password, userType: req.body.userType })
                 if (find.length === 0) {
-                    res.status(400).send({ success: false, msg: msfIferror, });
+                    return res.status(400).send({ success: false, msg: msfIferror, });
                 }
-            } else {
+            }
                 const msfIfSuccess = "Login Successfully";
                 let thisUser = find[0];
                 if (req.body.userType == '2' || req.body.userType == '3') {
@@ -32,7 +32,7 @@ module.exports = {
                     console.log(thisUser);
                 }
                 res.status(200).send({ success: true, msg: msfIfSuccess, data: thisUser });
-            }
+            
 
         } catch (error) {
             console.log("Error : ", error);
