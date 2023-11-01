@@ -438,6 +438,11 @@ module.exports = {
     }
 }
 
+const months = [
+    "jan", "feb", "mar", "apr", "may", "jun",
+    "jul", "aug", "sep", "oct", "nov", "dec"
+];
+
 function getMonthNameM_M(monthNumber) {
     const date = new Date(currentYear, monthNumber - 1, 1); // Subtracting 1 because months are 0-based
     return months[date.getMonth()];
