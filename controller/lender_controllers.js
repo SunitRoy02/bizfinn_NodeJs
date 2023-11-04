@@ -275,7 +275,7 @@ module.exports = {
             const lenderId = req.params.lenderId
             let filterBody = {};
             if (lenderId) {
-                filterBody = { 'lenders.lenderId': ObjectId(lenderId) };
+                filterBody = { 'lenders.lenderId': lenderId };
             }
 
             let TovValue = await LenderDashboardUtils.getTovValue(filterBody)
@@ -294,12 +294,13 @@ module.exports = {
                     $gte: new Date(fromDate),
                     $lte: new Date(toDate),
                 };
+                TovValue = await LenderDashboardUtils.getTovValue(filterBody)
+                GtvValue = await LenderDashboardUtils.getGTvValue(filterBody)
+                CommissionValue = await LenderDashboardUtils.getCommissionValue(filterBody)
+                activeDealValue = await LenderDashboardUtils.getActiveDealCounts(filterBody)
             }
 
-            TovValue = await LenderDashboardUtils.getTovValue(filterBody)
-            GtvValue = await LenderDashboardUtils.getGTvValue(filterBody)
-            CommissionValue = await LenderDashboardUtils.getCommissionValue(filterBody)
-            activeDealValue = await LenderDashboardUtils.getActiveDealCounts(filterBody)
+           
 
             res.json({
                 loan_status_year,
