@@ -332,12 +332,10 @@ module.exports = {
              
 
     },
-    getTovValue: async (lenderId) =>{
+    getTovValue: async (filterBody) =>{
         const result = await cases.aggregate([
             {
-                $match: {
-                    "lenders.lenderId": lenderId
-                }
+                $match: filterBody
             },
             {
                 $unwind: "$lenders"
@@ -359,12 +357,10 @@ module.exports = {
         return result[0]?.result
 
     },
-    getGTvValue: async (lenderId) =>{
+    getGTvValue: async (filterBody) =>{
         const result = await cases.aggregate([
             {
-                $match: {
-                    "lenders.lenderId": lenderId
-                }
+                $match: filterBody
             },
             {
                 $unwind: "$lenders"
@@ -384,12 +380,10 @@ module.exports = {
         ]);
         return result[0]?.result
     },
-    getCommissionValue: async (lenderId) =>{
+    getCommissionValue: async (filterBody) =>{
         const result = await cases.aggregate([
             {
-                $match: {
-                    "lenders.lenderId": lenderId
-                }
+                $match: filterBody
             },
             {
                 $unwind: "$lenders"
@@ -410,14 +404,17 @@ module.exports = {
         console.log(result);
         return result[0]?.result
     },
-    getActiveDealCounts: async (lenderId)=>{
+    getActiveDealCounts: async (filterBody)=>{
+
+        filterBody ={
+            ...filterBody,
+            "lenders.approved":0,
+            "lenders.lander_approved": { $ne: 3 },
+        }
+
         const progressCount = await cases.aggregate([
             {
-                $match: {
-                    "lenders.approved":0,
-                    "lenders.lander_approved": { $ne: 3 },
-                    "lenders.lenderId": lenderId
-                }
+                $match: filterBody
             },
             {
                 $group: {

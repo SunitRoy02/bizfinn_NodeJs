@@ -14,9 +14,16 @@ module.exports = {
     try {
 
       const { lenderId } = req.params;
+      const { fromDate, toDate } = req.query;
       let filterBody = {};
       if (lenderId) {
         filterBody = { 'lenders.lenderId': ObjectId(lenderId) };
+      }
+      if (fromDate && toDate) {
+        filterBody.createdAt = {
+          $gte: new Date(fromDate),
+          $lte: new Date(toDate),
+        };
       }
 
       const allCases = await cases.find(filterBody);
@@ -201,7 +208,7 @@ async function calculateReq(data) {
 async function activeCasesCount(data) {
   let activeCases = 0;
   for (let i = 0; i < data.length; i++) {
-    if (data[i].status === 0 || data[i].status===3) {
+    if (data[i].status === 0 || data[i].status === 3) {
       activeCases++;
     }
   }

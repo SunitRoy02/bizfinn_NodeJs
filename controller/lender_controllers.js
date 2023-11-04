@@ -273,27 +273,44 @@ module.exports = {
     lenderDashbord: async (req, res) => {
         try {
             const lenderId = req.params.lenderId
+            let filterBody = {};
+            if (lenderId) {
+                filterBody = { 'lenders.lenderId': ObjectId(lenderId) };
+            }
 
-            const TovValue = await LenderDashboardUtils.getTovValue(lenderId)
-            const GtvValue = await LenderDashboardUtils.getGTvValue(lenderId) 
-            const CommissionValue = await LenderDashboardUtils.getCommissionValue(lenderId)
-            const activeDealValue = await LenderDashboardUtils.getActiveDealCounts(lenderId)
+            let TovValue = await LenderDashboardUtils.getTovValue(filterBody)
+            let GtvValue = await LenderDashboardUtils.getGTvValue(filterBody)
+            let CommissionValue = await LenderDashboardUtils.getCommissionValue(filterBody)
+            let activeDealValue = await LenderDashboardUtils.getActiveDealCounts(filterBody)
             const loan_status_year = await LenderDashboardUtils.getLoanStatus(lenderId);
             const allTypeOfLoan = await LenderDashboardUtils.getAllTypeOfLoanCount(lenderId)
-            const approved_chart = await LenderDashboardUtils.getLenderApprovedCount(lenderId) 
+            const approved_chart = await LenderDashboardUtils.getLenderApprovedCount(lenderId)
             const rejected_chart = await LenderDashboardUtils.getLenderRejectedCount(lenderId)
             const NewsBullitin = await LenderDashboardUtils.getDisbursementMonthVise(lenderId);
 
+            const { fromDate, toDate } = req.query;
+            if (fromDate && toDate) {
+                filterBody.createdAt = {
+                    $gte: new Date(fromDate),
+                    $lte: new Date(toDate),
+                };
+            }
+
+            TovValue = await LenderDashboardUtils.getTovValue(filterBody)
+            GtvValue = await LenderDashboardUtils.getGTvValue(filterBody)
+            CommissionValue = await LenderDashboardUtils.getCommissionValue(filterBody)
+            activeDealValue = await LenderDashboardUtils.getActiveDealCounts(filterBody)
+
             res.json({
-                loan_status_year, 
-                allTypeOfLoan, 
-                approved_chart, 
-                rejected_chart, 
+                loan_status_year,
+                allTypeOfLoan,
+                approved_chart,
+                rejected_chart,
                 NewsBullitin,
-                total_origination_value:TovValue,
-                gross_transaction_value:GtvValue,
-                active_cases_count:activeDealValue ? activeDealValue : 0,
-                gross_revenue:CommissionValue
+                total_origination_value: TovValue,
+                gross_transaction_value: GtvValue,
+                active_cases_count: activeDealValue ? activeDealValue : 0,
+                gross_revenue: CommissionValue
             })
 
         } catch (error) {
