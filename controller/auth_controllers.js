@@ -41,6 +41,19 @@ module.exports = {
         }
     },
 
+    otpVerified:async(req,res)=>{
+        try{
+            let user = await users.find({mobile:req.body.mobile })
+            thisUser  = user[0]
+            const findAdmin = await users.findOne({ userType: 1 });
+            thisUser.admin = findAdmin._id
+            const msfIfSuccess="Login Successfully"
+            res.status(200).send({ success: true, msg: msfIfSuccess, data: thisUser });
+        }catch(error){
+            res.status(500).send({ success: false, msg: error.message });
+        }
+    },
+
     registerFun: async (req, res) => {
         try {
 

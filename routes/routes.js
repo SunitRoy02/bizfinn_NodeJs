@@ -31,7 +31,8 @@ router.get('/admin/dashbord/:lenderId',adminController.dashbord)
 
 
 //Auth --------
-router.post('/login' , loginValidation , authController.loginFun)
+router.post('/login' , authController.loginFun) 
+router.post('/otp-verified', authController.otpVerified)
 router.post('/register' , registerValidation , authController.registerFun)
 router.post('/forgotPassword',forgotPassValidation,authController.forgotPassFun)
 router.post('/getProfile',getProfileValidation,authController.getProfile)
@@ -64,6 +65,9 @@ router.put('/updateBorrowerFinancialDetails/:id' , borrowerController.updateBorr
 router.get('/borrowerCases/:borrowerId',borrowerController.getCases)
 router.get('/borrowerDashbord/:borrowerId',borrowerController.borrowerDashbord)
 router.put('/removeBorrowerExtradocs/:id' , borrowerController.removeBorrowerExtraDocs)
+
+
+router.get('/otpVerified' , borrowerController.getBorrowers)
 
 
 //Notification ---------
