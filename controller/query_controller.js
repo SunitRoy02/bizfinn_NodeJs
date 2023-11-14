@@ -70,7 +70,7 @@ module.exports = {
             const msfIfSuccess = "Query Created Successfully";
             notiCont.localNotification(msfIfSuccess,"Kindly wait for a revert from  Admin",lenderId);
             notiCont.localNotification("Query alert !!","New query has been found kindly check and update",admin._id);
-            notiCont.localNotification("Query alert !!","New query has been found kindly check and update",borrower);
+            notiCont.localNotification("Query alert !!","New query has been found kindly check and update",reqData.borrower);
 
 
             return res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
