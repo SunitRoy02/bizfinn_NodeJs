@@ -80,10 +80,11 @@ module.exports = {
             let data = new cases(reqData);
             let result = await data.save();
 
+            const admin =await users.findOne({userType:1})
 
             const msfIfSuccess = "Cases Created Successfully";
             notiCont.localNotification(msfIfSuccess, "Kindly wait for Admin and lender approvel", reqData.borrower);
-            notiCont.localNotification(msfIfSuccess, "Please assign lenders to proceed forward", '64fb697d8ae2c074f1319981');
+            notiCont.localNotification(msfIfSuccess, "Please assign lenders to proceed forward", admin._id);
             return res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
 
 

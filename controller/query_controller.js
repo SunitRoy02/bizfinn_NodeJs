@@ -64,10 +64,14 @@ module.exports = {
             let data = new query(reqData);
             let result = await data.save();
 
+            const admin =await users.findOne({userType:1})
+
 
             const msfIfSuccess = "Query Created Successfully";
             notiCont.localNotification(msfIfSuccess,"Kindly wait for a revert from  Admin",lenderId);
-            notiCont.localNotification("Query alert !!","New query has been found kindly check and update",'64fb697d8ae2c074f1319981');
+            notiCont.localNotification("Query alert !!","New query has been found kindly check and update",admin._id);
+            notiCont.localNotification("Query alert !!","New query has been found kindly check and update",borrower);
+
 
             return res.status(200).send({ success: true, msg: msfIfSuccess, data: result });
         
