@@ -752,7 +752,7 @@ module.exports = {
                     }
 
                     const buffer = response.data;
-                    const fileName = `file${index + 1}.jpeg`;
+                    const fileName = `file${index + 1}.${getExtension(link)}`;
                     zip.file(fileName, buffer);
                 } catch (error) {
                     console.error(`Error fetching ${link}: ${error.message}`);
@@ -771,6 +771,13 @@ module.exports = {
         }
     }
 }
+
+const getExtension = (url) => {
+    const match = url.match(/\.[0-9a-z]+$/i);
+    const urlValue = match ? match[0].substr(1) : '';
+    console.log("url match" , urlValue);
+    return urlValue;
+  };
 
 
 async function updateBorrowerCaseData(caseId, approved) {
