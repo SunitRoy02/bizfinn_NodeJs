@@ -734,6 +734,13 @@ module.exports = {
                         links.push(case_financialDetail.bussiness_details[key]?.url);
                     }
                 }
+            } else  if(fileType == 'Extra_docs'){
+                for (const key in case_financialDetail.userExtraDocs) {
+                    if (key !== 'createdAt' && case_financialDetail.userExtraDocs[key]?.url) {
+                        // Exclude 'createdAt' property and check if the 'url' property exists
+                        links.push(case_financialDetail.userExtraDocs[key]?.url);
+                    }
+                }
             }
             // Iterate through the object properties
            
