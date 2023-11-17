@@ -80,7 +80,7 @@ module.exports = {
             let data = new cases(reqData);
             let result = await data.save();
 
-            const admin =await users.findOne({userType:1})
+            const admin = await users.findOne({ userType: 1 })
 
             const msfIfSuccess = "Cases Created Successfully";
             notiCont.localNotification(msfIfSuccess, "Kindly wait for Admin and lender approvel", reqData.borrower);
@@ -711,7 +711,7 @@ module.exports = {
 
             let links = [];
 
-            if(fileType == 'Financial_Details'){
+            if (fileType == 'Financial_Details') {
                 for (const key in case_financialDetail.financial_details) {
                     if (key !== 'createdAt' && case_financialDetail.financial_details[key]?.url) {
                         // Exclude 'createdAt' property and check if the 'url' property exists
@@ -719,7 +719,7 @@ module.exports = {
                     }
                 }
             }
-            else  if(fileType == 'KYC_Details'){
+            else if (fileType == 'KYC_Details') {
                 for (const key in case_financialDetail.kyc_details) {
                     if (key !== 'createdAt' && case_financialDetail.kyc_details[key]?.url) {
                         // Exclude 'createdAt' property and check if the 'url' property exists
@@ -727,14 +727,14 @@ module.exports = {
                     }
                 }
             }
-            else  if(fileType == 'Business_Details'){
+            else if (fileType == 'Business_Details') {
                 for (const key in case_financialDetail.bussiness_details) {
                     if (key !== 'createdAt' && case_financialDetail.bussiness_details[key]?.url) {
                         // Exclude 'createdAt' property and check if the 'url' property exists
                         links.push(case_financialDetail.bussiness_details[key]?.url);
                     }
                 }
-            } else  if(fileType == 'Extra_docs'){
+            } else if (fileType == 'Extra_docs') {
                 for (const key in case_financialDetail.userExtraDocs) {
                     if (key !== 'createdAt' && case_financialDetail.userExtraDocs[key]?.url) {
                         // Exclude 'createdAt' property and check if the 'url' property exists
@@ -743,7 +743,7 @@ module.exports = {
                 }
             }
             // Iterate through the object properties
-           
+
 
             console.log(links);
 
@@ -759,7 +759,7 @@ module.exports = {
                     }
 
                     const buffer = response.data;
-                    const fileName = `file${index + 1}.${getExtension(link)}`;
+                    const fileName = `${getFileName(link)}.${getExtension(link)}`;
                     zip.file(fileName, buffer);
                 } catch (error) {
                     console.error(`Error fetching ${link}: ${error.message}`);
@@ -771,7 +771,7 @@ module.exports = {
             const zipBlob = await zip.generateAsync({ type: 'nodebuffer' });
 
             res.setHeader('Content-Type', 'application/zip');
-            res.setHeader('Content-Disposition', `attachment; filename=Bizfinn-${case_financialDetail.case_no}.zip`);
+            res.setHeader('Content-Disposition', `attachment; filename=Bizfinn-${case_financialDetail.name}.zip`);
             res.send(zipBlob);
         } catch (error) {
             res.status(500).send(error)
@@ -779,12 +779,22 @@ module.exports = {
     }
 }
 
+const getFileName = (url) => {
+
+    // Get the part after the last '/' and before the file extension
+    const fileNameWithPrefix = url.split('/').pop();
+    const fileName = fileNameWithPrefix.replace(/^[^-]+-/, '').replace(/\.[^/.]+$/, '');
+
+    return fileName
+
+}
+
 const getExtension = (url) => {
     const match = url.match(/\.[0-9a-z]+$/i);
     const urlValue = match ? match[0].substr(1) : '';
-    console.log("url match" , urlValue);
+    console.log("url match", urlValue);
     return urlValue;
-  };
+};
 
 
 async function updateBorrowerCaseData(caseId, approved) {
