@@ -64,9 +64,6 @@ module.exports = {
             reqData.case_approved = 0;
             reqData.case_pending = 0;
             reqData.userType = 3;
-            reqData.bussiness_details = {
-                bussiness_structure: ""
-            };
             reqData.kyc_details = null;
             reqData.financial_details = null;
             reqData.name = reqData.companyName
