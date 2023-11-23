@@ -37,7 +37,6 @@ const bussinessSchema = mongoose.Schema({
     updatedAt : String,
     borrowerId: String,
     register_company_name: String,
-    bussiness_structure: String,
     age_of_business: String,
     type_of_business: String,
     annual_turn_over: String,
