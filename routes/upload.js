@@ -25,7 +25,7 @@ exports.upload = multer({
     },
     key: function (req, file, cb) {
       // cb(null,file.originalname);
-      cb(null, shortId.generate() + '-' + file.originalname);
+      cb(null, file.originalname);
     },
   }),
 });
