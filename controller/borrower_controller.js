@@ -225,6 +225,7 @@ module.exports = {
             if (!userData) {
                 return res.status(400).json({ status: false, message: 'User not found' });
             }
+            console.log(userData);
 
             if (!updatedBusinessDetails.gst_number) {
                 return res.status(400).json({ status: false, message: 'Gst Number not found' });
@@ -237,7 +238,7 @@ module.exports = {
             }
 
             // Update only non-null, non-undefined, and non-empty values in business details
-            if (userData.bussiness_details !== null) {
+            if (userData.bussiness_details !== null && userData.bussiness_details != undefined) {
                 // console.log('userData.bussiness_details >> ', userData.bussiness_details);
                 // console.log('updatedBusinessDetails >> ', updatedBusinessDetails);
                 for (const key in updatedBusinessDetails) {
