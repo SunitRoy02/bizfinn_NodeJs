@@ -546,12 +546,12 @@ module.exports = {
 
         try {
             const userId = req.body.userId
-            const roomId = req.body?.roomId;
+            const roomId = req.body.roomId;
             let chatMsg
             if (roomId) {
                 chatMsg = await chat.chatDetails.updateMany(
                     { receiverId: userId, roomId },
-                    { $set: { "chatDetails.isSeen": true } }
+                    { $set: { "isSeen": true } }
                 )
             }
             else {
