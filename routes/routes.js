@@ -66,6 +66,9 @@ router.get('/borrowerCases/:borrowerId',borrowerController.getCases)
 router.get('/borrowerDashbord/:borrowerId',borrowerController.borrowerDashbord)
 router.put('/removeBorrowerExtradocs/:id' , borrowerController.removeBorrowerExtraDocs)
 
+router.put('/markChatSeen' , borrowerController.markChatSeen)
+
+router.get('/check-msg-seen' , borrowerController.checkIfMsgSeen)
 
 router.get('/otpVerified' , borrowerController.getBorrowers)
 

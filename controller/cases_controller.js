@@ -771,7 +771,7 @@ module.exports = {
             const zipBlob = await zip.generateAsync({ type: 'nodebuffer' });
 
             res.setHeader('Content-Type', 'application/zip');
-            res.setHeader('Content-Disposition', `attachment; filename=Bizfinn-${case_financialDetail.name}.zip`);
+            res.setHeader('Content-Disposition', `attachment; filename=${case_financialDetail.name + " " + fileType}.zip`);
             res.send(zipBlob);
         } catch (error) {
             res.status(500).send(error)

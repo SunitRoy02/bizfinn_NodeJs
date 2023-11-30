@@ -9,6 +9,7 @@ const chatSchema = mongoose.Schema({
     id: mongoose.Schema.Types.ObjectId, // Reference to the recipient user's ObjectId
     media: [String], // Array of media URLs or paths
     createdAt: { type: Date, default: Date.now },
+    isSeen:{type:Boolean , default:false}
 });
 
 const chatConversationSchema = mongoose.Schema({

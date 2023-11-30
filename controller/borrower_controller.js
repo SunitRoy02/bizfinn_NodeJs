@@ -3,6 +3,7 @@ const users = require('../models/users');
 const cases = require('../models/cases');
 const { ObjectId } = require('mongodb');
 const axios = require('axios');
+const chat = require('../models/chat');
 
 async function generateRandomSixDigitNumber() {
     const min = 100000; // Smallest 6-digit number
@@ -329,7 +330,7 @@ module.exports = {
         try {
             const userId = req.params.id;
             const newObjects = req.body.extraDocArray;
-            console.log("body => ",req.body);
+            console.log("body => ", req.body);
             // Find the user by userId
             const userData = await users.findOne({ _id: userId });
 
@@ -339,9 +340,9 @@ module.exports = {
             const formattedExtraDocArray = newObjects.map(url => {
                 const name = url.split('/').pop(); // Extract the name from the URL
                 return { name, url };
-              });
+            });
 
-              console.log("docs  => ",formattedExtraDocArray);
+            console.log("docs  => ", formattedExtraDocArray);
 
             const updatedUser = await users.findOneAndUpdate(
                 { _id: userId },
@@ -374,8 +375,8 @@ module.exports = {
                 return res.status(400).json({ status: false, message: 'User not found' });
             }
             const updatedUser = await users.findOneAndUpdate(
-                    { _id: userId },
-                    { $pull: { userExtraDocs: { _id: imageId } } })
+                { _id: userId },
+                { $pull: { userExtraDocs: { _id: imageId } } })
 
 
             return res.json({ status: true, message: "Kyc updated successfully.", data: updatedUser });
@@ -541,7 +542,44 @@ module.exports = {
         }
     },
 
+    markChatSeen: async (req, res) => {
 
+        try {
+            const userId = req.body.userId
+            const roomId = req.body?.roomId;
+            let chatMsg
+            if (chatId) {
+                chatMsg = await chat.chatDetails.updateMany(
+                    { receiverId: userId, roomId },
+                    { $set: { "chatDetails.$.isSeen": true } }
+                )
+            }
+            else {
+                chatMsg = await chat.chatDetails.updateMany(
+                    { receiverId: userId },
+                    { $set: { "chatDetails.$.isSeen": true } }
+                )
+            }
+
+            res.send({ success: true, content: chatMsg })
+        } catch (error) {
+            console.error('Error:', error);
+            return res.status(400).json({ status: false, msg: error });
+        }
+    },
+
+    checkIfMsgSeen: async (req, res) => {
+
+        try {
+            const userId = req.body.userId
+            let chatMsg = await chat.chatDetails.find({ receiverId: userId , isSeen:false})
+
+            res.send({ success: true, content: chatMsg })
+        } catch (error) {
+            console.error('Error:', error);
+            return res.status(400).json({ status: false, msg: error });
+        }
+    }
 
 }
 
