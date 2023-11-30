@@ -548,16 +548,16 @@ module.exports = {
             const userId = req.body.userId
             const roomId = req.body?.roomId;
             let chatMsg
-            if (chatId) {
+            if (roomId) {
                 chatMsg = await chat.chatDetails.updateMany(
                     { receiverId: userId, roomId },
-                    { $set: { "chatDetails.$.isSeen": true } }
+                    { $set: { "chatDetails.isSeen": true } }
                 )
             }
             else {
                 chatMsg = await chat.chatDetails.updateMany(
                     { receiverId: userId },
-                    { $set: { "chatDetails.$.isSeen": true } }
+                    { $set: { "isSeen": true } }
                 )
             }
 
@@ -573,8 +573,10 @@ module.exports = {
         try {
             const userId = req.body.userId
             let chatMsg = await chat.chatDetails.find({ receiverId: userId , isSeen:false})
-
-            res.send({ success: true, content: chatMsg })
+            if(chatMsg.length>0){
+                return res.send({success:true , isSeen:false})
+            }
+            res.send({success:true , isSeen:true})
         } catch (error) {
             console.error('Error:', error);
             return res.status(400).json({ status: false, msg: error });
