@@ -10,7 +10,7 @@ module.exports = function initializeSocket(server) {
       origin: "*",
     },
   });
-
+ 
 
   io.on('connection', (socket) => {
     console.log('User connected ');
