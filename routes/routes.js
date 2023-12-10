@@ -113,5 +113,19 @@ router.post('/query/:queryId/comments',queryController.addCommentInCase)
 //Chat -------------
 router.get('/getOldMessages/:roomId',chat_controller.getMsgs)
 
+// by ghost
+router.post("/create/conversion",async (req,res)=>{
+ try{
+   const {senderId, receiverId,data} = req.body;
+    const conversation = await  chat_controller.createOrGetConversationRoom(senderId, receiverId,data);
+    res.status(200).json({sucess:true,data:conversation});
+ }
+ catch(error){
+    res.status(500).json({sucess:false,msg : error.message});
+ }
+})
+
+// end
+
 
 module.exports = router
