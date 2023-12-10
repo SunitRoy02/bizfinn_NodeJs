@@ -23,6 +23,13 @@ async function createOrGetConversationRoom(senderId, receiverId,data) {
     const uniqueId = uid();
     const userData1 = await users.findOne({ _id: senderId });
     const userData2 = await users.findOne({ _id: receiverId });
+
+     if(!userData1){
+        throw new Error("Sender id is incorrect");
+    }
+     if(!userData2){
+        throw new Error("Receiver id is incorrect");
+    }
     const userParticipants = [userData1, userData2];
   
     const convoData = {
